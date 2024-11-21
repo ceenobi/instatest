@@ -17,11 +17,11 @@ export const validatePassword = (password) => {
 };
 
 export const validateUsername = (username) => {
-  const validRegex = /^[a-zA-Z0-9_]+$/;
+  //const validRegex = /^[a-zA-Z0-9_]+$/;
   if (!username) {
     return "Please enter a username.";
-  } else if (validRegex.test(username)) {
-    return "Username must contain only letters, numbers, and underscores.";
+  } else if (username.length < 3 || username.length > 20) {
+    return "Username must be between 3 and 20 characters long.";
   }
 };
 

@@ -8,7 +8,6 @@ export default function ActionButton({
   return (
     <button
       type={type}
-      loading={loading}
       disabled={loading}
       {...rest}
       className={`btn rounded-none  ${classname}`}

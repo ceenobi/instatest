@@ -22,7 +22,7 @@ export default function Signup() {
   return (
     <>
       <Helmet>
-        <title>Sign up to Instashot</title>
+        <title>Sign up to Instapics</title>
         <meta name="description" content="Get access to Instashot" />
       </Helmet>
       <div className="max-w-[270px] mx-auto">

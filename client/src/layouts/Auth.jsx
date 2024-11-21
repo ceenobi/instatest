@@ -20,7 +20,7 @@ export default function Auth() {
               onClick={redirect}
               role="button"
             >
-              Instagram
+              Instapics
             </h1>
             <Outlet />
           </div>
@@ -49,7 +49,7 @@ export default function Auth() {
       </div>
       <div className="my-12 max-w-[350px] mx-auto">
         <h1 className="text-center text-sm">
-          &copy; {new Date().getFullYear()} Instagram Clone
+          &copy; {new Date().getFullYear()} Instapics
         </h1>
       </div>
     </div>

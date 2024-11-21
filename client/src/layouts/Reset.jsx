@@ -6,7 +6,7 @@ export default function Reset() {
     <div className="max-w-[1200px] mx-auto py-6 px-4">
       <div className="sticky top-0 ">
         <Link to="/" className="text-center text-3xl font-bold mb-8 text-logo">
-          Instagram
+          Instapics
         </Link>
       </div>
       <div className="max-w-[350px] mx-auto flex flex-col justify-center">
@@ -24,7 +24,7 @@ export default function Reset() {
       </div>
       <div className="my-12 max-w-[350px] mx-auto">
         <h1 className="text-center text-sm">
-          &copy; {new Date().getFullYear()} Instagram Clone
+          &copy; {new Date().getFullYear()} Instapics
         </h1>
       </div>
     </div>
