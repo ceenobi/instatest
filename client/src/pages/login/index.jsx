@@ -1,30 +1,38 @@
 import { signInUser } from "@/api";
-import { ActionButton, FormInput } from "@/components";
+import { ActionButton, Alert, FormInput } from "@/components";
+import { useAuthStore } from "@/hooks";
 import { handleError, inputFields } from "@/utils";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState(null);
-  //const location = useLocation();
-  //const from = location.state?.from || "/";
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || "/";
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
+  const { setAccessToken, checkAuth } = useAuthStore();
 
   const fields = ["username", "password"];
 
   const onFormSubmit = async (data) => {
     try {
       const res = await signInUser(data);
-      console.log(res);
+      if (res.status === 200) {
+        setAccessToken(res.data.accessToken);
+        toast.success(res.data.message);
+        navigate(from, { replace: true });
+        await checkAuth();
+      }
     } catch (error) {
-      //console.error(error);
       handleError(setError, error);
     }
   };
@@ -36,24 +44,7 @@ export default function Login() {
         <meta name="description" content="Get access to Instashot" />
       </Helmet>
       <div className="max-w-[300px] mx-auto">
-        {error && (
-          <div role="alert" className="alert alert-error">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span className="font-semibold">Error! {error}</span>
-          </div>
-        )}
+        {error && <Alert error={error} />}
         <form className="w-full p-3" onSubmit={handleSubmit(onFormSubmit)}>
           {inputFields
             .filter((item) => fields.includes(item.name))

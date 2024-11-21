@@ -1,4 +1,5 @@
 import Auth from "./Auth";
-import Reset from "./Reset";
+import Recover from "./Recover";
+import Root from "./Root";
 
-export { Auth, Reset };
+export { Auth, Recover, Root };

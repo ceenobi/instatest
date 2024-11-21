@@ -1,10 +1,10 @@
 import { Lock } from "lucide-react";
 import { Link, Outlet } from "react-router-dom";
 
-export default function Reset() {
+export default function Recover() {
   return (
     <div className="max-w-[1200px] mx-auto py-6 px-4">
-      <div className="sticky top-0 ">
+      <div className="sticky top-0 z-40 bg-white">
         <Link to="/" className="text-center text-3xl font-bold mb-8 text-logo">
           Instapics
         </Link>

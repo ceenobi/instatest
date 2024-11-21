@@ -2,6 +2,8 @@ import express, { json } from "express";
 import createHttpError, { isHttpError } from "http-errors";
 import morgan from "morgan";
 import cors from "cors";
+import compression from "compression";
+
 import authRoutes from "./routes/user.js";
 
 const app = express();
@@ -13,6 +15,7 @@ const corsOptions = {
   credentials: true,
 };
 app.use(cors(corsOptions));
+app.use(compression());
 app.use(morgan("dev"));
 app.use(json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));

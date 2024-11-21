@@ -1,23 +1,40 @@
-import { ActionButton, FormInput } from "@/components";
-import { inputFields } from "@/utils";
+import { signUpUser } from "@/api";
+import { ActionButton, Alert, FormInput } from "@/components";
+import { useAuthStore } from "@/hooks";
+import { handleError, inputFields } from "@/utils";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function Signup() {
   const [isVisible, setIsVisible] = useState(false);
-  //const location = useLocation();
-  //const from = location.state?.from || "/";
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
+  const { setAccessToken, checkAuth } = useAuthStore();
 
   const fields = ["username", "email", "fullname", "password"];
 
-  const onFormSubmit = (data) => {
-    console.log(data);
+  const onFormSubmit = async (data) => {
+    try {
+      const res = await signUpUser(data);
+      if (res.status === 201) {
+        setAccessToken(res.data.accessToken);
+        toast.success(res.data.message);
+        navigate(from, { replace: true });
+        await checkAuth();
+      }
+    } catch (error) {
+      handleError(setError, error);
+    }
   };
   return (
     <>
@@ -29,6 +46,7 @@ export default function Signup() {
         <h1 className="text-center font-semibold">
           Sign up to see photos from your friends.
         </h1>
+        {error && <Alert error={error} />}
         <form className="w-full p-3" onSubmit={handleSubmit(onFormSubmit)}>
           {inputFields
             .filter((item) => fields.includes(item.name))

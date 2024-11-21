@@ -35,23 +35,21 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    resetPasswordToken: {
+    token: {
       type: String,
       select: false,
     },
-    resetPasswordExpires: {
+    tokenExpires: {
       type: Date,
       select: false,
-      expires: "15m",
     },
     verificationToken: {
       type: String,
       select: false,
     },
-    verificationExpires: {
+    verificationTokenExpires: {
       type: Date,
       select: false,
-      expires: "24h",
     },
     lastLogin: {
       type: Date,
@@ -65,6 +63,12 @@ const userSchema = new Schema(
       type: String,
       maxlength: [150, "Bio cannot be more than 150 characters"],
       default: "",
+    },
+    followers: {
+      type: [String],
+    },
+    following: {
+      type: [String],
     },
   },
   {

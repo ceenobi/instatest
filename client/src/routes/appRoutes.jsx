@@ -1,8 +1,8 @@
 import { LazySpinner } from "@/components";
 import { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { AuthLayout, ResetLayout } from ".";
-import { ForgotPassword, Login, Signup } from "@/pages";
+import { AuthLayout, RecoverLayout, RootLayout } from ".";
+import { ForgotPassword, Home, Login, Signup, VerifyLogin } from "@/pages";
 
 const routes = [
   {
@@ -27,13 +27,31 @@ const routes = [
     path: "account",
     element: (
       <Suspense fallback={<LazySpinner />}>
-        <ResetLayout />
+        <RecoverLayout />
       </Suspense>
     ),
     children: [
       {
         path: "forgot-password",
         element: <ForgotPassword />,
+      },
+      {
+        path: "email-login/:userId/:token",
+        element: <VerifyLogin />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    element: (
+      <Suspense fallback={<LazySpinner />}>
+        <RootLayout />
+      </Suspense>
+    ),
+    children: [
+      {
+        index: true,
+        element: <Home />,
       },
     ],
   },

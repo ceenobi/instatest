@@ -5,7 +5,7 @@ const TIMEOUTMSG = "Waiting for too long...Aborted!";
 
 const config = {
   baseURL: BASEURL,
-  timeout: 3000,
+  timeout: 20000,
   timeoutErrorMessage: TIMEOUTMSG,
   withCredentials: true,
 };

@@ -7,6 +7,7 @@ const handleError = (fn, error) => {
     return fn(
       error.response.data?.message ||
         error.response.data?.error ||
+        error.response.data ||
         error?.message ||
         "An unexpected error occured"
     );

@@ -1,9 +1,13 @@
-import { ActionButton, FormInput } from "@/components";
-import { inputFields } from "@/utils";
+import { signInViaEmail } from "@/api";
+import { ActionButton, Alert, FormInput } from "@/components";
+import { handleError, inputFields } from "@/utils";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function ForgotPassword() {
+  const [error, SetError] = useState(null);
   const {
     register,
     handleSubmit,
@@ -12,8 +16,16 @@ export default function ForgotPassword() {
 
   const fields = ["email"];
 
-  const onFormSubmit = (data) => {
-    console.log(data);
+  const onFormSubmit = async (data) => {
+    try {
+      const res = await signInViaEmail(data);
+      if (res.status === 200) {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      handleError(SetError, error);
+      //handleError((message) => toast.error(message), error);
+    }
   };
 
   return (
@@ -25,6 +37,7 @@ export default function ForgotPassword() {
           account.
         </p>
       </div>
+      {error && <Alert error={error} />}
       <form className="w-full p-3" onSubmit={handleSubmit(onFormSubmit)}>
         {inputFields
           .filter((item) => fields.includes(item.name))

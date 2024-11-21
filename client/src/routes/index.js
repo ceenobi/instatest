@@ -1,6 +1,7 @@
 import { lazy } from "react";
 
 const AuthLayout = lazy(() => import("@/layouts/Auth"));
-const ResetLayout = lazy(() => import("@/layouts/Reset"));
+const RecoverLayout = lazy(() => import("@/layouts/Recover"));
+const RootLayout = lazy(() => import("@/layouts/Root"));
 
-export { AuthLayout, ResetLayout };
+export { AuthLayout, RecoverLayout, RootLayout };
