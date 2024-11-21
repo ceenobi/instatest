@@ -1,7 +1,8 @@
 import Login from "./login";
 import Signup from "./signup";
-import ForgotPassword from "./recover";
-import VerifyLogin from "./recover/verifyLogin";
+import ForgotPassword from "./account";
+import VerifyLogin from "./account/verifyLogin";
 import Home from "./home";
+import VerifyEmail from "./account/VerifyEmail";
 
-export { Login, Signup, ForgotPassword, VerifyLogin, Home };
+export { Login, Signup, ForgotPassword, VerifyLogin, Home, VerifyEmail };

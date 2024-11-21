@@ -3,6 +3,7 @@ import { Alert, DataSpinner } from "@/components";
 import { useAuthStore } from "@/hooks";
 import { handleError } from "@/utils";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -24,24 +25,30 @@ export default function VerifyLogin() {
           setAccessToken(res.data.accessToken);
           toast.success(res.data.message);
           navigate(from, { replace: true });
+          setLoading(false);
           await checkAuth();
         }
       } catch (error) {
         handleError(setError, error);
-      } finally {
-        setLoading(false);
       }
     };
     verify();
-  });
+  }, [userId, token, setAccessToken, navigate, from, checkAuth]);
+
   return (
-    <div className="max-w-[300px] mx-auto mt-6">
-      {error && <Alert error={error} />}
-      {loading && (
-        <div className="mt-4 text-center">
-          <DataSpinner />
-        </div>
-      )}
-    </div>
+    <>
+      <Helmet>
+        <title>Verify Login Link</title>
+        <meta name="description" content="Get access to Instashot" />
+      </Helmet>
+      <div className="max-w-[300px] mx-auto mt-6">
+        {error && <Alert error={error} />}
+        {loading && (
+          <div className="mt-4 text-center">
+            <DataSpinner />
+          </div>
+        )}
+      </div>
+    </>
   );
 }

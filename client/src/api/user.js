@@ -23,7 +23,7 @@ export const sendVerifyEmailLink = async (userId) => {
 };
 
 export const verifyEmail = async (userId, verificationToken) => {
-  return await axiosInstance.get(
+  return await axiosInstance.patch(
     `/auth/verifyEmail/${userId}/${verificationToken}`
   );
 };

@@ -29,8 +29,8 @@ export default function Signup() {
       if (res.status === 201) {
         setAccessToken(res.data.accessToken);
         toast.success(res.data.message);
-        navigate(from, { replace: true });
         await checkAuth();
+        navigate(from, { replace: true });
       }
     } catch (error) {
       handleError(setError, error);

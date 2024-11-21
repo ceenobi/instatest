@@ -4,6 +4,16 @@ import {
   signInViaEmail,
   getAuthenticatedUser,
   verifyLoginLink,
+  verifyEmail,
+  sendVerifyEmailLink,
 } from "./user";
 
-export { signUpUser, signInUser, getAuthenticatedUser, signInViaEmail, verifyLoginLink };
+export {
+  signUpUser,
+  signInUser,
+  getAuthenticatedUser,
+  signInViaEmail,
+  verifyLoginLink,
+  verifyEmail,
+  sendVerifyEmailLink,
+};
