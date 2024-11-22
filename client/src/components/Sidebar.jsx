@@ -4,10 +4,10 @@ import { AlignJustify, Bookmark, ImagePlus, Instagram } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
-  const { user } = useAuthStore() || {};
+  const { user, logout } = useAuthStore() || {};
   return (
-    <div className="py-6 px-[8px] flex flex-col h-[100%] justify-between items-center">
-      <NavLink to="/" className="tooltip tooltip-right" data-tip="Home">
+    <div className="py-8 px-[8px] flex flex-col h-[100%] justify-between items-center">
+      <NavLink to="/" className="tooltip tooltip-right" data-tip="Instapics">
         <Instagram size="28px" />
       </NavLink>
       <div>
@@ -33,9 +33,9 @@ export default function Sidebar() {
         </div>
         <NavLink
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
-          to={`/profile/${user?.data?.username}`}
+          to={`/${user?.data?.username}`}
         >
-          <div className="w-8 rounded-xl">
+          <div className="w-8 rounded-full">
             <img
               src={
                 user?.data?.profilePicture ||
@@ -45,7 +45,7 @@ export default function Sidebar() {
           </div>
         </NavLink>
       </div>
-      <div className="dropdown dropdown-top hover:bg-zinc-100 rounded-lg p-3 ">
+      <div className="dropdown dropdown-top hover:bg-zinc-100 rounded-lg p-3 cursor-pointer">
         <div tabIndex={0} role="button" className="m-1">
           <AlignJustify />
         </div>
@@ -54,16 +54,23 @@ export default function Sidebar() {
           className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
         >
           <li>
-            <>
-              <NavLink className="btn w-[30x]">
-                <Bookmark />
-                Saved
-              </NavLink>
-            </>
+            <NavLink
+              className="flex items-center gap-2"
+              to={`/profile/${user?.data?.username}/saved`}
+            >
+              <Bookmark />
+              Saved
+            </NavLink>
           </li>
-          <div className="divider"></div>
+          <div className="w-full h-[1px] bg-gray-300 my-1"></div>
           <li>
-            <a href="#">Logout</a>
+            <button
+              onClick={() => {
+                logout();
+              }}
+            >
+              Logout
+            </button>
           </li>
         </ul>
       </div>

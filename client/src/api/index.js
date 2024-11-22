@@ -6,8 +6,9 @@ import {
   verifyLoginLink,
   verifyEmail,
   sendVerifyEmailLink,
-  refreshAccessToken 
-} from "./user";
+  refreshAccessToken,
+  logoutUser,
+} from "./auth";
 
 export {
   signUpUser,
@@ -17,5 +18,6 @@ export {
   verifyLoginLink,
   verifyEmail,
   sendVerifyEmailLink,
-  refreshAccessToken 
+  refreshAccessToken,
+  logoutUser,
 };

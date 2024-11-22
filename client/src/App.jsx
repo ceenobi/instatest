@@ -6,9 +6,9 @@ import { LazySpinner } from "@/components";
 import { Toaster } from "sonner";
 
 function App() {
-  const { isCheckingAuth} = useAuthStore();
+  const { user } = useAuthStore();
 
-  if (isCheckingAuth) {
+  if (user?.isCheckingAuth) {
     return <LazySpinner />;
   }
 

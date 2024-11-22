@@ -3,5 +3,6 @@ import { FormInput } from "./FormField";
 import ActionButton from "./ActionButton";
 import Sidebar from "./Sidebar";
 import Alert from "./Alert";
+import Modal from "./Modal";
 
-export { LazySpinner, FormInput, ActionButton, Sidebar, Alert, DataSpinner };
+export { LazySpinner, FormInput, ActionButton, Sidebar, Alert, DataSpinner, Modal };

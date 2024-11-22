@@ -1,5 +1,5 @@
 import { verifyEmail } from "@/api";
-import { Alert, DataSpinner } from "@/components";
+import { Alert } from "@/components";
 import { useAuthStore, useFetch } from "@/hooks";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
@@ -36,7 +36,7 @@ export default function VerifyEmail() {
         {error && <Alert error={error} />}
         {loading && (
           <div className="mt-4 text-center">
-            <DataSpinner />
+            <span className="loading loading-spinner loading-md bg-accent"></span>
           </div>
         )}
         {!error && !loading && data?.success && (

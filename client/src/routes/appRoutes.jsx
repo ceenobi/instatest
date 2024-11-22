@@ -6,6 +6,7 @@ import {
   ForgotPassword,
   Home,
   Login,
+  Profile,
   Signup,
   VerifyEmail,
   VerifyLogin,
@@ -76,6 +77,10 @@ const routes = [
       {
         index: true,
         element: <Home />,
+      },
+      {
+        path: ":profile",
+        element: <Profile />,
       },
     ],
   },

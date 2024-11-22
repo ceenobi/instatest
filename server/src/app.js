@@ -5,7 +5,8 @@ import cors from "cors";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 
-import authRoutes from "./routes/user.js";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 app.use((req, res, next) => {
   return next(createHttpError(404, "Endpoint not found"));

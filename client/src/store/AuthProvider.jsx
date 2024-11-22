@@ -1,7 +1,9 @@
-import { getAuthenticatedUser, refreshAccessToken } from "@/api";
+import { getAuthenticatedUser, logoutUser, refreshAccessToken } from "@/api";
 import { useLocalStorage } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { AuthStore } from ".";
+// import { LazySpinner } from "@/components";
 
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useLocalStorage(
@@ -11,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({
     isError: null,
     data: null,
-    isCheckingAuth:false,
+    isCheckingAuth: false,
     isAuthenticated: false,
   });
 
@@ -88,7 +90,28 @@ export const AuthProvider = ({ children }) => {
       ignore = true;
     };
   }, [checkAuth]);
-  console.log(user);  
+
+  const logout = async () => {
+    try {
+      const res = await logoutUser();
+      if (res.status === 200) {
+        setAccessToken(null);
+        setUser({
+          data: null,
+          isError: null,
+          isAuthenticated: false,
+          isCheckingAuth: false,
+        });
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  // if (user?.isCheckingAuth) {
+  //   return <LazySpinner />;
+  // }
 
   const contextData = {
     user,
@@ -96,6 +119,7 @@ export const AuthProvider = ({ children }) => {
     setAccessToken,
     checkAuth,
     refreshToken,
+    logout,
   };
 
   return (
