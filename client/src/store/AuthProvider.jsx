@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({
     isError: null,
     data: null,
-    isCheckingAuth: true,
+    isCheckingAuth:false,
     isAuthenticated: false,
   });
 
@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
       const res = await refreshAccessToken();
       if (res.status === 200) {
         setAccessToken(res.data.accessToken);
-        console.log("refreshed token");
         return true;
       }
       return false;

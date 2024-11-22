@@ -14,7 +14,7 @@ const cookieOptions = {
   httpOnly: true, // Prevents client-side access to the cookie
   secure: process.env.NODE_ENV === "production", // HTTPS only in production
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 4 * 60 * 1000, // 7 days
+  maxAge: 60 * 60 * 1000, // 1 hour
   path: "/", // Cookie is accessible on all paths
 };
 

@@ -1,3 +1,4 @@
+import { Compass, Heart, House, Search } from "lucide-react";
 import {
   validateEmail,
   validateFullname,
@@ -41,5 +42,32 @@ export const inputFields = [
     placeholder: "Fullname",
     validate: (value) => validateFullname(value),
     isRequired: true,
+  },
+];
+
+export const sidebar = [
+  {
+    id: 1,
+    path: "/",
+    name: "Home",
+    Icon: House,
+  },
+  {
+    id: 2,
+    path: "/search",
+    name: "Search",
+    Icon: Search,
+  },
+  {
+    id: 3,
+    path: "/explore",
+    name: "Explore",
+    Icon: Compass,
+  },
+  {
+    id: 4,
+    path: "/favorites",
+    name: "Likes",
+    Icon: Heart,
   },
 ];

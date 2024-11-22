@@ -23,10 +23,10 @@ export default function VerifyLogin() {
         const res = await verifyLoginLink(userId, token);
         if (res.status === 200) {
           setAccessToken(res.data.accessToken);
-          toast.success(res.data.message);
-          navigate(from, { replace: true });
-          setLoading(false);
           await checkAuth();
+          toast.success(res.data.message);
+          setLoading(false);
+          navigate(from, { replace: true });
         }
       } catch (error) {
         handleError(setError, error);

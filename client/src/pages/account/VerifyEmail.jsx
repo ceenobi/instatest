@@ -8,14 +8,16 @@ import { toast } from "sonner";
 
 export default function VerifyEmail() {
   const { userId, verificationToken } = useParams();
-  const { error, loading, data } = useFetch(verifyEmail, userId, verificationToken);
+  const { error, loading, data } = useFetch(
+    verifyEmail,
+    userId,
+    verificationToken
+  );
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || "/";
   const { data: userData } = user || {};
-  console.log(verificationToken);
-  
 
   useEffect(() => {
     if (userData?.isVerified) {
