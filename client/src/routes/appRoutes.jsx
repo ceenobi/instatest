@@ -36,23 +36,29 @@ const routes = [
   {
     path: "account",
     element: (
-      <PublicRoutes>
-        <Suspense fallback={<LazySpinner />}>
-          <RecoverLayout />
-        </Suspense>
-      </PublicRoutes>
+      <Suspense fallback={<LazySpinner />}>
+        <RecoverLayout />
+      </Suspense>
     ),
     children: [
       {
         path: "forgot-password",
-        element: <ForgotPassword />,
+        element: (
+          <PublicRoutes>
+            <ForgotPassword />
+          </PublicRoutes>
+        ),
       },
       {
         path: "email-login/:userId/:token",
-        element: <VerifyLogin />,
+        element: (
+          <PublicRoutes>
+            <VerifyLogin />
+          </PublicRoutes>
+        ),
       },
       {
-        path: "verify-email/:userId/:token",
+        path: "verify-email/:userId/:verificationToken",
         element: <VerifyEmail />,
       },
     ],

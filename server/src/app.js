@@ -3,6 +3,7 @@ import createHttpError, { isHttpError } from "http-errors";
 import morgan from "morgan";
 import cors from "cors";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/user.js";
 
@@ -14,9 +15,11 @@ const corsOptions = {
   methods: ["GET", "POST", "PATCH", "DELETE"],
   credentials: true,
 };
+
 app.use(cors(corsOptions));
 app.use(compression());
 app.use(morgan("dev"));
+app.use(cookieParser());
 app.use(json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
 

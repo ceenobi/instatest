@@ -6,6 +6,7 @@ import {
   verifyLoginLink,
   verifyEmail,
   sendVerifyEmailLink,
+  refreshAccessToken 
 } from "./user";
 
 export {
@@ -16,4 +17,5 @@ export {
   verifyLoginLink,
   verifyEmail,
   sendVerifyEmailLink,
+  refreshAccessToken 
 };

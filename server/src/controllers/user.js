@@ -2,6 +2,7 @@ import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 import NodeCache from "node-cache";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import {
   generateAccessToken,
@@ -13,7 +14,7 @@ const cookieOptions = {
   httpOnly: true, // Prevents client-side access to the cookie
   secure: process.env.NODE_ENV === "production", // HTTPS only in production
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+  maxAge: 4 * 60 * 1000, // 7 days
   path: "/", // Cookie is accessible on all paths
 };
 
@@ -272,11 +273,11 @@ export const verifyEmail = async (req, res, next) => {
     }
     const user = await User.findOne({
       _id: userId,
-      verificationToken,
+      verificationToken: verificationToken,
     }).select("+verificationToken +verificationTokenExpires");
     if (!user) {
       return next(
-        createHttpError(404, "User  or verification token not found")
+        createHttpError(404, "User id  or verification token not found")
       );
     }
     if (user.verificationTokenExpires < Date.now()) {
@@ -293,6 +294,48 @@ export const verifyEmail = async (req, res, next) => {
       success: true,
       message: "Email verified successfully",
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const refreshAccessToken = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken) {
+      return next(createHttpError(401, "No refresh token found"));
+    }
+
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_SECRET_KEY,
+      async (err, decoded) => {
+        if (err) {
+          res.clearCookie("refreshToken", cookieOptions);
+          return next(createHttpError(401, "Invalid or expired refresh token"));
+        }
+
+        try {
+          const user = await User.findById(decoded.id);
+          if (!user) {
+            return next(createHttpError(401, "User no longer exists"));
+          }
+
+          const accessToken = generateAccessToken(user._id, user.role);
+          const newRefreshToken = generateRefreshToken(user._id, user.role);
+
+          res.cookie("refreshToken", newRefreshToken, cookieOptions);
+
+          res.status(200).json({
+            accessToken,
+            message: "Tokens refreshed successfully",
+          });
+        } catch (error) {
+          return next(error);
+        }
+      }
+    );
   } catch (error) {
     next(error);
   }

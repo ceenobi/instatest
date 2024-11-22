@@ -1,28 +1,44 @@
 import { verifyEmail } from "@/api";
 import { Alert, DataSpinner } from "@/components";
-import { useFetch } from "@/hooks";
+import { useAuthStore, useFetch } from "@/hooks";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function VerifyEmail() {
-  const { userId, token } = useParams();
-  const { error, loading } = useFetch(verifyEmail, userId, token);
+  const { userId, verificationToken } = useParams();
+  const { error, loading, data } = useFetch(verifyEmail, userId, verificationToken);
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
+  const { data: userData } = user || {};
+  console.log(verificationToken);
+  
+
+  useEffect(() => {
+    if (userData?.isVerified) {
+      toast.success("You are verified already");
+      navigate(from, { replace: true });
+    }
+  }, [from, navigate, userData?.isVerified]);
 
   return (
     <>
       <Helmet>
         <title>Verify account</title>
-        <meta name="description" content="Verify account" />
+        <meta name="description" content="Get verified on Instashot" />
       </Helmet>
       <div className="max-w-[300px] mx-auto mt-6">
-        {error ? (
-          <Alert error={error} />
-        ) : loading ? (
+        {error && <Alert error={error} />}
+        {loading && (
           <div className="mt-4 text-center">
             <DataSpinner />
           </div>
-        ) : (
-          <p className="mt-4 text-center">Email verified successfully</p>
+        )}
+        {!error && !loading && data?.success && (
+          <p className="mt-4 text-center">{data.message}</p>
         )}
       </div>
     </>

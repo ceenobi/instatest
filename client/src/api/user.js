@@ -23,9 +23,13 @@ export const sendVerifyEmailLink = async (userId) => {
 };
 
 export const verifyEmail = async (userId, verificationToken) => {
-  return await axiosInstance.patch(
-    `/auth/verifyEmail/${userId}/${verificationToken}`
-  );
+  return await axiosInstance.patch(`/auth/verifyEmail/${userId}/${verificationToken}`);
+};
+
+export const refreshAccessToken = async () => {
+  return await axiosInstance.get("/auth/refreshAccessToken", {
+    withCredentials: true // This is crucial for sending cookies
+  });
 };
 
 export const getAuthenticatedUser = async (token) => {

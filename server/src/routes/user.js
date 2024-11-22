@@ -28,4 +28,9 @@ router.patch(
   AuthController.verifyEmail
 );
 
+router.get(
+  "/refreshAccessToken",
+  AuthController.refreshAccessToken 
+);
+
 export default router;
