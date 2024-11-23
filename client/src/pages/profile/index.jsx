@@ -80,6 +80,7 @@ export default function Profile() {
           ...prev,
           profilePicture: res.data.profilePicture,
         }));
+        setSelectedImage(null);
       }
     } catch (error) {
       setStatus("error");
@@ -225,6 +226,11 @@ export default function Profile() {
               <p className="text-sm text-gray-600">
                 {uploadProgress}% uploaded
               </p>
+              <progress
+                className="progress w-56"
+                value={uploadProgress}
+                max="100%"
+              ></progress>
             </div>
           )}
           {status === "success" && (
