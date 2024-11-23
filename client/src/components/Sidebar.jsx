@@ -35,7 +35,7 @@ export default function Sidebar() {
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
           to={`/${user?.data?.username}`}
         >
-          <div className="w-8 rounded-full">
+          <div className="w-8 rounded-full border-2 border-accent">
             <img
               src={
                 user?.data?.profilePicture ||

@@ -19,7 +19,7 @@ export default function Signup() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
-  const { setAccessToken, checkAuth } = useAuthStore();
+  const { setAccessToken } = useAuthStore();
 
   const fields = ["username", "email", "fullname", "password"];
 
@@ -29,7 +29,6 @@ export default function Signup() {
       if (res.status === 201) {
         setAccessToken(res.data.accessToken);
         toast.success(res.data.message);
-        await checkAuth();
         navigate(from, { replace: true });
       }
     } catch (error) {

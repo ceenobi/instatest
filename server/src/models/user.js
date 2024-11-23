@@ -59,6 +59,10 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    profilePhotoId: {
+      type: String,
+      default: "",
+    },
     bio: {
       type: String,
       maxlength: [150, "Bio cannot be more than 150 characters"],

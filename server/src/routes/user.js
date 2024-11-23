@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.get("/:username", UserController.getAUser);
 
+router.patch("/uploadProfilePic", verifyAuth(Roles.All), UserController.changeProfilePhoto);
+
 export default router;

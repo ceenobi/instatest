@@ -19,7 +19,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
-  const { setAccessToken, checkAuth } = useAuthStore();
+  const { setAccessToken } = useAuthStore();
 
   const fields = ["username", "password"];
 
@@ -29,7 +29,6 @@ export default function Login() {
       if (res.status === 200) {
         setAccessToken(res.data.accessToken);
         toast.success(res.data.message);
-        await checkAuth();
         navigate(from, { replace: true });
       }
     } catch (error) {

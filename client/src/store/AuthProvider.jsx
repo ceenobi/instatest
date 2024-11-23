@@ -3,7 +3,6 @@ import { useLocalStorage } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AuthStore } from ".";
-// import { LazySpinner } from "@/components";
 
 export const AuthProvider = ({ children }) => {
   const [accessToken, setAccessToken] = useLocalStorage(
@@ -39,26 +38,19 @@ export const AuthProvider = ({ children }) => {
   }, [setAccessToken]);
 
   const checkAuth = useCallback(async () => {
-    setUser((prev) => ({ ...prev, isError: null, isCheckingAuth: true }));
     try {
       const res = await getAuthenticatedUser(accessToken);
       setUser({
         data: res.data,
         isAuthenticated: true,
         isCheckingAuth: false,
+        isError: null,
       });
     } catch (error) {
-      // If access token is expired, try to refresh it
       if (error.response?.status === 401) {
-        const refreshed = await refreshToken();
-        if (refreshed) {
-          // Retry the auth check with new access token
-          const retryRes = await getAuthenticatedUser(accessToken);
-          setUser({
-            data: retryRes.data,
-            isAuthenticated: true,
-            isCheckingAuth: false,
-          });
+        const isRefreshed = await refreshToken();
+        if (isRefreshed) {
+          await checkAuth();
           return;
         }
       }
@@ -71,25 +63,45 @@ export const AuthProvider = ({ children }) => {
     }
   }, [accessToken, refreshToken]);
 
+  // Only run auth check on mount or when access token changes
   useEffect(() => {
-    let ignore = false;
+    let mounted = true;
 
-    const verifyAuth = async () => {
+    const initAuth = async () => {
+      if (!accessToken) {
+        setUser({
+          data: null,
+          isError: null,
+          isAuthenticated: false,
+          isCheckingAuth: false,
+        });
+        return;
+      }
+
+      setUser((prev) => ({ ...prev, isCheckingAuth: true }));
       try {
-        if (!ignore) {
+        if (mounted) {
           await checkAuth();
         }
       } catch (error) {
-        console.error("Auth verification failed:", error);
+        if (mounted) {
+          setUser({
+            data: null,
+            isError: error,
+            isAuthenticated: false,
+            isCheckingAuth: false,
+          });
+        }
       }
     };
 
-    verifyAuth();
+    initAuth();
 
     return () => {
-      ignore = true;
+      mounted = false;
     };
-  }, [checkAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken]); // Only depend on accessToken changes
 
   const logout = async () => {
     try {
@@ -109,12 +121,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // if (user?.isCheckingAuth) {
-  //   return <LazySpinner />;
-  // }
-
   const contextData = {
     user,
+    setUser,
     accessToken,
     setAccessToken,
     checkAuth,

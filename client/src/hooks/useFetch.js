@@ -35,5 +35,5 @@ export default function useFetch(endpoint, params1, params2) {
     };
   }, [endpoint, params1, params2]);
 
-  return { data, error, loading };
+  return { data, error, loading, setData };
 }

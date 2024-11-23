@@ -11,7 +11,7 @@ export function LazySpinner() {
 export function DataSpinner() {
   return (
     <div className="flex justify-center items-center h-screen">
-      <span className="loading loading-spinner loading-md bg-accent"></span>;
+      <span className="loading loading-spinner loading-md bg-accent"></span>
     </div>
   );
 }
