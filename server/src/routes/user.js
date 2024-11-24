@@ -21,5 +21,10 @@ router.patch(
   verifyAuth(Roles.All),
   UserController.updatePassword
 );
+router.patch(
+  "/togglePrivacy",
+  verifyAuth(Roles.All),
+  UserController.togglePrivateAccount
+);
 
 export default router;

@@ -24,7 +24,7 @@ export default function UpdateProfile({ accessToken, setData, data }) {
     }
   }, [data, setValue]);
 
-  const fields = ["username", "email", "fullname", "bio"];
+  const fields = ["username", "email", "fullname"];
 
   const onFormSubmit = async (data) => {
     try {
@@ -69,11 +69,18 @@ export default function UpdateProfile({ accessToken, setData, data }) {
                 validate={validate}
               />
             ))}
+          <textarea
+            className="textarea textarea-bordered w-full"
+            placeholder="Bio"
+            name="bio"
+            id="bio"
+            {...register("bio")}
+          ></textarea>
           <ActionButton
             text="Update"
             type="submit"
             loading={isSubmitting}
-            classname="w-full btn-sm btn-secondary"
+            classname="w-full btn-sm btn-secondary mt-4"
           />
         </form>
       </Modal>

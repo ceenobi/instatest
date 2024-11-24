@@ -36,3 +36,12 @@ export const updateUserPassword = async (data, token) => {
     },
   });
 };
+
+export const toggleAccountPrivacy = async (token) => {
+  return await axiosInstance.patch("/user/togglePrivacy", {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};

@@ -74,6 +74,10 @@ const userSchema = new Schema(
     following: {
       type: [String],
     },
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields

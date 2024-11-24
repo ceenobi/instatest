@@ -7,5 +7,19 @@ import VerifyEmail from "./account/VerifyEmail";
 import Profile from "./profile";
 import UpdatePassword from "./settings/UpdatePassword";
 import VerifyAccount from "./settings/VerifyAccount";
+import AccountPrivacy from "./settings/AccountPrivacy";
+import DeleteAccount from "./settings/DeleteAccount";
 
-export { Login, Signup, ForgotPassword, VerifyLogin, Home, VerifyEmail, Profile, UpdatePassword, VerifyAccount };
+export {
+  Login,
+  Signup,
+  ForgotPassword,
+  VerifyLogin,
+  Home,
+  VerifyEmail,
+  Profile,
+  UpdatePassword,
+  VerifyAccount,
+  AccountPrivacy,
+  DeleteAccount,
+};

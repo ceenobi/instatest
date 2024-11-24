@@ -118,3 +118,22 @@ export const updatePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+export const togglePrivateAccount = async (req, res, next) => {
+  const { id: userId } = req.user;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    user.isPublic = !user.isPublic;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Account privacy updated successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

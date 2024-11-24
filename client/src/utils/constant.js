@@ -1,4 +1,13 @@
-import { BadgeCheck, Compass, Heart, House, KeyRound, Search } from "lucide-react";
+import {
+  BadgeCheck,
+  BadgeX,
+  Compass,
+  Heart,
+  House,
+  KeyRound,
+  Lock,
+  Search,
+} from "lucide-react";
 import {
   validateEmail,
   validateFullname,
@@ -111,5 +120,17 @@ export const settingsLinks = [
     path: "/verify-account",
     name: "Account verification",
     Icon: BadgeCheck,
+  },
+  {
+    id: 3,
+    path: "/account-privacy",
+    name: "Account privacy",
+    Icon: Lock,
+  },
+  {
+    id: 4,
+    path: "/delete-account",
+    name: "Delete account",
+    Icon: BadgeX,
   },
 ];

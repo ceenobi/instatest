@@ -3,6 +3,8 @@ import { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import { AuthLayout, RecoverLayout, RootLayout, SettingsLayout } from ".";
 import {
+  AccountPrivacy,
+  DeleteAccount,
   ForgotPassword,
   Home,
   Login,
@@ -101,6 +103,14 @@ const routes = [
           {
             path: "verify-account",
             element: <VerifyAccount />,
+          },
+          {
+            path: "account-privacy",
+            element: <AccountPrivacy />,
+          },
+          {
+            path: "delete-account",
+            element: <DeleteAccount />,
           },
         ],
       },
