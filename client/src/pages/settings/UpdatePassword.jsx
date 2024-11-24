@@ -3,6 +3,7 @@ import { ActionButton, Alert, FormInput } from "@/components";
 import { useAuthStore } from "@/hooks";
 import { handleError, inputFields } from "@/utils";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -34,38 +35,44 @@ export default function UpdatePassword() {
   };
 
   return (
-    <div className="mt-6 py-6 px-4 w-[450px] mx-auto">
-      <h1 className="text-2xl font-bold mb-8 px-3">Update password</h1>
-      {error && <Alert error={error} classname="my-4" />}
-      <form
-        className="max-w-[450px] mx-auto p-3"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        {inputFields
-          .filter((item) => fields.includes(item.name))
-          .map(({ type, id, name, placeholder, validate }) => (
-            <FormInput
-              type={type}
-              id={id}
-              name={name}
-              register={register}
-              placeholder={
-                placeholder === "Password" ? "Current password" : placeholder
-              }
-              key={id}
-              errors={errors}
-              validate={validate}
-              isVisible={isVisible}
-              setIsVisible={setIsVisible}
-            />
-          ))}
-        <ActionButton
-          text="Update password"
-          type="submit"
-          loading={isSubmitting}
-          classname="mt-4 w-full btn-sm btn-secondary"
-        />
-      </form>
-    </div>
+    <>
+      <Helmet>
+        <title>Update password</title>
+        <meta name="description" content="Update password" />
+      </Helmet>
+      <div className="py-5 px-4 max-w-[400px] xl:max-w-[450px] mx-auto">
+        <h1 className="text-2xl font-bold mb-8 px-3">Update password</h1>
+        {error && <Alert error={error} classname="my-4" />}
+        <form
+          className="w-[85vw] md:w-[400px] p-3"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          {inputFields
+            .filter((item) => fields.includes(item.name))
+            .map(({ type, id, name, placeholder, validate }) => (
+              <FormInput
+                type={type}
+                id={id}
+                name={name}
+                register={register}
+                placeholder={
+                  placeholder === "Password" ? "Current password" : placeholder
+                }
+                key={id}
+                errors={errors}
+                validate={validate}
+                isVisible={isVisible}
+                setIsVisible={setIsVisible}
+              />
+            ))}
+          <ActionButton
+            text="Update password"
+            type="submit"
+            loading={isSubmitting}
+            classname="mt-4 w-full btn-sm btn-secondary"
+          />
+        </form>
+      </div>
+    </>
   );
 }

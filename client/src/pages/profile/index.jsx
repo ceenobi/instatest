@@ -17,13 +17,13 @@ export default function Profile() {
         <title>Your Instapics profile - (@{profile}) </title>
         <meta name="description" content="Get access to Instashot" />
       </Helmet>
-      <div className="py-12 md:py-8">
+      <div className="py-4 md:py-8">
         {error && <Alert error={error} classname="my-4" />}
         {loading ? (
           <DataSpinner />
         ) : (
           <>
-            <div className="grid md:grid-cols-12 gap-4 md:gap-8 max-w-[968px] mx-auto">
+            <div className="grid md:grid-cols-12 gap-4 md:gap-8 max-w-[600px] justify-center mx-auto px-4">
               <div className="md:col-span-4">
                 <div className="flex gap-6">
                   <ChangeProfileImg
@@ -32,24 +32,6 @@ export default function Profile() {
                     setData={setData}
                     data={data}
                   />
-                  {/* <div
-                    className="avatar flex justify-center cursor-pointer"
-                    onClick={() =>
-                      document.getElementById("my_modal_1").showModal()
-                    }
-                  >
-                    <div className="w-20 h-20 md:w-[160px] md:h-[160px] rounded-full">
-                      <img
-                        src={
-                          data?.profilePicture ||
-                          "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                        }
-                        title="change profile photo"
-                        loading="lazy"
-                        alt={data?.username}
-                      />
-                    </div>
-                  </div> */}
                   <div className="md:hidden">
                     <h1 className="text-xl font-bold">{profile}</h1>
                     <div className="mt-2 flex items-center gap-4">
@@ -58,14 +40,12 @@ export default function Profile() {
                         setUser={setUser}
                         setData={setData}
                       />
-                      <button className="btn btn-neutral btn-sm">
-                        Edit
-                      </button>
+                      <button className="btn btn-neutral btn-sm w-[100px]">Edit</button>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="md:col-span-7">
+              <div className="md:col-span-8">
                 <div className="hidden md:flex items-center gap-4">
                   <h1 className="text-xl font-bold flex-1">{profile}</h1>
                   <div className="flex items-center gap-4">
@@ -99,20 +79,22 @@ export default function Profile() {
                 </p>
               </div>
             </div>
-            <div className="flex justify-between items-center md:hidden mt-4 p-3 border border-gray-200">
+            <div className="divider m-0 md:hidden mt-4"></div>
+            <div className="flex justify-between items-center md:hidden px-12 md:px-4">
               <div className="text-center">
                 <p className="font-bold">4</p>
-                <span className="">posts</span>
+                <span className="text-neutral text-sm">posts</span>
               </div>
               <div className="text-center">
                 <p className="font-bold">4</p>
-                <span className="">followers</span>
+                <span className="text-neutral text-sm">followers</span>
               </div>
               <div className="text-center">
                 <p className="font-bold">4</p>
-                <span className="">following</span>
+                <span className="text-neutral text-sm">following</span>
               </div>
             </div>
+            <div className="divider m-0 md:hidden"></div>
           </>
         )}
       </div>

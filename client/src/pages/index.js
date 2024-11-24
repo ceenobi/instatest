@@ -6,5 +6,6 @@ import Home from "./home";
 import VerifyEmail from "./account/VerifyEmail";
 import Profile from "./profile";
 import UpdatePassword from "./settings/UpdatePassword";
+import VerifyAccount from "./settings/VerifyAccount";
 
-export { Login, Signup, ForgotPassword, VerifyLogin, Home, VerifyEmail, Profile, UpdatePassword };
+export { Login, Signup, ForgotPassword, VerifyLogin, Home, VerifyEmail, Profile, UpdatePassword, VerifyAccount };

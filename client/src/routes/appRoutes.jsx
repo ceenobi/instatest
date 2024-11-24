@@ -9,6 +9,7 @@ import {
   Profile,
   Signup,
   UpdatePassword,
+  VerifyAccount,
   VerifyEmail,
   VerifyLogin,
 } from "@/pages";
@@ -97,11 +98,14 @@ const routes = [
             path: "update-password",
             element: <UpdatePassword />,
           },
+          {
+            path: "verify-account",
+            element: <VerifyAccount />,
+          },
         ],
       },
     ],
   },
-  
 ];
 const router = createBrowserRouter(routes);
 

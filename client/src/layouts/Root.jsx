@@ -1,9 +1,10 @@
-import { Sidebar } from "@/components";
+import { Nav, Sidebar } from "@/components";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 
 export default function Root() {
   return (
-    <main className="flex min-h-dvh">
+    <main className="min-h-dvh flex flex-col">
+      <Nav />
       <div className="hidden md:block fixed top-0 w-[80px] h-full z-40 border-r-2 bg-white">
         <Sidebar />
       </div>
