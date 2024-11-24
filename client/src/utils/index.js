@@ -4,7 +4,7 @@ import {
   validateUsername,
   validateFullname,
 } from "./formValidate";
-import { inputFields, sidebar } from "./constant";
+import { inputFields, sidebar, settingsLinks } from "./constant";
 import axiosInstance from "./axiosInstance";
 import handleError from "./handleError";
 
@@ -16,5 +16,6 @@ export {
   inputFields,
   axiosInstance,
   handleError,
-  sidebar
+  sidebar,
+  settingsLinks,
 };

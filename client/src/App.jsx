@@ -4,11 +4,10 @@ import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "sonner";
 
 function App() {
-
   return (
     <>
       <HelmetProvider>
-        <Toaster />
+        <Toaster position="top-center" expand={true} richColors/>
         <RouterProvider router={router} />
       </HelmetProvider>
     </>

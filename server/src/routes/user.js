@@ -4,9 +4,22 @@ import { verifyAuth, Roles } from "../middleware/verifyAuth.js";
 
 const router = express.Router();
 
-
 router.get("/:username", UserController.getAUser);
 
-router.patch("/uploadProfilePic", verifyAuth(Roles.All), UserController.changeProfilePhoto);
+router.patch(
+  "/uploadProfilePic",
+  verifyAuth(Roles.All),
+  UserController.changeProfilePhoto
+);
+router.patch(
+  "/updateProfile",
+  verifyAuth(Roles.All),
+  UserController.updateUserProfile
+);
+router.patch(
+  "/updatePassword",
+  verifyAuth(Roles.All),
+  UserController.updatePassword
+);
 
 export default router;

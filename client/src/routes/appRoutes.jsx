@@ -1,13 +1,14 @@
 import { LazySpinner } from "@/components";
 import { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { AuthLayout, RecoverLayout, RootLayout } from ".";
+import { AuthLayout, RecoverLayout, RootLayout, SettingsLayout } from ".";
 import {
   ForgotPassword,
   Home,
   Login,
   Profile,
   Signup,
+  UpdatePassword,
   VerifyEmail,
   VerifyLogin,
 } from "@/pages";
@@ -82,8 +83,25 @@ const routes = [
         path: ":profile",
         element: <Profile />,
       },
+      {
+        path: "settings",
+        element: (
+          <PrivateRoutes>
+            <Suspense fallback={<LazySpinner />}>
+              <SettingsLayout />
+            </Suspense>
+          </PrivateRoutes>
+        ),
+        children: [
+          {
+            path: "update-password",
+            element: <UpdatePassword />,
+          },
+        ],
+      },
     ],
   },
+  
 ];
 const router = createBrowserRouter(routes);
 

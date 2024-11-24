@@ -1,4 +1,4 @@
-import { Compass, Heart, House, Search } from "lucide-react";
+import { BadgeCheck, Compass, Heart, House, KeyRound, Search } from "lucide-react";
 import {
   validateEmail,
   validateFullname,
@@ -22,7 +22,7 @@ export const inputFields = [
     id: "password",
     name: "password",
     placeholder: "Password",
-    validate: (value) => validatePassword(value),
+    validate: (value) => validatePassword(value, "Password is required."),
     isRequired: true,
   },
   {
@@ -41,6 +41,33 @@ export const inputFields = [
     name: "fullname",
     placeholder: "Fullname",
     validate: (value) => validateFullname(value),
+    isRequired: true,
+  },
+  {
+    label: "Bio",
+    type: "text",
+    id: "bio",
+    name: "bio",
+    placeholder: "Bio",
+    isRequired: false,
+  },
+  {
+    label: "New Password",
+    type: "password",
+    id: "newPassword",
+    name: "newPassword",
+    placeholder: "New password",
+    validate: (value) => validatePassword(value, "New password is required."),
+    isRequired: true,
+  },
+  {
+    label: "Confirm Password",
+    type: "password",
+    id: "confirmPassword",
+    name: "confirmPassword",
+    placeholder: "Confirm Password",
+    validate: (value) =>
+      validatePassword(value, "Confirm password is required."),
     isRequired: true,
   },
 ];
@@ -69,5 +96,20 @@ export const sidebar = [
     path: "/favorites",
     name: "Likes",
     Icon: Heart,
+  },
+];
+
+export const settingsLinks = [
+  {
+    id: 1,
+    path: "/update-password",
+    name: "Change password",
+    Icon: KeyRound,
+  },
+  {
+    id: 2,
+    path: "/verify-account",
+    name: "Account verification",
+    Icon: BadgeCheck,
   },
 ];

@@ -18,3 +18,21 @@ export const changeProfilePhoto = async (data, token, fn) => {
     },
   });
 };
+
+export const updateUserProfile = async (data, token) => {
+  return await axiosInstance.patch("/user/updateProfile", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const updateUserPassword = async (data, token) => {
+  return await axiosInstance.patch("/user/updatePassword", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};

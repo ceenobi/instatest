@@ -1,6 +1,10 @@
 import createHttpError from "http-errors";
+import bcrypt from "bcryptjs";
 import User from "../models/user.js";
-import { deleteFromCloudinary, uploadToCloudinary } from "../config/cloudinary.js";
+import {
+  deleteFromCloudinary,
+  uploadToCloudinary,
+} from "../config/cloudinary.js";
 
 export const getAUser = async (req, res, next) => {
   const { username } = req.params;
@@ -43,8 +47,8 @@ export const changeProfilePhoto = async (req, res, next) => {
       transformation: [
         { width: 500, height: 500, crop: "fill" },
         { quality: "auto" },
-        { fetch_format: "auto" }
-      ]
+        { fetch_format: "auto" },
+      ],
     });
 
     // Update user profile
@@ -54,7 +58,61 @@ export const changeProfilePhoto = async (req, res, next) => {
 
     res.status(200).json({
       message: "Profile photo updated successfully",
-      profilePicture: user.profilePicture
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserProfile = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { fullname, bio, username, email } = req.body;
+  try {
+    if (!fullname || !bio || !username || !email) {
+      throw createHttpError(400, "All fields are required");
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    user.fullname = fullname;
+    user.bio = bio;
+    user.username = username;
+    user.email = email;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updatePassword = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { password, newPassword } = req.body;
+  try {
+    if (!newPassword || !password) {
+      throw createHttpError(400, "Password or New Password is required");
+    }
+    const user = await User.findById(userId).select("+password");
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return next(createHttpError(401, "Invalid current password"));
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully, Login with new password",
     });
   } catch (error) {
     next(error);

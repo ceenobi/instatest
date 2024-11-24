@@ -1,6 +1,12 @@
 import { useAuthStore } from "@/hooks";
 import { sidebar } from "@/utils";
-import { AlignJustify, Bookmark, ImagePlus, Instagram } from "lucide-react";
+import {
+  AlignJustify,
+  Bookmark,
+  ImagePlus,
+  Instagram,
+  Settings,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
@@ -54,9 +60,15 @@ export default function Sidebar() {
           className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
         >
           <li>
+            <NavLink className="flex items-center gap-2" to="/settings/update-password">
+              <Settings />
+              Settings
+            </NavLink>
+          </li>
+          <li>
             <NavLink
               className="flex items-center gap-2"
-              to={`/profile/${user?.data?.username}/saved`}
+              to={`/${user?.data?.username}/saved`}
             >
               <Bookmark />
               Saved
