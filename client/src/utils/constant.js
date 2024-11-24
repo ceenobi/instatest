@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import {
   validateEmail,
-  validateFullname,
+  validateTextField,
   validatePassword,
   validateUsername,
 } from "./formValidate";
@@ -49,7 +49,7 @@ export const inputFields = [
     id: "fullname",
     name: "fullname",
     placeholder: "Fullname",
-    validate: (value) => validateFullname(value),
+    validate: (value) => validateTextField(value, "Fullname is required."),
     isRequired: true,
   },
   {
@@ -77,6 +77,15 @@ export const inputFields = [
     placeholder: "Confirm Password",
     validate: (value) =>
       validatePassword(value, "Confirm password is required."),
+    isRequired: true,
+  },
+  {
+    label: "Title",
+    type: "text",
+    id: "title",
+    name: "title",
+    placeholder: "Title",
+    validate: (value) => validateTextField(value, "Title is required."),
     isRequired: true,
   },
 ];

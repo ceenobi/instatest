@@ -2,7 +2,7 @@ import {
   validateEmail,
   validatePassword,
   validateUsername,
-  validateFullname,
+  validateTextField,
 } from "./formValidate";
 import { inputFields, sidebar, settingsLinks } from "./constant";
 import axiosInstance from "./axiosInstance";
@@ -12,7 +12,7 @@ export {
   validateEmail,
   validatePassword,
   validateUsername,
-  validateFullname,
+  validateTextField,
   inputFields,
   axiosInstance,
   handleError,

@@ -1,13 +1,8 @@
 import { useAuthStore } from "@/hooks";
 import { sidebar } from "@/utils";
-import {
-  AlignJustify,
-  Bookmark,
-  ImagePlus,
-  Instagram,
-  Settings,
-} from "lucide-react";
+import { AlignJustify, Bookmark, Instagram, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import CreatePost from "./CreatePost";
 
 export default function Sidebar() {
   const { user, logout } = useAuthStore() || {};
@@ -35,7 +30,7 @@ export default function Sidebar() {
           className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
           data-tip="New post"
         >
-          <ImagePlus size="28px" />
+          <CreatePost />
         </div>
         <NavLink
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
@@ -60,7 +55,10 @@ export default function Sidebar() {
           className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
         >
           <li>
-            <NavLink className="flex items-center gap-2" to="/settings/update-password">
+            <NavLink
+              className="flex items-center gap-2"
+              to="/settings/update-password"
+            >
               <Settings />
               Settings
             </NavLink>

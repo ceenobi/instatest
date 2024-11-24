@@ -33,7 +33,7 @@ export default function VerifyAccount() {
         <title>Check Verification Status</title>
         <meta name="description" content="Account verification" />
       </Helmet>
-      <div className="py-5 px-4 md:px-8 max-w-[450px] mx-auto">
+      <div className="mt-5 py-5 px-4 md:px-8 max-w-[450px] mx-auto">
         <h1 className="text-2xl font-bold mb-2">Verify account</h1>
         <div className="flex gap-2 items-center">
           <p>

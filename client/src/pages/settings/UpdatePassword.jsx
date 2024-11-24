@@ -40,7 +40,7 @@ export default function UpdatePassword() {
         <title>Update password</title>
         <meta name="description" content="Update password" />
       </Helmet>
-      <div className="py-5 px-4 max-w-[400px] xl:max-w-[450px] mx-auto">
+      <div className="mt-5 py-5 px-4 max-w-[400px] xl:max-w-[450px] mx-auto">
         <h1 className="text-2xl font-bold mb-8 px-3">Update password</h1>
         {error && <Alert error={error} classname="my-4" />}
         <form

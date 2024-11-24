@@ -1,5 +1,5 @@
 import { changeProfilePhoto } from "@/api/user";
-import { Modal } from "@/components";
+import { Alert, Modal } from "@/components";
 import { handleError } from "@/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -117,7 +117,7 @@ export default function ChangeProfileImg({
           <form>
             <input
               type="file"
-              className="file-input file-input-bordered w-full max-w-xs"
+              className="file-input file-input-bordered w-full max-w-xs h-[40px]"
               accept="image/*"
               {...register("photo", { required: true })}
               onChange={handleImage}
@@ -125,7 +125,7 @@ export default function ChangeProfileImg({
             {errors.photo && (
               <p className="text-red-600 text-sm">Provide an image to upload</p>
             )}
-            {err && <p className="text-red-600 text-sm">{err}</p>}
+            {err && <Alert error={err} classname="my-4" />}
             {selectedImage && (
               <img
                 src={selectedImage}

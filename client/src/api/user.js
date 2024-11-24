@@ -38,10 +38,26 @@ export const updateUserPassword = async (data, token) => {
 };
 
 export const toggleAccountPrivacy = async (token) => {
-  return await axiosInstance.patch("/user/togglePrivacy", {}, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  return await axiosInstance.patch(
+    "/user/togglePrivacy",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+
+export const deleteAccount = async (token) => {
+  return await axiosInstance.delete(
+    "/user/deleteAccount",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 };

@@ -27,4 +27,10 @@ router.patch(
   UserController.togglePrivateAccount
 );
 
+router.delete(
+  "/deleteAccount",
+  verifyAuth(Roles.All),
+  UserController.deleteAccount
+);
+
 export default router;

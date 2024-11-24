@@ -137,3 +137,24 @@ export const togglePrivateAccount = async (req, res, next) => {
     next(error);
   }
 };
+
+export const deleteAccount = async (req, res, next) => {
+  const { id: userId } = req.user;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    // Delete profile photo if it exists
+    if (user.profilePhotoId) {
+      await deleteFromCloudinary(user.profilePhotoId);
+    }
+    await User.findByIdAndDelete(userId);
+    res.status(200).json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

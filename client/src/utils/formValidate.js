@@ -25,8 +25,8 @@ export const validateUsername = (username) => {
   }
 };
 
-export const validateFullname = (fullname) => {
-  if (!fullname) {
-    return "Fullname is required.";
+export const validateTextField = (field, msg) => {
+  if (!field) {
+    return msg
   }
 };
