@@ -3,7 +3,7 @@ import { NavLink, Outlet } from "react-router-dom";
 
 export default function Settings() {
   return (
-    <div className="flex min-h-dvh ml-[30px] w-[1200px]">
+    <div className="flex min-h-dvh ml-[80px] w-[1200px]">
       <div className="hidden md:block fixed top-0 w-[240px] h-full z-30 border-2 bg-white">
         <div className="py-8 text-center">
           <h1 className="text-2xl font-bold mb-8">Settings</h1>
