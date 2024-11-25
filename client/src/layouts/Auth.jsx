@@ -20,7 +20,7 @@ export default function Auth() {
                 src="https://unsplash.com/photos/9qD8AbQyj5w/download?force=true&w=1920"
                 className="w-full h-[600px] object-cover"
                 alt="auth"
-                loading="lazy"
+                loading="eager"
               />
             </div>
           )}

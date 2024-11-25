@@ -29,7 +29,7 @@ export default function Settings() {
           ))}
         </div>
       </div>
-      <div className="max-w-[1200px] md:ml-[300px]">
+      <div className="max-w-[1200px] md:ml-[200px] md:mr-[20px] mx-auto">
         <Outlet />
       </div>
     </div>

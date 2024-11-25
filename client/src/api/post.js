@@ -14,3 +14,11 @@ export const createPost = async (data, token, fn) => {
     },
   });
 };
+
+export const getAllPosts = async (token) => {
+  return await axiosInstance.get("/post/getAllPosts", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

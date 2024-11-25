@@ -67,3 +67,16 @@ export const createPost = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find().populate("user", "username profilePicture");
+    res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully",
+      posts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

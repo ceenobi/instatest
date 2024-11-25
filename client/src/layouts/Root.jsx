@@ -3,13 +3,15 @@ import { Outlet, ScrollRestoration } from "react-router-dom";
 
 export default function Root() {
   return (
-    <main className="min-h-dvh flex">
+    <main className="min-h-dvh md:flex">
       <Nav />
       <div className="hidden md:block fixed top-0 w-[80px] h-full z-40 border-r-2 bg-white">
         <Sidebar />
       </div>
-      <div className="max-w-full mx-auto">
-        <Outlet />
+      <div className="w-full md:w-[calc(100%-80px)] mx-auto">
+        <div className="md:ml-[80px]">
+          <Outlet />
+        </div>
       </div>
       <ScrollRestoration
         getKey={(location) => {
