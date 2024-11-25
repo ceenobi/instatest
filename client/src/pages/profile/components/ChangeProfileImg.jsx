@@ -1,6 +1,7 @@
 import { changeProfilePhoto } from "@/api/user";
 import { Alert, Modal } from "@/components";
 import { handleError } from "@/utils";
+import { Image } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -114,10 +115,14 @@ export default function ChangeProfileImg({
         onClose={() => setIsOpen(false)}
       >
         <div className="my-6 flex flex-col justify-center items-center gap-4">
-          <form>
+          <form className="text-center flex flex-col justify-center items-center relative">
+            <Image size="64px" />
+            <p className="font-semibold">
+              {selectedImage ? "Change image" : "Choose image"}
+            </p>
             <input
               type="file"
-              className="file-input file-input-bordered w-full max-w-xs h-[40px]"
+              className="file-input file-input-bordered w-full max-w-xs h-[100%] absolute top-0 inset-y-0 opacity-0 z-20"
               accept="image/*"
               {...register("photo", { required: true })}
               onChange={handleImage}

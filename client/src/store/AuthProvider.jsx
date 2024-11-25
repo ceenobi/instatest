@@ -1,7 +1,8 @@
 import { getAuthenticatedUser, logoutUser, refreshAccessToken } from "@/api";
 import { useLocalStorage } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
+import { jwtDecode } from "jwt-decode";
 import { AuthStore } from ".";
 
 export const AuthProvider = ({ children }) => {
@@ -15,123 +16,103 @@ export const AuthProvider = ({ children }) => {
     isCheckingAuth: false,
     isAuthenticated: false,
   });
+  const [loading, setLoading] = useState(true);
 
-  const refreshToken = useCallback(async () => {
+  const handleLogout = useCallback(async () => {
     try {
-      const res = await refreshAccessToken();
-      if (res.status === 200) {
-        setAccessToken(res.data.accessToken);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      // If refresh token is expired or invalid, clear auth state
+      await logoutUser(); // This will clear the refresh token cookie
       setAccessToken(null);
       setUser({
         data: null,
-        isError: error,
+        isError: null,
         isAuthenticated: false,
-        isCheckingAuth: false,
       });
-      return false;
+    } catch (error) {
+      console.error("Error during logout:", error);
+      setAccessToken(null);
+      setUser({
+        data: null,
+        isError: null,
+        isAuthenticated: false,
+      });
     }
   }, [setAccessToken]);
 
-  const checkAuth = useCallback(async () => {
-    try {
-      const res = await getAuthenticatedUser(accessToken);
-      setUser({
-        data: res.data,
-        isAuthenticated: true,
-        isCheckingAuth: false,
-        isError: null,
-      });
-    } catch (error) {
-      if (error.response?.status === 401) {
-        const isRefreshed = await refreshToken();
-        if (isRefreshed) {
-          await checkAuth();
-          return;
-        }
-      }
-      setUser({
-        data: null,
-        isError: error,
-        isAuthenticated: false,
-        isCheckingAuth: false,
-      });
-    }
-  }, [accessToken, refreshToken]);
+  const setupTokenRefresh = useCallback(() => {
+    if (!accessToken) return;
 
-  // Only run auth check on mount or when access token changes
+    try {
+      const decodedToken = jwtDecode(accessToken);
+      const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+      const currentTime = Date.now();
+      const timeUntilExpiry = expirationTime - currentTime;
+
+      // Refresh token 5 minutes before it expires
+      const refreshBuffer = 5 * 60 * 1000;
+      const timeUntilRefresh = timeUntilExpiry - refreshBuffer;
+
+      if (timeUntilRefresh <= 0) {
+        // Token is expired or about to expire, refresh immediately
+        refreshAccessToken()
+          .then(({ data }) => {
+            setAccessToken(data.accessToken);
+          })
+          .catch(handleLogout);
+      } else {
+        // Set up refresh timer
+        const refreshTimer = setTimeout(async () => {
+          try {
+            const { data } = await refreshAccessToken();
+            setAccessToken(data.accessToken);
+          } catch (error) {
+            console.error(error);
+            handleLogout();
+          }
+        }, timeUntilRefresh);
+
+        return () => clearTimeout(refreshTimer);
+      }
+    } catch (error) {
+      console.error("Error setting up token refresh:", error);
+      handleLogout();
+    }
+  }, [accessToken, handleLogout, setAccessToken]);
+
   useEffect(() => {
-    let mounted = true;
-
-    const initAuth = async () => {
-      if (!accessToken) {
-        setUser({
-          data: null,
-          isError: null,
-          isAuthenticated: false,
-          isCheckingAuth: false,
-        });
-        return;
-      }
-
-      setUser((prev) => ({ ...prev, isCheckingAuth: true }));
-      try {
-        if (mounted) {
-          await checkAuth();
-        }
-      } catch (error) {
-        if (mounted) {
-          setUser({
-            data: null,
-            isError: error,
-            isAuthenticated: false,
-            isCheckingAuth: false,
-          });
-        }
-      }
-    };
-
-    initAuth();
-
-    return () => {
-      mounted = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken]); // Only depend on accessToken changes
-
-  const logout = async () => {
-    try {
-      const res = await logoutUser();
-      if (res.status === 200) {
-        setAccessToken(null);
-        setUser({
-          data: null,
-          isError: null,
-          isAuthenticated: false,
-          isCheckingAuth: false,
-        });
-        toast.success(res.data.message);
-      }
-    } catch (error) {
-      toast.error(error);
+    if (!accessToken) {
+      setLoading(false);
+      return;
     }
-  };
 
-  const contextData = {
-    user,
-    setUser,
+    const fetchUser = async () => {
+      try {
+        const { data } = await getAuthenticatedUser(accessToken);
+        setUser({
+          data: data,
+          isAuthenticated: true,
+          isError: null,
+        });
+      } catch (error) {
+        //toast.error("Session expired. Please login again");
+        console.error("Error fetching user:", error);
+        handleLogout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+    const cleanup = setupTokenRefresh();
+    return () => cleanup?.();
+  }, [accessToken, handleLogout, setupTokenRefresh]);
+
+  const value = {
     accessToken,
     setAccessToken,
-    checkAuth,
-    refreshToken,
-    logout,
+    user,
+    setUser,
+    loading,
   };
 
-  return (
-    <AuthStore.Provider value={contextData}>{children}</AuthStore.Provider>
-  );
+  return <AuthStore.Provider value={value}>{children}</AuthStore.Provider>;
 };

@@ -105,12 +105,12 @@ export default function CreatePost() {
           <form className="my-10" onSubmit={handleSubmit(onSubmit)}>
             {err && <Alert error={err} classname="my-4" />}
             {step === 1 && (
-              <div className="flex flex-col justify-center gap-4 items-center relative cursor-pointer">
+              <div className="flex flex-col justify-center gap-4 items-center relative">
                 <Image size="64px" />
-                <p className="cursor-pointer">Choose image file(s)</p>
+                <p className="font-semibold">Choose image file(s)</p>
                 <input
                   type="file"
-                  className="file-input w-full max-w-xs h-full absolute top-0 inset-y-0 opacity-0"
+                  className="file-input file-input-bordered w-full max-w-xs h-full absolute top-0 inset-y-0 opacity-0 z-20 cursor-pointer"
                   accept="image/*"
                   multiple
                   {...register("photo", { required: true })}

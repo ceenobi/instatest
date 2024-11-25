@@ -18,7 +18,7 @@ export default function Auth() {
             <div className="hidden lg:block max-w-[400px] mx-auto">
               <img
                 src="https://unsplash.com/photos/9qD8AbQyj5w/download?force=true&w=1920"
-                className="w-full h-full object-cover"
+                className="w-full h-[600px] object-cover"
                 alt="auth"
                 loading="lazy"
               />
