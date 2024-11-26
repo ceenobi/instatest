@@ -70,12 +70,38 @@ export const createPost = async (req, res, next) => {
 
 export const getAllPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find().populate("user", "username profilePicture");
+    const posts = await Post.find()
+      .populate("user", "username profilePicture")
+      .sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
       posts,
-    }).sort({ createdAt: -1 });
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const likeAPost = async (req, res, next) => {
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter((id) => id !== userId);
+    } else {
+      post.likes.push(userId);
+    }
+    await post.save();
+    res.status(200).json({
+      success: true,
+      message: "Post liked successfully",
+      post,
+    });
   } catch (error) {
     next(error);
   }

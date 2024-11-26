@@ -47,25 +47,25 @@ export default function Card({ post }) {
         <Ellipsis />
       </div>
       <div className="mt-2 carousel w-full overflow-hidden">
-        {post?.images?.length > 0 && (
-          <div className="carousel-item w-full relative">
-            <div
-              className="w-full h-[550px] relative transition-transform duration-300 ease-in-out"
-              style={{
-                transform: `translateX(${
-                  slideDirection === "next" ? "-100%" : "100%"
-                })`,
-                opacity: 0,
-                animation: "slideIn 0.3s forwards",
-              }}
-            >
-              <img
-                src={post.images[currentImageIndex]}
-                className="w-full h-full object-cover"
-                alt="image post"
-                loading="lazy"
-              />
-            </div>
+        <div className="carousel-item w-full relative">
+          <div
+            className="w-full h-[550px] relative transition-transform duration-300 ease-in-out"
+            style={{
+              transform: `translateX(${
+                slideDirection === "next" ? "-100%" : "100%"
+              })`,
+              opacity: 0,
+              animation: "slideIn 0.3s forwards",
+            }}
+          >
+            <img
+              src={post.images[currentImageIndex]}
+              className="w-full h-full object-cover"
+              alt="image post"
+              loading="lazy"
+            />
+          </div>
+          {post?.images?.length > 1 && (
             <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
               <button
                 onClick={handlePrevImage}
@@ -80,8 +80,8 @@ export default function Card({ post }) {
                 ❯
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <div className="px-4 md:px-0 mt-2 flex justify-between items-center">
         <div className="flex gap-4 items-center">

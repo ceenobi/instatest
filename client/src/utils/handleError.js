@@ -1,7 +1,7 @@
 const handleError = (fn, error) => {
   console.error(error);
   if (error?.message === "Network Error") {
-    return fn("Server is down, pls wait a bit and reload");
+    return fn("Server is down, pls wait a bit and try again.");
   }
   if (error) {
     return fn(

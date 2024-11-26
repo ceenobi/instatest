@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         //toast.error("Session expired. Please login again");
         console.error("Error fetching user:", error);
-        handleLogout();
+        //handleLogout();
       } finally {
         setLoading(false);
       }
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
     const cleanup = setupTokenRefresh();
     return () => cleanup?.();
-  }, [accessToken, handleLogout, setupTokenRefresh]);
+  }, [accessToken, setupTokenRefresh]);
 
   const value = {
     accessToken,
@@ -112,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     user,
     setUser,
     loading,
+    handleLogout
   };
 
   return <AuthStore.Provider value={value}>{children}</AuthStore.Provider>;

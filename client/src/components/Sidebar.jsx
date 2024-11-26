@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import CreatePost from "./CreatePost";
 
 export default function Sidebar() {
-  const { user, logout } = useAuthStore() || {};
+  const { user, handleLogout } = useAuthStore() || {};
   return (
     <div className="py-8 px-[8px] flex flex-col h-[100%] justify-between items-center">
       <NavLink to="/" className="tooltip tooltip-right" data-tip="Instapics">
@@ -74,13 +74,7 @@ export default function Sidebar() {
           </li>
           <div className="w-full h-[1px] bg-gray-300 my-1"></div>
           <li>
-            <button
-              onClick={() => {
-                logout();
-              }}
-            >
-              Logout
-            </button>
+            <button onClick={handleLogout}>Logout</button>
           </li>
         </ul>
       </div>

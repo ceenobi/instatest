@@ -78,6 +78,12 @@ const userSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    savedPosts: {
+      type: [Schema.Types.ObjectId],
+      ref: "Post",
+      default: [],
+      select: false,
+    },
   },
   {
     timestamps: true, // Adds createdAt and updatedAt fields
