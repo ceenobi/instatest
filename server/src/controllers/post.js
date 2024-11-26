@@ -75,7 +75,7 @@ export const getAllPosts = async (req, res, next) => {
       success: true,
       message: "Posts fetched successfully",
       posts,
-    });
+    }).sort({ createdAt: -1 });
   } catch (error) {
     next(error);
   }
