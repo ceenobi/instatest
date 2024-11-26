@@ -1,8 +1,10 @@
 import { useAuthStore, useFetch } from "@/hooks";
-import Card from "./components/Card";
 import { getAllPosts } from "@/api/post";
-import { Alert } from "@/components";
+import { Alert, LazySpinner } from "@/components";
 import Skeleton from "./components/Skeleton";
+import { lazy, Suspense } from "react";
+
+const Card = lazy(() => import("./components/Card"));
 
 export default function Home() {
   const { accessToken } = useAuthStore();
@@ -15,7 +17,7 @@ export default function Home() {
       <div className="py-8 lg:flex justify-between w-full min-h-dvh">
         <div className="lg:w-[60%]">
           <div className="mb-6 px-4 flex gap-4 overscroll-auto">
-          <div className="avatar">
+            <div className="avatar">
               <div className="w-[50px] rounded-full border-2 border-accent">
                 <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
               </div>
@@ -30,7 +32,7 @@ export default function Home() {
             {loading ? (
               <Skeleton />
             ) : (
-              <>
+              <Suspense fallback={<LazySpinner />}>
                 {posts.length === 0 && (
                   <div className="text-center text-2xl font-bold">
                     No posts yet
@@ -39,7 +41,7 @@ export default function Home() {
                 {posts.map((post) => (
                   <Card key={post._id} post={post} />
                 ))}
-              </>
+              </Suspense>
             )}
           </div>
         </div>

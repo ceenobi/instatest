@@ -93,7 +93,11 @@ export default function CreatePost() {
         <meta name="description" content="Create post" />
       </Helmet>
       <div>
-        <ImagePlus size="28px" onClick={() => setIsOpen(true)} />
+        <ImagePlus
+          size="28px"
+          className="cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        />
         <Modal
           title="Create post"
           isOpen={isOpen}
