@@ -14,6 +14,8 @@ export default function SeeWhoLiked({
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [followText, setFollowText] = useState("");
+  const [activeBtn, setActiveBtn] = useState(0);
   const [error, setError] = useState(null);
 
   const fetchLikes = async () => {
@@ -32,7 +34,7 @@ export default function SeeWhoLiked({
 
   const toggleFollowUser = async (userId) => {
     try {
-      setLoading(true);
+      setFollowText("Following...");
       const res = await followUser(userId, accessToken);
       if (res.status === 200) {
         toast.success(res.data.message);
@@ -40,20 +42,20 @@ export default function SeeWhoLiked({
           ...prev,
           data: {
             ...prev.data,
-            following: [...res.data.user.following, ...prev.data.following],
+            ...res.data.user,
           },
         }));
       }
     } catch (error) {
       handleError(setError, error);
     } finally {
-      setLoading(false);
+      setFollowText("");
     }
   };
 
   const toggleUnfollowUser = async (userId) => {
     try {
-      setLoading(true);
+      setFollowText("Unfollowing...");
       const res = await unfollowUser(userId, accessToken);
       if (res.status === 200) {
         toast.success(res.data.message);
@@ -61,14 +63,14 @@ export default function SeeWhoLiked({
           ...prev,
           data: {
             ...prev.data,
-            followers: [...res.data.user.followers, ...prev.data.followers],
+            ...res.data.user,
           },
         }));
       }
     } catch (error) {
       handleError(setError, error);
     } finally {
-      setLoading(false);
+      setFollowText("");
     }
   };
 
@@ -82,6 +84,7 @@ export default function SeeWhoLiked({
       <button
         className="px-4 md:px-0 mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
         onClick={handleOpen}
+        title="See who liked this post"
       >
         {post?.likes?.length} likes
       </button>
@@ -97,7 +100,7 @@ export default function SeeWhoLiked({
             </div>
           ) : (
             <div className="space-y-4">
-              {users.map((user) => (
+              {users.map((user, index) => (
                 <div
                   key={user._id}
                   className="flex items-center justify-between"
@@ -120,20 +123,28 @@ export default function SeeWhoLiked({
                     </div>
                   </div>
                   <button
-                    className="btn btn-sm"
+                    className={`btn btn-sm w-[110px] focus:outline-none ${
+                      loggedInUser.following.includes(user._id)
+                        ? "btn-accent text-white"
+                        : ""
+                    }`}
                     disabled={user._id === loggedInUser._id}
                     onClick={() => {
-                      if (user.followers.includes(loggedInUser._id)) {
+                      if (loggedInUser.following.includes(user._id)) {
                         toggleUnfollowUser(user._id, accessToken);
+                        setActiveBtn(index);
                       } else {
                         toggleFollowUser(user._id, accessToken);
+                        setActiveBtn(index);
                       }
                     }}
                   >
-                    {loading
-                      ? "Loading..."
-                      : user.followers.includes(loggedInUser._id)
-                      ? "Unfollow"
+                    {loggedInUser.following.includes(user._id)
+                      ? followText && activeBtn === index
+                        ? followText
+                        : "Following"
+                      : followText && activeBtn === index
+                      ? followText
                       : "Follow"}
                   </button>
                 </div>

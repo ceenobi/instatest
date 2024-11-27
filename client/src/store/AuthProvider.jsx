@@ -1,7 +1,6 @@
 import { getAuthenticatedUser, logoutUser, refreshAccessToken } from "@/api";
 import { useLocalStorage } from "@/hooks";
 import { useCallback, useEffect, useState } from "react";
-// import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
 import { AuthStore } from ".";
 
@@ -93,9 +92,8 @@ export const AuthProvider = ({ children }) => {
           isError: null,
         });
       } catch (error) {
-        //toast.error("Session expired. Please login again");
         console.error("Error fetching user:", error);
-        //handleLogout();
+        handleLogout();
       } finally {
         setLoading(false);
       }
@@ -104,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
     const cleanup = setupTokenRefresh();
     return () => cleanup?.();
-  }, [accessToken, setupTokenRefresh]);
+  }, [accessToken, handleLogout, setupTokenRefresh]);
 
   const value = {
     accessToken,

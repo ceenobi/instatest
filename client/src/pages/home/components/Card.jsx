@@ -6,6 +6,7 @@ import { useAuthStore } from "@/hooks";
 import { toast } from "sonner";
 import { handleError } from "@/utils";
 import SeeWhoLiked from "./SeeWhoLiked";
+import { Link } from "react-router-dom";
 
 export default function Card({ post, setData }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -165,7 +166,9 @@ export default function Card({ post, setData }) {
         setUser={setUser}
       />
       <p className="px-4 md:px-0 mt-2 text-sm">
-        <span className="font-bold">{post?.user?.username}</span>{" "}
+        <Link to={`/${post?.user?.username}`} className="font-bold">
+          {post?.user?.username}
+        </Link>{" "}
         {post?.description}
       </p>
       <style type="text/css">{`
