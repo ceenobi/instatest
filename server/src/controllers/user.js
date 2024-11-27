@@ -158,3 +158,57 @@ export const deleteAccount = async (req, res, next) => {
     next(error);
   }
 };
+
+export const followUser = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { id: followerId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    const followedUser = await User.findById(followerId);
+    if (!user || !followedUser) {
+      return next(createHttpError(404, "User not found"));
+    }
+    user.following.push(followerId);
+    followedUser.followers.push(userId);
+    await user.save();
+    await followedUser.save();
+    res.status(200).json({
+      success: true,
+      message: "User followed successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unfollowUser = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const { id: followerId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    const followedUser = await User.findById(followerId);
+    if (!user || !followedUser) {
+      return next(createHttpError(404, "User not found"));
+    }
+    user.following = user.following.filter(
+      (id) => id.toString() !== followerId
+    );
+    user.followers = user.followers.filter((id) => id.toString() !== userId);
+    followedUser.followers = followedUser.followers.filter(
+      (id) => id.toString() !== userId
+    );
+    followedUser.following = followedUser.following.filter(
+      (id) => id.toString() !== followerId
+    );
+    await user.save();
+    await followedUser.save();
+    res.status(200).json({
+      success: true,
+      message: "User unfollowed successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

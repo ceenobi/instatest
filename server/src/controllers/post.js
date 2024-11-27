@@ -83,7 +83,7 @@ export const getAllPosts = async (req, res, next) => {
   }
 };
 
-export const likeAPost = async (req, res, next) => {
+export const likePost = async (req, res, next) => {
   const { id: postId } = req.params;
   const { id: userId } = req.user;
   try {
@@ -91,8 +91,8 @@ export const likeAPost = async (req, res, next) => {
     if (!post) {
       return next(createHttpError(404, "Post not found"));
     }
-    if (post.likes.includes(userId)) {
-      post.likes = post.likes.filter((id) => id !== userId);
+    if (post.likes.map((id) => id.toString()).includes(userId)) {
+      post.likes = post.likes.filter((id) => id.toString() !== userId);
     } else {
       post.likes.push(userId);
     }
@@ -106,3 +106,50 @@ export const likeAPost = async (req, res, next) => {
     next(error);
   }
 };
+
+export const unlikePost = async (req, res, next) => {
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+    if (post.likes.map((id) => id.toString()).includes(userId)) {
+      post.likes = post.likes.filter((id) => id.toString() !== userId);
+    }
+    await post.save();
+    res.status(200).json({
+      success: true,
+      message: "Post unliked successfully",
+      post,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const seeWhoLiked = async (req, res, next) => {
+  const { id: postId } = req.params;
+  try {
+    const post = await Post.findById(postId).sort({ createdAt: -1 });
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+    const getUserPromises = post.likes.map((id) =>
+      User.findById(id).select(
+        "id username profilePicture fullname followers following"
+      )
+    );
+    const users = await Promise.all(getUserPromises);
+    res.status(200).json({
+      success: true,
+      message: "Post fetched successfully",
+      users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+

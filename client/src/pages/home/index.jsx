@@ -8,7 +8,7 @@ const Card = lazy(() => import("./components/Card"));
 
 export default function Home() {
   const { accessToken } = useAuthStore();
-  const { error, data, loading } = useFetch(getAllPosts, accessToken);
+  const { error, data, loading, setData } = useFetch(getAllPosts, accessToken);
   const posts = data?.posts || [];
 
   return (
@@ -39,7 +39,7 @@ export default function Home() {
                   </div>
                 )}
                 {posts.map((post) => (
-                  <Card key={post._id} post={post} />
+                  <Card key={post._id} post={post} setData={setData} />
                 ))}
               </Suspense>
             )}

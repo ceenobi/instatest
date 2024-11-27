@@ -1,10 +1,17 @@
 import { Bookmark, Dot, Ellipsis, Heart, MessageCircle } from "lucide-react";
 import TimeAgo from "timeago-react";
 import { useState } from "react";
+import { likePost, unlikePost } from "@/api/post";
+import { useAuthStore } from "@/hooks";
+import { toast } from "sonner";
+import { handleError } from "@/utils";
+import SeeWhoLiked from "./SeeWhoLiked";
 
-export default function Card({ post }) {
+export default function Card({ post, setData }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState("next");
+  const { accessToken, user, setUser } = useAuthStore();
+  const { data } = user || {};
 
   const handlePrevImage = () => {
     setSlideDirection("prev");
@@ -19,6 +26,56 @@ export default function Card({ post }) {
       prev === post.images.length - 1 ? 0 : prev + 1
     );
   };
+
+  const handleLike = async () => {
+    try {
+      const res = await likePost(post._id, accessToken);
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setData((prev) => ({
+          ...prev,
+          posts: prev.posts.map((p) => {
+            if (p._id === post._id) {
+              return {
+                ...p,
+                likes: res.data.post.likes,
+              };
+            }
+            return p;
+          }),
+        }));
+      }
+    } catch (error) {
+      handleError(toast.error, error);
+    }
+  };
+
+  const handleUnlike = async () => {
+    try {
+      const res = await unlikePost(post._id, accessToken);
+      if (res.status === 200) {
+        toast.success(res.data.message);
+        setData((prev) => ({
+          ...prev,
+          posts: prev.posts.map((p) => {
+            if (p._id === post._id) {
+              return {
+                ...p,
+                likes: res.data.post.likes,
+              };
+            }
+            return p;
+          }),
+        }));
+      }
+    } catch (error) {
+      handleError(toast.error, error);
+    }
+  };
+
+  if (!post) {
+    return null;
+  }
 
   return (
     <div className="mb-6 w-full md:w-[80%] lg:w-[450px]">
@@ -85,12 +142,28 @@ export default function Card({ post }) {
       </div>
       <div className="px-4 md:px-0 mt-2 flex justify-between items-center">
         <div className="flex gap-4 items-center">
-          <Heart />
-          <MessageCircle />
+          <Heart
+            role="button"
+            onClick={
+              post?.likes?.includes(data?._id) ? handleUnlike : handleLike
+            }
+            className={post?.likes?.includes(data?._id) ? "text-red-600" : ""}
+            title={
+              post?.likes?.includes(data?._id)
+                ? "You liked this post"
+                : "Like this post"
+            }
+          />
+          <MessageCircle title="Comment" />
         </div>
         <Bookmark />
       </div>
-      <p className="px-4 md:px-0 mt-2">{post?.likes?.length} likes</p>
+      <SeeWhoLiked
+        post={post}
+        accessToken={accessToken}
+        loggedInUser={data}
+        setUser={setUser}
+      />
       <p className="px-4 md:px-0 mt-2 text-sm">
         <span className="font-bold">{post?.user?.username}</span>{" "}
         {post?.description}

@@ -33,4 +33,11 @@ router.delete(
   UserController.deleteAccount
 );
 
+router.patch("/follow/:id", verifyAuth(Roles.All), UserController.followUser);
+router.patch(
+  "/unfollow/:id",
+  verifyAuth(Roles.All),
+  UserController.unfollowUser
+);
+
 export default router;

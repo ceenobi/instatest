@@ -51,8 +51,31 @@ export const toggleAccountPrivacy = async (token) => {
 };
 
 export const deleteAccount = async (token) => {
-  return await axiosInstance.delete(
-    "/user/deleteAccount",
+  return await axiosInstance.delete("/user/deleteAccount", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const followUser = async (followerId, token) => {
+  return await axiosInstance.patch(
+    `/user/follow/${followerId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+
+export const unfollowUser = async (followerId, token) => {
+  return await axiosInstance.patch(
+    `/user/unfollow/${followerId}`,
+    {},
     {
       headers: {
         Authorization: `Bearer ${token}`,
