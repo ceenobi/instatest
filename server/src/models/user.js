@@ -11,14 +11,12 @@ const userSchema = new Schema(
     fullname: {
       type: String,
       required: [true, "Full name is required"],
-      trim: true,
     },
     email: {
       type: String,
       unique: true,
       required: [true, "Email is required"],
       trim: true,
-      lowercase: true,
     },
     password: {
       type: String,
@@ -77,12 +75,6 @@ const userSchema = new Schema(
     isPublic: {
       type: Boolean,
       default: true,
-    },
-    savedPosts: {
-      type: [Schema.Types.ObjectId],
-      ref: "Post",
-      default: [],
-      select: false,
     },
   },
   {

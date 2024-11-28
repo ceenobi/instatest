@@ -18,7 +18,12 @@ router.get(
   verifyAuth(Roles.All),
   PostController.seeWhoLiked
 );
-
+router.patch("/savePost/:id", verifyAuth(Roles.All), PostController.savePost);
+router.patch(
+  "/unsavePost/:id",
+  verifyAuth(Roles.All),
+  PostController.unsavePost
+);
 // router.patch(
 //     "/comment/:postId",
 //     verifyAuth(Roles.All),

@@ -40,7 +40,9 @@ export default function Profile() {
                         setUser={setUser}
                         setData={setData}
                       />
-                      <button className="btn btn-neutral btn-sm w-[100px]">Edit</button>
+                      <button className="btn btn-neutral btn-sm w-[100px]">
+                        Edit
+                      </button>
                     </div>
                   </div>
                 </div>

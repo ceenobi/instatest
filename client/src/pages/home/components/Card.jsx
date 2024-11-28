@@ -1,4 +1,4 @@
-import { Bookmark, Dot, Ellipsis, Heart, MessageCircle } from "lucide-react";
+import { Dot, Ellipsis, Heart, MessageCircle } from "lucide-react";
 import TimeAgo from "timeago-react";
 import { useState } from "react";
 import { likePost, unlikePost } from "@/api/post";
@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { handleError } from "@/utils";
 import SeeWhoLiked from "./SeeWhoLiked";
 import { Link } from "react-router-dom";
+import SavePost from "./SavePost";
+import Comments from "./Comments";
 
 export default function Card({ post, setData }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -127,13 +129,13 @@ export default function Card({ post, setData }) {
             <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
               <button
                 onClick={handlePrevImage}
-                className="btn btn-circle btn-sm"
+                className="btn btn-circle btn-sm focus:outline-none"
               >
                 ❮
               </button>
               <button
                 onClick={handleNextImage}
-                className="btn btn-circle btn-sm"
+                className="btn btn-circle btn-sm focus:outline-none"
               >
                 ❯
               </button>
@@ -143,21 +145,32 @@ export default function Card({ post, setData }) {
       </div>
       <div className="px-4 md:px-0 mt-2 flex justify-between items-center">
         <div className="flex gap-4 items-center">
-          <Heart
-            role="button"
-            onClick={
-              post?.likes?.includes(data?._id) ? handleUnlike : handleLike
-            }
-            className={post?.likes?.includes(data?._id) ? "text-red-600" : ""}
+          <div
             title={
               post?.likes?.includes(data?._id)
                 ? "You liked this post"
                 : "Like this post"
             }
-          />
+          >
+            {post?.likes?.includes(data?._id) ? (
+              <Heart
+                role="button"
+                onClick={handleUnlike}
+                fill="red"
+                strokeWidth={0}
+              />
+            ) : (
+              <Heart role="button" onClick={handleLike} />
+            )}
+          </div>
           <MessageCircle title="Comment" />
         </div>
-        <Bookmark />
+        <SavePost
+          post={post}
+          accessToken={accessToken}
+          loggedInUser={data}
+          setData={setData}
+        />
       </div>
       <SeeWhoLiked
         post={post}
@@ -169,8 +182,11 @@ export default function Card({ post, setData }) {
         <Link to={`/${post?.user?.username}`} className="font-bold">
           {post?.user?.username}
         </Link>{" "}
-        {post?.description}
+        {post?.description?.length > 200
+          ? post?.description?.slice(0, 200) + "..." + " " + "more"
+          : post?.description}
       </p>
+      <Comments />
       <style type="text/css">{`
         @keyframes slideIn {
           from {

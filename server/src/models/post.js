@@ -37,6 +37,11 @@ const postSchema = new Schema(
       type: Boolean,
       default: true,
     },
+    savedBy: {
+      type: [Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
+    },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );

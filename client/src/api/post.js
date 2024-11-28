@@ -54,3 +54,27 @@ export const seeWhoLiked = async (postId, token) => {
     },
   });
 };
+
+export const savePost = async (postId, token) => {
+  return await axiosInstance.patch(
+    `/post/savePost/${postId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const unsavePost = async (postId, token) => {
+  return await axiosInstance.patch(
+    `/post/unsavePost/${postId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};

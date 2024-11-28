@@ -14,7 +14,7 @@ export default async function mailService({
 }) {
   try {
     if (!to || !subject || !text) {
-      throw createHttpError(400, "Email recipient, subject, and text are required");
+      throw createHttpError(500, "Email recipient, subject, and text are required");
     }
 
     // Initialize Mailgen

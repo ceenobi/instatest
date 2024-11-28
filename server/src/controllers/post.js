@@ -152,4 +152,48 @@ export const seeWhoLiked = async (req, res, next) => {
   }
 };
 
+export const savePost = async (req, res, next) => {
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+    if (post.savedBy.map((id) => id.toString()).includes(userId)) {
+      post.savedBy = post.savedBy.filter((id) => id.toString() !== userId);
+    } else {
+      post.savedBy.push(userId);
+    }
+    await post.save();
+    res.status(200).json({
+      success: true,
+      message: "Post saved successfully",
+      post,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
+export const unsavePost = async (req, res, next) => {
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+    if (post.savedBy.map((id) => id.toString()).includes(userId)) {
+      post.savedBy = post.savedBy.filter((id) => id.toString() !== userId);
+    }
+    await post.save();
+    res.status(200).json({
+      success: true,
+      message: "Post unsaved successfully",
+      post,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

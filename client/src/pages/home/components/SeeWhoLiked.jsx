@@ -4,6 +4,8 @@ import { Alert, Modal } from "@/components";
 import { handleError } from "@/utils";
 import { toast } from "sonner";
 import { followUser, unfollowUser } from "@/api/user";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 export default function SeeWhoLiked({
   post,
@@ -81,6 +83,10 @@ export default function SeeWhoLiked({
 
   return (
     <>
+      <Helmet>
+        <title>See who liked this post </title>
+        <meta name="description" content="See who liked this post" />
+      </Helmet>
       <button
         className="px-4 md:px-0 mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
         onClick={handleOpen}
@@ -105,23 +111,25 @@ export default function SeeWhoLiked({
                   key={user._id}
                   className="flex items-center justify-between"
                 >
-                  <div className="flex items-center gap-2">
-                    <div className="avatar">
-                      <div className="w-[40px] rounded-full">
-                        <img
-                          src={
-                            user?.profilePicture ||
-                            "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                          }
-                          alt={user.username}
-                        />
+                  <Link to={`/${user.username}`}>
+                    <div className="flex items-center gap-2">
+                      <div className="avatar">
+                        <div className="w-[40px] rounded-full">
+                          <img
+                            src={
+                              user?.profilePicture ||
+                              "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                            }
+                            alt={user.username}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <p className="font-semibold">{user.username}</p>
+                        <p className="text-sm text-gray-500">{user.fullname}</p>
                       </div>
                     </div>
-                    <div>
-                      <p className="font-semibold">{user.username}</p>
-                      <p className="text-sm text-gray-500">{user.fullname}</p>
-                    </div>
-                  </div>
+                  </Link>
                   <button
                     className={`btn btn-sm w-[110px] focus:outline-none ${
                       loggedInUser.following.includes(user._id)

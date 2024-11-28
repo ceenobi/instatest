@@ -9,6 +9,7 @@ import { v2 as cloudinary } from "cloudinary";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import postRoutes from "./routes/post.js";
+import commentRoutes from "./routes/comment.js";
 
 const app = express();
 
@@ -43,8 +44,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/post", postRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/posts", postRoutes);
+app.use("/api/comments", commentRoutes);
 
 app.use((req, res, next) => {
   return next(createHttpError(404, "Endpoint not found"));
