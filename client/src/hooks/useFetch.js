@@ -1,7 +1,7 @@
 import { handleError } from "@/utils";
 import { useEffect, useMemo, useState } from "react";
 
-export default function useFetch(endpoint, params1, params2) {
+export default function useFetch(endpoint, params1, params2, params3) {
   const [getData, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,7 +15,7 @@ export default function useFetch(endpoint, params1, params2) {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await endpoint(params1, params2, { signal });
+        const res = await endpoint(params1, params2, params3,{ signal });
         if (!signal.aborted) {
           setData(res.data);
         }
@@ -33,7 +33,7 @@ export default function useFetch(endpoint, params1, params2) {
     return () => {
       controller.abort();
     };
-  }, [endpoint, params1, params2]);
+  }, [endpoint, params1, params2, params3]);
 
   return { data, error, loading, setData };
 }

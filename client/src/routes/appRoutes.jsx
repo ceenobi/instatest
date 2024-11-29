@@ -1,9 +1,16 @@
 import { LazySpinner } from "@/components";
 import { Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import { AuthLayout, RecoverLayout, RootLayout, SettingsLayout } from ".";
+import {
+  AuthLayout,
+  RecoverLayout,
+  RootLayout,
+  SettingsLayout,
+  ViewPostLayout,
+} from ".";
 import {
   AccountPrivacy,
+  Comments,
   DeleteAccount,
   ForgotPassword,
   Home,
@@ -113,6 +120,22 @@ const routes = [
             element: <DeleteAccount />,
           },
         ],
+      },
+    ],
+  },
+  {
+    path: "comments",
+    element: (
+      <Suspense fallback={<LazySpinner />}>
+        <PrivateRoutes>
+          <ViewPostLayout />
+        </PrivateRoutes>
+      </Suspense>
+    ),
+    children: [
+      {
+        path: ":postId",
+        element: <Comments />,
       },
     ],
   },

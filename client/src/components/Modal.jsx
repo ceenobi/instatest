@@ -7,6 +7,7 @@ export default function Modal({
   step,
   setStep,
   selectedImages,
+  classname,
 }) {
   const handleNext = () => {
     setStep((prev) => prev + 1);
@@ -23,7 +24,7 @@ export default function Modal({
         isOpen ? "modal-open" : ""
       }`}
     >
-      <div className="modal-box">
+      <div className={`modal-box ${classname}`}>
         <h3 className="font-bold text-lg">{title}</h3>
         {children}
         <div className="modal-action">

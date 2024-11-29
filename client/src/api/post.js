@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/utils";
 
 export const createPost = async (data, token, fn) => {
-  return await axiosInstance.post("/post/createPost", data, {
+  return await axiosInstance.post("/posts/createPost", data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export const createPost = async (data, token, fn) => {
 };
 
 export const getAllPosts = async (token) => {
-  return await axiosInstance.get("/post/getAllPosts", {
+  return await axiosInstance.get("/posts/getAllPosts", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -25,7 +25,7 @@ export const getAllPosts = async (token) => {
 
 export const likePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/post/likePost/${postId}`,
+    `/posts/likePost/${postId}`,
     {},
     {
       headers: {
@@ -37,7 +37,7 @@ export const likePost = async (postId, token) => {
 
 export const unlikePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/post/unlikePost/${postId}`,
+    `/posts/unlikePost/${postId}`,
     {},
     {
       headers: {
@@ -48,7 +48,7 @@ export const unlikePost = async (postId, token) => {
 };
 
 export const seeWhoLiked = async (postId, token) => {
-  return await axiosInstance.get(`/post/seeWhoLiked/${postId}`, {
+  return await axiosInstance.get(`/posts/seeWhoLiked/${postId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -57,7 +57,7 @@ export const seeWhoLiked = async (postId, token) => {
 
 export const savePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/post/savePost/${postId}`,
+    `/posts/savePost/${postId}`,
     {},
     {
       headers: {
@@ -69,7 +69,7 @@ export const savePost = async (postId, token) => {
 
 export const unsavePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/post/unsavePost/${postId}`,
+    `/posts/unsavePost/${postId}`,
     {},
     {
       headers: {

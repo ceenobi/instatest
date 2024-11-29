@@ -11,11 +11,11 @@ import { verifyAuth, Roles } from "../middleware/verifyAuth.js";
 const router = Router();
 
 // All routes require authentication
-router.use(verifyAuth);
+router.use(verifyAuth(Roles.All));
 
 // Comment routes
-router.post("/", createComment);
-router.get("/post/:postId", getPostComments);
+router.post("/createComment/:getPostId", createComment);
+router.get("/getPostComments/:postId", getPostComments);
 router.get("/:commentId/replies", getCommentReplies);
 router.delete("/:commentId", deleteComment);
 router.post("/:commentId/like", toggleCommentLike);

@@ -1,22 +1,30 @@
 import Comment from "../models/comment.js";
 import Post from "../models/post.js";
 import createError from "http-errors";
+import User from "../models/user.js";
 
 // Create a new comment or reply
 export const createComment = async (req, res, next) => {
   try {
-    const { postId, comment, parentComment } = req.body;
+    const { comment, parentComment } = req.body;
     const { id: userId } = req.user;
+    const { getPostId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user.isVerified) {
+      return next(
+        createHttpError(403, "Please verify your email to post comments")
+      );
+    }
 
     // Check if post exists
-    const post = await Post.findById(postId);
+    const post = await Post.findById(getPostId);
     if (!post) {
       throw createError(404, "Post not found");
     }
-
     const newComment = await Comment.create({
       user: userId,
-      postId,
+      postId: post._id,
       comment,
       parentComment: parentComment || null,
     });
@@ -25,7 +33,8 @@ export const createComment = async (req, res, next) => {
     await newComment.populate("user", "username avatar");
 
     res.status(201).json({
-      status: "success",
+      success: true,
+      message: "Comment posted successfully",
       data: newComment,
     });
   } catch (error) {
@@ -42,16 +51,22 @@ export const getPostComments = async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     // Get only top-level comments (no parentComment)
+    const post = await Post.findById(postId)
+      .select("description images")
+      .populate("user", "username profilePicture");
+    if (!post) {
+      throw createError(404, "Post not found");
+    }
     const comments = await Comment.find({ postId, parentComment: null })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("user", "username avatar")
+      .populate("user", "username profilePicture")
       .populate({
         path: "replies",
         populate: {
           path: "user",
-          select: "username avatar",
+          select: "username profilePicture",
         },
         options: { sort: { createdAt: 1 } },
       });
@@ -59,8 +74,9 @@ export const getPostComments = async (req, res, next) => {
     const total = await Comment.countDocuments({ postId, parentComment: null });
 
     res.status(200).json({
-      status: "success",
-      data: comments,
+      success: true,
+      comments,
+      post,
       pagination: {
         page,
         limit,

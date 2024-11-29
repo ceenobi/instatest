@@ -109,12 +109,16 @@ export default function Card({ post, setData }) {
       <div className="mt-2 carousel w-full overflow-hidden">
         <div className="carousel-item w-full relative">
           <div
-            className="w-full h-[550px] relative transition-transform duration-300 ease-in-out"
+            className={`w-full h-[550px] relative transition-transform duration-300 ease-in-out  ${
+              currentImageIndex === currentImageIndex
+                ? slideDirection === "next"
+                  ? "translate-x-0 animate-slideInRight"
+                  : "translate-x-0 animate-slideInLeft"
+                : slideDirection === "next"
+                ? "-translate-x-full"
+                : "translate-x-full"
+            }`}
             style={{
-              transform: `translateX(${
-                slideDirection === "next" ? "-100%" : "100%"
-              })`,
-              opacity: 0,
               animation: "slideIn 0.3s forwards",
             }}
           >
@@ -186,21 +190,12 @@ export default function Card({ post, setData }) {
           ? post?.description?.slice(0, 200) + "..." + " " + "more"
           : post?.description}
       </p>
-      <Comments />
-      <style type="text/css">{`
-        @keyframes slideIn {
-          from {
-            transform: translateX(${
-              slideDirection === "next" ? "100%" : "-100%"
-            });
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
+      <Comments
+        post={post}
+        accessToken={accessToken}
+        loggedInUser={data}
+        setData={setData}
+      />
     </div>
   );
 }

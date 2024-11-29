@@ -1,4 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import authHeroPic from "@/assets/collabstr-9qD8AbQyj5w-unsplash.jpg";
 
 export default function Auth() {
   const location = useLocation();
@@ -17,7 +18,7 @@ export default function Auth() {
           {location.pathname === "/auth/login" && (
             <div className="hidden lg:block max-w-[400px] mx-auto">
               <img
-                src="https://unsplash.com/photos/9qD8AbQyj5w/download?force=true&w=1920"
+                src={authHeroPic}
                 className="w-full h-[600px] object-cover"
                 alt="auth"
                 loading="eager"

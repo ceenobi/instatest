@@ -9,6 +9,7 @@ import UpdatePassword from "./settings/UpdatePassword";
 import VerifyAccount from "./settings/VerifyAccount";
 import AccountPrivacy from "./settings/AccountPrivacy";
 import DeleteAccount from "./settings/DeleteAccount";
+import Comments from "./comments";
 
 export {
   Login,
@@ -22,4 +23,5 @@ export {
   VerifyAccount,
   AccountPrivacy,
   DeleteAccount,
+  Comments,
 };

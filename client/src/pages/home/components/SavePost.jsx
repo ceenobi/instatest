@@ -51,8 +51,8 @@ export default function SavePost({ post, accessToken, setData, loggedInUser }) {
   };
 
   return (
-    <div title={post.savedBy.includes(loggedInUser._id) ? "Unsave" : "Save"}>
-      {post.savedBy.includes(loggedInUser._id) ? (
+    <div title={post.savedBy.includes(loggedInUser?._id) ? "Unsave" : "Save"}>
+      {post.savedBy.includes(loggedInUser?._id) ? (
         <Bookmark
           role="button"
           onClick={removeUserPost}
