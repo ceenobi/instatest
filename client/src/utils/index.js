@@ -7,6 +7,16 @@ import {
 import { inputFields, sidebar, settingsLinks } from "./constant";
 import axiosInstance from "./axiosInstance";
 import handleError from "./handleError";
+import {
+  saveUserPost,
+  unsaveUserPost,
+  savePostPage,
+  unsavePostPage,
+  handleLike,
+  handleUnlike,
+  handleLikePostPage,
+  handleUnlikePostPage,
+} from "./setFunction";
 
 export {
   validateEmail,
@@ -18,4 +28,12 @@ export {
   handleError,
   sidebar,
   settingsLinks,
+  saveUserPost,
+  unsaveUserPost,
+  savePostPage,
+  unsavePostPage,
+  handleLike,
+  handleUnlike,
+  handleLikePostPage,
+  handleUnlikePostPage,
 };

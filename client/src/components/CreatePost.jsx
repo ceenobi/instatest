@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { handleError, inputFields } from "@/utils";
 import { FormInput } from "./FormField";
 import ActionButton from "./ActionButton";
-import { createPost } from "@/api/post";
-import { useAuthStore } from "@/hooks";
+import { createPost, getAllPosts } from "@/api/post";
+import { useAuthStore, useFetch } from "@/hooks";
 import { toast } from "sonner";
 import Alert from "./Alert";
 import { Helmet } from "react-helmet-async";
@@ -26,6 +26,7 @@ export default function CreatePost() {
     reset,
   } = useForm();
   const { accessToken } = useAuthStore();
+  const { setData } = useFetch(getAllPosts, accessToken);
 
   const handleImage = (e) => {
     const files = Array.from(e.target.files || []);
@@ -71,6 +72,7 @@ export default function CreatePost() {
     try {
       const res = await createPost(formData, accessToken, setUploadProgress);
       if (res.status === 201) {
+        setData((prev) => [res.data, ...prev]);
         setSelectedImages([]);
         setTags([]);
         reset();

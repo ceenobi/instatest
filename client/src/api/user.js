@@ -1,11 +1,11 @@
 import { axiosInstance } from "@/utils";
 
 export const getUser = async (username) => {
-  return await axiosInstance.get(`/user/${username}`);
+  return await axiosInstance.get(`/users/${username}`);
 };
 
 export const changeProfilePhoto = async (data, token, fn) => {
-  return await axiosInstance.patch("/user/uploadProfilePic", data, {
+  return await axiosInstance.patch("/users/uploadProfilePic", data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export const changeProfilePhoto = async (data, token, fn) => {
 };
 
 export const updateUserProfile = async (data, token) => {
-  return await axiosInstance.patch("/user/updateProfile", data, {
+  return await axiosInstance.patch("/users/updateProfile", data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export const updateUserProfile = async (data, token) => {
 };
 
 export const updateUserPassword = async (data, token) => {
-  return await axiosInstance.patch("/user/updatePassword", data, {
+  return await axiosInstance.patch("/users/updatePassword", data, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export const updateUserPassword = async (data, token) => {
 
 export const toggleAccountPrivacy = async (token) => {
   return await axiosInstance.patch(
-    "/user/togglePrivacy",
+    "/users/togglePrivacy",
     {},
     {
       headers: {
@@ -51,7 +51,7 @@ export const toggleAccountPrivacy = async (token) => {
 };
 
 export const deleteAccount = async (token) => {
-  return await axiosInstance.delete("/user/deleteAccount", {
+  return await axiosInstance.delete("/users/deleteAccount", {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export const deleteAccount = async (token) => {
 
 export const followUser = async (followerId, token) => {
   return await axiosInstance.patch(
-    `/user/follow/${followerId}`,
+    `/users/follow/${followerId}`,
     {},
     {
       headers: {
@@ -74,7 +74,7 @@ export const followUser = async (followerId, token) => {
 
 export const unfollowUser = async (followerId, token) => {
   return await axiosInstance.patch(
-    `/user/unfollow/${followerId}`,
+    `/users/unfollow/${followerId}`,
     {},
     {
       headers: {

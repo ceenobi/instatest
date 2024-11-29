@@ -213,12 +213,7 @@ export const verifyLoginLink = async (req, res, next) => {
 
 export const authenticateUser = async (req, res, next) => {
   const { id: userId } = req.user;
-  //const cache = new NodeCache({ stdTTL: 180 });
   try {
-    // const cacheUser = cache.get("user");
-    // if (cacheUser) {
-    //   return res.status(200).json(cacheUser);
-    // }
     const user = await User.findById(userId);
     if (!user) {
       return next(createHttpError(404, "User not found"));

@@ -1,80 +1,21 @@
 import { Dot, Ellipsis, Heart, MessageCircle } from "lucide-react";
 import TimeAgo from "timeago-react";
-import { useState } from "react";
-import { likePost, unlikePost } from "@/api/post";
-import { useAuthStore } from "@/hooks";
-import { toast } from "sonner";
-import { handleError } from "@/utils";
+import { useAuthStore, useSlide } from "@/hooks";
+import { handleLike, handleUnlike } from "@/utils";
 import SeeWhoLiked from "./SeeWhoLiked";
 import { Link } from "react-router-dom";
 import SavePost from "./SavePost";
 import Comments from "./Comments";
 
 export default function Card({ post, setData }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [slideDirection, setSlideDirection] = useState("next");
   const { accessToken, user, setUser } = useAuthStore();
+  const {
+    currentImageIndex,
+    slideDirection,
+    handlePrevImage,
+    handleNextImage,
+  } = useSlide({ post });
   const { data } = user || {};
-
-  const handlePrevImage = () => {
-    setSlideDirection("prev");
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? post.images.length - 1 : prev - 1
-    );
-  };
-
-  const handleNextImage = () => {
-    setSlideDirection("next");
-    setCurrentImageIndex((prev) =>
-      prev === post.images.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const handleLike = async () => {
-    try {
-      const res = await likePost(post._id, accessToken);
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        setData((prev) => ({
-          ...prev,
-          posts: prev.posts.map((p) => {
-            if (p._id === post._id) {
-              return {
-                ...p,
-                likes: res.data.post.likes,
-              };
-            }
-            return p;
-          }),
-        }));
-      }
-    } catch (error) {
-      handleError(toast.error, error);
-    }
-  };
-
-  const handleUnlike = async () => {
-    try {
-      const res = await unlikePost(post._id, accessToken);
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        setData((prev) => ({
-          ...prev,
-          posts: prev.posts.map((p) => {
-            if (p._id === post._id) {
-              return {
-                ...p,
-                likes: res.data.post.likes,
-              };
-            }
-            return p;
-          }),
-        }));
-      }
-    } catch (error) {
-      handleError(toast.error, error);
-    }
-  };
 
   if (!post) {
     return null;
@@ -159,12 +100,15 @@ export default function Card({ post, setData }) {
             {post?.likes?.includes(data?._id) ? (
               <Heart
                 role="button"
-                onClick={handleUnlike}
+                onClick={() => handleUnlike(post._id, accessToken, setData)}
                 fill="red"
                 strokeWidth={0}
               />
             ) : (
-              <Heart role="button" onClick={handleLike} />
+              <Heart
+                role="button"
+                onClick={() => handleLike(post._id, accessToken, setData)}
+              />
             )}
           </div>
           <MessageCircle title="Comment" />
@@ -190,12 +134,7 @@ export default function Card({ post, setData }) {
           ? post?.description?.slice(0, 200) + "..." + " " + "more"
           : post?.description}
       </p>
-      <Comments
-        post={post}
-        accessToken={accessToken}
-        loggedInUser={data}
-        setData={setData}
-      />
+      <Comments post={post} accessToken={accessToken} />
     </div>
   );
 }
