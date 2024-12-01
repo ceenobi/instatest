@@ -45,7 +45,7 @@ export default function Comments({ post, accessToken }) {
         <p className="text-xs text-red-500">failed to fetch comments</p>
       )}
       <p
-        className="block text-gray-500 hover:underline"
+        className="block text-gray-500 text-sm hover:underline"
         role="button"
         onClick={handleOpen}
       >

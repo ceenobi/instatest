@@ -246,6 +246,26 @@ export default function Comments() {
                     {post?.description}
                   </p>
                 </div>
+                <div className="dropdown dropdown-bottom dropdown-end">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-xs btn-ghost"
+                  >
+                    {" "}
+                    <Ellipsis />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
+                  >
+                    <li>
+                      <a onClick={() => {}}>
+                        {isLoading ? "Deleting..." : "Delete post"}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
               <div className="divider"></div>
               {/* Comments section */}

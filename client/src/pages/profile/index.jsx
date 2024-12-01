@@ -2,14 +2,33 @@ import { getUser } from "@/api/user";
 import { Alert, DataSpinner } from "@/components";
 import { useAuthStore, useFetch } from "@/hooks";
 import { Helmet } from "react-helmet-async";
-import { useParams } from "react-router-dom";
+import { NavLink, Outlet, useMatch, useParams } from "react-router-dom";
 import ChangeProfileImg from "./components/ChangeProfileImg";
 import UpdateProfile from "./components/UpdateProfile";
+import { Bookmark, Grid3x3 } from "lucide-react";
+import { lazy, Suspense } from "react";
+
+const Posts = lazy(() => import("./components/Posts"));
 
 export default function Profile() {
   const { profile } = useParams();
+  const match = useMatch(`/${profile}`);
   const { error, loading, data, setData } = useFetch(getUser, profile);
-  const { accessToken, setUser } = useAuthStore();
+  const { accessToken, setUser, user } = useAuthStore();
+  const { data: loggedInUser } = user || {};
+
+  const profileLinks = [
+    {
+      path: `/${profile}`,
+      Icon: Grid3x3,
+      name: "Posts",
+    },
+    {
+      path: `/${loggedInUser?.username}/saved`,
+      Icon: Bookmark,
+      name: "Saved",
+    },
+  ];
 
   return (
     <>
@@ -17,13 +36,13 @@ export default function Profile() {
         <title>Your Instapics profile - (@{profile}) </title>
         <meta name="description" content="Get access to Instashot" />
       </Helmet>
-      <div className="py-4 md:py-8">
+      <div className="py-4 md:py-8 max-w-[900px] mx-auto">
         {error && <Alert error={error} classname="my-4" />}
         {loading ? (
           <DataSpinner />
         ) : (
           <>
-            <div className="grid md:grid-cols-12 gap-4 md:gap-8 max-w-[600px] justify-center mx-auto px-4">
+            <div className="grid md:grid-cols-12 gap-4 md:gap-8 max-w-[700px] justify-center mx-auto px-4">
               <div className="md:col-span-4">
                 <div className="flex gap-6">
                   <ChangeProfileImg
@@ -99,6 +118,39 @@ export default function Profile() {
             <div className="divider m-0 md:hidden"></div>
           </>
         )}
+        <>
+          <div className="divider mt-8 mb-0"></div>
+          <div className="flex justify-center items-center gap-6 px-4 md:px-0">
+            {profileLinks.map(({ path, name, Icon }) => (
+              <NavLink
+                key={path}
+                className="flex flex-col justify-center items-center"
+                to={path}
+                end
+              >
+                {({ isActive }) => (
+                  <span
+                    className={`mb-2 mt-0 p-3 flex gap-2 items-center ${
+                      isActive
+                        ? "font-semibold hover:text-neutral mt-6 border-t-2 border-accent"
+                        : ""
+                    }`}
+                  >
+                    <Icon size="20px" />
+                    {name}
+                  </span>
+                )}
+              </NavLink>
+            ))}
+          </div>
+          {match ? (
+            <Suspense fallback={<div>Fetching posts..</div>}>
+              <Posts accessToken={accessToken} profileId={data._id} />
+            </Suspense>
+          ) : (
+            <Outlet />
+          )}
+        </>
       </div>
     </>
   );

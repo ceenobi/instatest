@@ -83,7 +83,7 @@ export default function SeeWhoLiked({
   return (
     <>
       <button
-        className="font-semibold px-4 md:px-0 mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
+        className="font-semibold mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
         onClick={handleOpen}
         title="See who liked this post"
       >

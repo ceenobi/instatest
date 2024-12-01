@@ -49,7 +49,7 @@ export default function Card({ post }) {
   };
 
   return (
-    <div className="card bg-base-100 mb-8 md:w-[80%] lg:w-[450px]">
+    <div className="card bg-base-100 mb-8 lg:w-[450px]">
       <div className="card-body py-2 px-4 md:px-0">
         <div className="flex items-center gap-3">
           <div className="avatar placeholder">
@@ -186,7 +186,7 @@ export default function Card({ post }) {
             {post.title}
           </div>
           {post.description && (
-            <p className="text-gray-600">{post.description}</p>
+            <p className="text-gray-600 text-sm">{post.description}</p>
           )}
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">

@@ -22,11 +22,12 @@ router.patch(
   verifyAuth(Roles.All),
   PostController.handleSavePost
 );
-// router.patch(
-//   "/unsavePost/:id",
-//   verifyAuth(Roles.All),
-//   PostController.unsavePost
-// );
+
+router.get(
+  "/getUserPosts/:id",
+  verifyAuth(Roles.All),
+  PostController.getUserPosts
+);
 // router.patch(
 //     "/comment/:postId",
 //     verifyAuth(Roles.All),

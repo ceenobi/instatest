@@ -10,6 +10,7 @@ import VerifyAccount from "./settings/VerifyAccount";
 import AccountPrivacy from "./settings/AccountPrivacy";
 import DeleteAccount from "./settings/DeleteAccount";
 import Comments from "./comments";
+import SavedPosts from "./profile/savedPosts";
 
 export {
   Login,
@@ -24,4 +25,5 @@ export {
   AccountPrivacy,
   DeleteAccount,
   Comments,
+  SavedPosts,
 };

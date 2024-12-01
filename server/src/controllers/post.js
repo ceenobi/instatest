@@ -168,6 +168,42 @@ export const handleSavePost = async (req, res, next) => {
   }
 };
 
+export const getUserPosts = async (req, res, next) => {
+  const { id: userId } = req.params;
+  try {
+    const posts = await Post.find({ user: userId })
+      .populate("user", "username profilePicture")
+      .sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully",
+      posts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // export const unsavePost = async (req, res, next) => {
 //   const { id: postId } = req.params;
 //   const { id: userId } = req.user;

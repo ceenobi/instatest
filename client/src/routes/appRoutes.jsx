@@ -16,6 +16,7 @@ import {
   Home,
   Login,
   Profile,
+  SavedPosts,
   Signup,
   UpdatePassword,
   VerifyAccount,
@@ -95,6 +96,12 @@ const routes = [
       {
         path: ":profile",
         element: <Profile />,
+        children: [
+          {
+            path: "saved",
+            element: <SavedPosts />,
+          },
+        ],
       },
       {
         path: "settings",

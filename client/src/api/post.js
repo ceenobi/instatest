@@ -23,6 +23,14 @@ export const getAllPosts = async (token) => {
   });
 };
 
+export const getUserPosts = async (userId, token) => {
+  return await axiosInstance.get(`/posts/getUserPosts/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 export const likePost = async (postId, token) => {
   return await axiosInstance.patch(
     `/posts/handleLikePost/${postId}`,
