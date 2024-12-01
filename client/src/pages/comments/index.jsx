@@ -109,19 +109,22 @@ export default function Comments() {
   }, [commentsArray, loggedInUser?._id, postId, posts]);
 
   const handleLikeFn = async () => {
-    const updatedPost = await handleLike(postId, accessToken, setPostData);
-    if (updatedPost) {
-      setPostData(updatedPost);
-      setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
-    }
+    const updatedLike = await handleLike(
+      postId,
+      accessToken,
+      setPostData,
+      setData
+    );
+    return updatedLike;
   };
 
   const handleSaveFn = async () => {
-    const updatedPost = await handleSavePost(postId, accessToken, setPostData);
-    if (updatedPost) {
-      setPostData(updatedPost);
-      setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
-    }
+    const updatedSavedPost = await handleSavePost(
+      postId,
+      accessToken,
+      setPostData
+    );
+    return updatedSavedPost;
   };
 
   const handleLikeCommentFn = async (commentId) => {
@@ -222,7 +225,7 @@ export default function Comments() {
               </figure>
             </div>
             <div className="lg:w-[40%] px-4 relative">
-              <div className="flex gap-4 w-full">
+              <div className="flex w-full">
                 <div>
                   <Link to={`/${post?.user?.username}`}>
                     <img
@@ -232,7 +235,7 @@ export default function Comments() {
                     />
                   </Link>
                 </div>
-                <div>
+                <div className="flex-1 ml-4">
                   <Link
                     to={`/${post?.user?.username}`}
                     className="font-semibold text-sm"
@@ -254,15 +257,24 @@ export default function Comments() {
                 )}
                 {commentsArray?.map((comment) => (
                   <div key={comment?._id} className="mb-4">
-                    <div className="flex gap-4">
-                      <Link to={`/${comment?.user?.username}`}>
-                        <img
-                          src={comment?.user?.profilePicture}
-                          alt={comment?.user?.username}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      </Link>
-                      <div className="w-full flex-1">
+                    <div className="flex w-full gap-4">
+                      <div className="avatar placeholder">
+                        <div className="w-12 h-12 rounded-full border-2">
+                          <Link to={`/${comment?.user?.username}`}>
+                            {comment?.user?.profilePicture ? (
+                              <img
+                                src={comment?.user?.profilePicture}
+                                alt={comment?.user?.username}
+                              />
+                            ) : (
+                              <span className="text-3xl">
+                                {comment.user?.username?.charAt(0)}
+                              </span>
+                            )}
+                          </Link>
+                        </div>
+                      </div>
+                      <div className="flex-1">
                         <Link
                           to={`/${comment?.user?.username}`}
                           className="font-semibold text-sm"

@@ -6,11 +6,11 @@ import { toast } from "sonner";
 import { useFetch } from "@/hooks";
 
 export default function Comments({ post, accessToken }) {
-  const { error, data: postComments } = useFetch(
-    getPostComments,
-    post._id,
-    accessToken
-  );
+  const {
+    error,
+    data: postComments,
+    setData,
+  } = useFetch(getPostComments, post._id, accessToken);
   const {
     register,
     handleSubmit,
@@ -28,6 +28,10 @@ export default function Comments({ post, accessToken }) {
       const res = await addPostComment(post._id, data, accessToken);
       if (res.status === 201) {
         toast.success(res.data.message);
+        setData((prev) => ({
+          ...prev,
+          comments: [res.data.data, ...(prev?.comments || [])],
+        }));
         reset({ comment: "" });
       }
     } catch (error) {
