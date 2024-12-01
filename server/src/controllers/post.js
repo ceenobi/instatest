@@ -50,10 +50,20 @@ export const createPost = async (req, res, next) => {
       user: user._id,
     });
 
+    // Populate user details and include all necessary post fields
+    const populatedPost = await Post.findById(newPost._id)
+      .populate({
+        path: "user",
+        select: "username profilePicture",
+      })
+      .select(
+        "title description images tags likes savedBy createdAt updatedAt"
+      );
+
     res.status(201).json({
       success: true,
       message: "Post created successfully",
-      post: newPost,
+      post: populatedPost,
     });
   } catch (error) {
     // If there's an error, we should clean up any uploaded images
@@ -83,7 +93,7 @@ export const getAllPosts = async (req, res, next) => {
   }
 };
 
-export const likePost = async (req, res, next) => {
+export const handleLikePost = async (req, res, next) => {
   const { id: postId } = req.params;
   const { id: userId } = req.user;
   try {
@@ -99,29 +109,9 @@ export const likePost = async (req, res, next) => {
     await post.save();
     res.status(200).json({
       success: true,
-      message: "Post liked successfully",
-      post,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const unlikePost = async (req, res, next) => {
-  const { id: postId } = req.params;
-  const { id: userId } = req.user;
-  try {
-    const post = await Post.findById(postId);
-    if (!post) {
-      return next(createHttpError(404, "Post not found"));
-    }
-    if (post.likes.map((id) => id.toString()).includes(userId)) {
-      post.likes = post.likes.filter((id) => id.toString() !== userId);
-    }
-    await post.save();
-    res.status(200).json({
-      success: true,
-      message: "Post unliked successfully",
+      message: post.likes.map((id) => id.toString()).includes(userId)
+        ? "Post liked successfully"
+        : "Post unliked successfully",
       post,
     });
   } catch (error) {
@@ -152,7 +142,7 @@ export const seeWhoLiked = async (req, res, next) => {
   }
 };
 
-export const savePost = async (req, res, next) => {
+export const handleSavePost = async (req, res, next) => {
   const { id: postId } = req.params;
   const { id: userId } = req.user;
   try {
@@ -168,7 +158,9 @@ export const savePost = async (req, res, next) => {
     await post.save();
     res.status(200).json({
       success: true,
-      message: "Post saved successfully",
+      message: post.savedBy.map((id) => id.toString()).includes(userId)
+        ? "Post saved successfully"
+        : "Post unsaved successfully",
       post,
     });
   } catch (error) {
@@ -176,24 +168,46 @@ export const savePost = async (req, res, next) => {
   }
 };
 
-export const unsavePost = async (req, res, next) => {
-  const { id: postId } = req.params;
-  const { id: userId } = req.user;
-  try {
-    const post = await Post.findById(postId);
-    if (!post) {
-      return next(createHttpError(404, "Post not found"));
-    }
-    if (post.savedBy.map((id) => id.toString()).includes(userId)) {
-      post.savedBy = post.savedBy.filter((id) => id.toString() !== userId);
-    }
-    await post.save();
-    res.status(200).json({
-      success: true,
-      message: "Post unsaved successfully",
-      post,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// export const unsavePost = async (req, res, next) => {
+//   const { id: postId } = req.params;
+//   const { id: userId } = req.user;
+//   try {
+//     const post = await Post.findById(postId);
+//     if (!post) {
+//       return next(createHttpError(404, "Post not found"));
+//     }
+//     if (post.savedBy.map((id) => id.toString()).includes(userId)) {
+//       post.savedBy = post.savedBy.filter((id) => id.toString() !== userId);
+//     }
+//     await post.save();
+//     res.status(200).json({
+//       success: true,
+//       message: "Post unsaved successfully",
+//       post,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+// export const unlikePost = async (req, res, next) => {
+//   const { id: postId } = req.params;
+//   const { id: userId } = req.user;
+//   try {
+//     const post = await Post.findById(postId);
+//     if (!post) {
+//       return next(createHttpError(404, "Post not found"));
+//     }
+//     if (post.likes.map((id) => id.toString()).includes(userId)) {
+//       post.likes = post.likes.filter((id) => id.toString() !== userId);
+//     }
+//     await post.save();
+//     res.status(200).json({
+//       success: true,
+//       message: "Post unliked successfully",
+//       post,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };

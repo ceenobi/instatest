@@ -1,7 +1,6 @@
 import useLocalStorage from "./useLocalStorage";
-import { useAuthStore } from "./useProvider";
-import useError from "./useError";
+import { useAuthStore, usePostStore } from "./useProvider";
 import useFetch from "./useFetch";
 import useSlide from "./useSlide";
 
-export { useLocalStorage, useAuthStore, useError, useFetch, useSlide };
+export { useLocalStorage, useAuthStore, usePostStore, useFetch, useSlide };

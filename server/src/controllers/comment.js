@@ -30,7 +30,7 @@ export const createComment = async (req, res, next) => {
     });
 
     // Populate user details
-    await newComment.populate("user", "username avatar");
+    await newComment.populate("user", "username profilePicture");
 
     res.status(201).json({
       success: true,
@@ -52,7 +52,7 @@ export const getPostComments = async (req, res, next) => {
 
     // Get only top-level comments (no parentComment)
     const post = await Post.findById(postId)
-      .select("title description images likes savedBy")
+      .select("title description images likes savedBy createdAt")
       .populate("user", "username profilePicture");
     if (!post) {
       throw createError(404, "Post not found");
@@ -124,7 +124,7 @@ export const getCommentReplies = async (req, res, next) => {
 export const deleteComment = async (req, res, next) => {
   try {
     const { commentId } = req.params;
-    const userId = req.user._id;
+    const { id: userId } = req.user;
 
     const comment = await Comment.findById(commentId);
     if (!comment) {
@@ -143,7 +143,7 @@ export const deleteComment = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      message: "Comment deleted successfully",
+      message: "Comment deleted",
     });
   } catch (error) {
     next(error);
@@ -154,7 +154,7 @@ export const deleteComment = async (req, res, next) => {
 export const toggleCommentLike = async (req, res, next) => {
   try {
     const { commentId } = req.params;
-    const userId = req.user._id;
+    const { id: userId } = req.user;
 
     const comment = await Comment.findById(commentId);
     if (!comment) {
@@ -173,7 +173,8 @@ export const toggleCommentLike = async (req, res, next) => {
     ).populate("user", "username avatar");
 
     res.status(200).json({
-      status: "success",
+      success: true,
+      message: userLiked ? "Comment unliked" : "Comment liked",
       data: updatedComment,
     });
   } catch (error) {

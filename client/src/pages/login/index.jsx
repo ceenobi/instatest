@@ -40,7 +40,7 @@ export default function Login() {
     <>
       <Helmet>
         <title>Login to Instapics</title>
-        <meta name="description" content="Get access to Instashot" />
+        <meta name="description" content="Get access to Instapics" />
       </Helmet>
       <div className="max-w-[300px] mx-auto">
         {error && <Alert error={error} />}

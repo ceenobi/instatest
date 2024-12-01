@@ -25,10 +25,6 @@ const commentSchema = new Schema(
       type: [String],
       default: [],
     },
-    likeCount: {
-      type: Number,
-      default: 0,
-    },
     replyCount: {
       type: Number,
       default: 0,

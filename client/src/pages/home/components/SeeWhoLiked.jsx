@@ -5,7 +5,6 @@ import { handleError } from "@/utils";
 import { toast } from "sonner";
 import { followUser, unfollowUser } from "@/api/user";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 
 export default function SeeWhoLiked({
   post,
@@ -83,22 +82,20 @@ export default function SeeWhoLiked({
 
   return (
     <>
-      <Helmet>
-        <title>See who liked this post </title>
-        <meta name="description" content="See who liked this post" />
-      </Helmet>
       <button
-        className="px-4 md:px-0 mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
+        className="font-semibold px-4 md:px-0 mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
         onClick={handleOpen}
         title="See who liked this post"
       >
-        {post?.likes?.length} likes
+        {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
       </button>
       <Modal title="Likes" isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <div className="mt-4 min-h-[200px] max-h-[400px] overflow-y-auto">
           {error && <Alert error={error} classname="my-4" />}
-          {post?.likes?.length === 0 && (
-            <div className="text-center">No likes yet</div>
+          {!loading && !error && post?.likes?.length === 0 && (
+            <div className="text-center flex justify-center min-h-[200px] items-center">
+              <p className="text-lg font-semibold">No likes yet 😔 </p>
+            </div>
           )}
           {loading ? (
             <div className="flex justify-center items-center h-[200px]">

@@ -12,8 +12,8 @@ export function FormInput({
 }) {
   const toggleVisibility = () => setIsVisible((prev) => !prev);
   return (
-    <div className="mb-3 flex flex-col gap-2">
-      {label && <label htmlFor={id}>{label}</label>}
+    <div className="form-control mb-3 flex flex-col gap-2">
+      {label && <label htmlFor={id} className="label-text">{label}</label>}
       <div className="relative">
         <input
           type={isVisible ? "text" : type}
@@ -21,12 +21,14 @@ export function FormInput({
           name={name}
           placeholder={placeholder}
           {...register(name, { validate })}
-          className={`w-full border-[1.5px] p-2 text-sm ${errors[name] ? "focus:border-red-600" : "focus:border-zinc-600"} focus:outline-none`}
+          className={`input input-bordered w-full border-[1.5px] p-2 text-sm ${
+            errors[name] ? "focus:border-red-600" : ""
+          } rounded-none`}
         />
         {type === "password" && (
           <button
             type="button"
-            className="absolute top-2 right-2 text-gray-600 text-sm border-0 focus:outline-none font-semibold"
+            className="absolute inset-y-0 right-2 text-gray-600 text-sm border-0 focus:outline-none font-semibold"
             onClick={toggleVisibility}
           >
             {isVisible ? "Hide" : "Show"}

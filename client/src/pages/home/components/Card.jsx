@@ -1,140 +1,205 @@
-import { Dot, Ellipsis, Heart, MessageCircle } from "lucide-react";
-import TimeAgo from "timeago-react";
-import { useAuthStore, useSlide } from "@/hooks";
-import { handleLike, handleUnlike } from "@/utils";
-import SeeWhoLiked from "./SeeWhoLiked";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import SavePost from "./SavePost";
+import { useAuthStore, usePostStore } from "@/hooks";
+import { handleLike, handleSavePost } from "@/utils/setFunction";
+import { Heart, MessageCircle, Bookmark } from "lucide-react";
+import { useSlide } from "@/hooks";
+import TimeAgo from "timeago-react";
 import Comments from "./Comments";
+import SeeWhoLiked from "./SeeWhoLiked";
 
-export default function Card({ post, setData }) {
+export default function Card({ post }) {
   const { accessToken, user, setUser } = useAuthStore();
+  const { setData } = usePostStore();
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const {
-    currentImageIndex,
+    currentIndex,
     slideDirection,
-    handlePrevImage,
-    handleNextImage,
+    handlePrev,
+    handleNext,
+    setSlideDirection,
+    setCurrentIndex,
   } = useSlide({ post });
-  const { data } = user || {};
+  const { data: loggedInUser } = user || {};
 
-  if (!post) {
-    return null;
-  }
+  const formatTimeAgo = (timestamp) => {
+    return <TimeAgo datetime={timestamp} locale="en-US" />;
+  };
+
+  useEffect(() => {
+    setIsLiked(post?.likes?.includes(loggedInUser?._id));
+    setIsSaved(post?.savedBy?.includes(loggedInUser?._id));
+  }, [loggedInUser?._id, post]);
+
+  const handleLikeFn = async () => {
+    const updatedPost = await handleLike(post._id, accessToken, setData);
+    if (updatedPost) {
+      setData(updatedPost);
+      setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
+    }
+  };
+
+  const handleSaveFn = async () => {
+    const updatedPost = await handleSavePost(post._id, accessToken, setData);
+    if (updatedPost) {
+      setData(updatedPost);
+      setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
+    }
+  };
 
   return (
-    <div className="mb-6 w-full md:w-[80%] lg:w-[450px]">
-      <div className="px-4 md:px-0 flex justify-between items-center">
-        <div className="flex gap-2 items-center">
-          <div className="avatar">
-            <div className="w-[40px] rounded-full border-2 border-accent">
-              <img
-                src={
-                  post?.user?.profilePicture ||
-                  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                }
-              />
+    <div className="card bg-base-100 mb-8 md:w-[80%] lg:w-[450px]">
+      <div className="card-body py-2 px-4 md:px-0">
+        <div className="flex items-center gap-3">
+          <div className="avatar placeholder">
+            <div className="w-12 rounded-full border-2">
+              {post?.user?.profilePicture ? (
+                <img
+                  src={post.user?.profilePicture}
+                  alt={post.user?.username}
+                />
+              ) : (
+                <span className="text-3xl">
+                  {post.user?.username?.charAt(0)}
+                </span>
+              )}
             </div>
           </div>
-          <p className="font-bold">{post?.user?.username} </p>
-          <div className="flex items-center">
-            <Dot />
-            <TimeAgo
-              datetime={post.createdAt}
-              locale="en_US"
-              style={{ fontSize: "14px" }}
-            />
+          <div>
+            <Link
+              to={`/${post.user?.username}`}
+              className="font-semibold hover:text-gray-500"
+            >
+              {post.user?.username}
+            </Link>
+            <p className="text-sm text-gray-500">
+              {formatTimeAgo(post.createdAt)}
+            </p>
           </div>
         </div>
-        <Ellipsis />
       </div>
-      <div className="mt-2 carousel w-full overflow-hidden">
-        <div className="carousel-item w-full relative">
-          <div
-            className={`w-full h-[550px] relative transition-transform duration-300 ease-in-out  ${
-              currentImageIndex === currentImageIndex
-                ? slideDirection === "next"
-                  ? "translate-x-0 animate-slideInRight"
-                  : "translate-x-0 animate-slideInLeft"
-                : slideDirection === "next"
-                ? "-translate-x-full"
-                : "translate-x-full"
-            }`}
-            style={{
-              animation: "slideIn 0.3s forwards",
-            }}
-          >
+
+      <figure className="relative overflow-hidden">
+        <div
+          className={`flex transition-transform duration-300 ease-in-out transform ${
+            slideDirection === "next" ? "-translate-x-full" : "translate-x-full"
+          }`}
+          style={{
+            transform: `translateX(-${currentIndex * 100}%)`,
+          }}
+        >
+          {post?.images?.map((image, index) => (
             <img
-              src={post.images[currentImageIndex]}
-              className="w-full h-full object-cover"
-              alt="image post"
-              loading="lazy"
+              key={index}
+              src={image}
+              alt={`Post ${index + 1}`}
+              className="w-full object-cover aspect-square shrink-0"
             />
+          ))}
+        </div>
+        {post?.images?.length > 1 && (
+          <>
+            <button
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 btn btn-circle btn-sm opacity-75 hover:opacity-100"
+              onClick={handlePrev}
+              disabled={currentIndex === 0}
+            >
+              ❮
+            </button>
+            <button
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 btn btn-circle btn-sm opacity-75 hover:opacity-100"
+              onClick={handleNext}
+              disabled={currentIndex === post.images.length - 1}
+            >
+              ❯
+            </button>
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+              {post.images.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    index === currentIndex ? "bg-primary" : "bg-base-300"
+                  }`}
+                  onClick={() => {
+                    setSlideDirection(index > currentIndex ? "next" : "prev");
+                    setCurrentIndex(index);
+                  }}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </figure>
+
+      <div className="card-body p-1 px-4 md:px-0">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4">
+            <button
+              className={`btn btn-ghost btn-circle btn-sm focus:outline-none ${
+                isLiked ? "text-red-500" : ""
+              }`}
+              onClick={handleLikeFn}
+              title={
+                post?.likes?.includes(loggedInUser?._id)
+                  ? "You liked this post"
+                  : "Like this post"
+              }
+            >
+              <Heart className={isLiked ? "fill-current" : ""} />
+            </button>
+            <Link
+              to={`/comments/${post._id}`}
+              className="btn btn-ghost btn-circle btn-sm"
+            >
+              <MessageCircle />
+            </Link>
           </div>
-          {post?.images?.length > 1 && (
-            <div className="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-              <button
-                onClick={handlePrevImage}
-                className="btn btn-circle btn-sm focus:outline-none"
-              >
-                ❮
-              </button>
-              <button
-                onClick={handleNextImage}
-                className="btn btn-circle btn-sm focus:outline-none"
-              >
-                ❯
-              </button>
+          <button
+            className={`btn btn-ghost btn-circle btn-sm focus:outline-none ${
+              isSaved ? "text-yellow-500" : ""
+            }`}
+            onClick={handleSaveFn}
+            title={
+              post?.savedBy?.includes(loggedInUser?._id)
+                ? "You saved this post"
+                : "Save this post"
+            }
+          >
+            <Bookmark className={isSaved ? "fill-current" : ""} />
+          </button>
+        </div>
+        <div className="space-y-1">
+          <SeeWhoLiked
+            post={post}
+            accessToken={accessToken}
+            loggedInUser={loggedInUser}
+            setUser={setUser}
+          />
+          <div>
+            <Link
+              to={`/${post.user?.username}`}
+              className="font-semibold hover:underline"
+            >
+              {post.user?.username}
+            </Link>{" "}
+            {post.title}
+          </div>
+          {post.description && (
+            <p className="text-gray-600">{post.description}</p>
+          )}
+          {post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag, index) => (
+                <span key={index} className="text-blue-500">
+                  #{tag}
+                </span>
+              ))}
             </div>
           )}
         </div>
+        <Comments post={post} accessToken={accessToken} />
       </div>
-      <div className="px-4 md:px-0 mt-2 flex justify-between items-center">
-        <div className="flex gap-4 items-center">
-          <div
-            title={
-              post?.likes?.includes(data?._id)
-                ? "You liked this post"
-                : "Like this post"
-            }
-          >
-            {post?.likes?.includes(data?._id) ? (
-              <Heart
-                role="button"
-                onClick={() => handleUnlike(post._id, accessToken, setData)}
-                fill="red"
-                strokeWidth={0}
-              />
-            ) : (
-              <Heart
-                role="button"
-                onClick={() => handleLike(post._id, accessToken, setData)}
-              />
-            )}
-          </div>
-          <MessageCircle title="Comment" />
-        </div>
-        <SavePost
-          post={post}
-          accessToken={accessToken}
-          loggedInUser={data}
-          setData={setData}
-        />
-      </div>
-      <SeeWhoLiked
-        post={post}
-        accessToken={accessToken}
-        loggedInUser={data}
-        setUser={setUser}
-      />
-      <p className="px-4 md:px-0 mt-2 text-sm">
-        <Link to={`/${post?.user?.username}`} className="font-bold">
-          {post?.user?.username}
-        </Link>{" "}
-        {post?.description?.length > 200
-          ? post?.description?.slice(0, 200) + "..." + " " + "more"
-          : post?.description}
-      </p>
-      <Comments post={post} accessToken={accessToken} />
     </div>
   );
 }

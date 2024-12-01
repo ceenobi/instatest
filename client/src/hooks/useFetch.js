@@ -15,7 +15,7 @@ export default function useFetch(endpoint, params1, params2, params3) {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await endpoint(params1, params2, params3,{ signal });
+        const res = await endpoint(params1, params2, params3, { signal });
         if (!signal.aborted) {
           setData(res.data);
         }
@@ -35,5 +35,5 @@ export default function useFetch(endpoint, params1, params2, params3) {
     };
   }, [endpoint, params1, params2, params3]);
 
-  return { data, error, loading, setData };
+  return { data, error, loading, setData, setLoading };
 }

@@ -1,81 +1,11 @@
-import { likePost, savePost, unlikePost, unsavePost } from "@/api/post";
+import { likePost, savePost } from "@/api/post";
 import { toast } from "sonner";
 import handleError from "./handleError";
-import { getPostComments } from "@/api/comment";
-
-export const saveUserPost = async (postId, accessToken, setData) => {
-  try {
-    const res = await savePost(postId, accessToken);
-    if (res.status === 200) {
-      toast.success(res.data.message);
-      setData((prev) => ({
-        ...prev,
-        posts: prev.posts.map((p) => {
-          if (p._id === postId) {
-            return {
-              ...p,
-              savedBy: res.data.post?.savedBy,
-            };
-          }
-          return p;
-        }),
-      }));
-    }
-  } catch (error) {
-    handleError(toast.error, error);
-  }
-};
-
-export const unsaveUserPost = async (postId, accessToken, setData) => {
-  try {
-    const res = await unsavePost(postId, accessToken);
-    if (res.status === 200) {
-      toast.success(res.data.message);
-      setData((prev) => ({
-        ...prev,
-        posts: prev.posts.map((p) => {
-          if (p._id === postId) {
-            return {
-              ...p,
-              savedBy: res.data.post?.savedBy,
-            };
-          }
-          return p;
-        }),
-      }));
-    }
-  } catch (error) {
-    handleError(toast.error, error);
-  }
-};
-
-export const savePostPage = async (postId, accessToken, page, setData) => {
-  try {
-    const res = await savePost(postId, accessToken);
-    if (res.status === 200) {
-      // Refetch comments
-      const updatedData = await getPostComments(postId, accessToken, page);
-      setData(updatedData.data);
-      toast.success(res.data.message);
-    }
-  } catch (error) {
-    handleError(toast.error, error);
-  }
-};
-
-export const unsavePostPage = async (postId, accessToken, page, setData) => {
-  try {
-    const res = await unsavePost(postId, accessToken);
-    if (res.status === 200) {
-      // Refetch comments
-      const updatedData = await getPostComments(postId, accessToken, page);
-      setData(updatedData.data);
-      toast.success(res.data.message);
-    }
-  } catch (error) {
-    handleError(toast.error, error);
-  }
-};
+import {
+  deleteComment,
+  getPostComments,
+  toggleCommentLike,
+} from "@/api/comment";
 
 export const handleLike = async (postId, accessToken, setData) => {
   try {
@@ -100,9 +30,9 @@ export const handleLike = async (postId, accessToken, setData) => {
   }
 };
 
-export const handleUnlike = async (postId, accessToken, setData) => {
+export const handleSavePost = async (postId, accessToken, setData) => {
   try {
-    const res = await unlikePost(postId, accessToken);
+    const res = await savePost(postId, accessToken);
     if (res.status === 200) {
       setData((prev) => ({
         ...prev,
@@ -110,7 +40,7 @@ export const handleUnlike = async (postId, accessToken, setData) => {
           if (p._id === postId) {
             return {
               ...p,
-              likes: res.data.post.likes,
+              savedBy: res.data.post?.savedBy,
             };
           }
           return p;
@@ -123,44 +53,69 @@ export const handleUnlike = async (postId, accessToken, setData) => {
   }
 };
 
-export const handleLikePostPage = async (
-  postId,
+export const handleDeleteComment = async (
+  commentId,
   accessToken,
+  postId,
   setData,
-  post
+  page,
+  setCommentsArray
 ) => {
   try {
-    const res = await likePost(postId, accessToken);
+    const res = await deleteComment(commentId, accessToken);
     if (res.status === 200) {
-      setData((prev) => ({
-        ...prev,
-        post: {
-          ...post,
-          likes: res.data.post.likes,
-        },
-      }));
+      const updatedData = await getPostComments(postId, accessToken, page);
+      setData(updatedData.data);
+      setCommentsArray(updatedData.data.comments);
       toast.success(res.data.message);
     }
   } catch (error) {
     handleError(toast.error, error);
   }
 };
-export const handleUnlikePostPage = async (
-  postId,
+
+export const handleCommentLike = async (
+  commentId,
   accessToken,
   setData,
-  post
+  postId,
+  page,
+  setCommentsArray
 ) => {
   try {
-    const res = await unlikePost(postId, accessToken);
+    const res = await toggleCommentLike(commentId, accessToken);
     if (res.status === 200) {
       setData((prev) => ({
         ...prev,
-        post: {
-          ...post,
-          likes: res.data.post.likes,
-        },
+        comments: prev.comments.map((c) => {
+          if (c._id === commentId) {
+            return {
+              ...c,
+              likes: res.data.comment?.likes,
+            };
+          }
+          return c;
+        }),
       }));
+      const getComments = await getPostComments(postId, accessToken, page);
+      setData((prev) => ({
+        ...prev,
+        comments: getComments.data.comments,
+      }));
+      // Update the commentsArray with the new likes
+      setCommentsArray((prev) =>
+        prev.map((comment) => {
+          if (comment._id === commentId) {
+            return {
+              ...comment,
+              likes:
+                getComments.data.comments.find((c) => c._id === commentId)
+                  ?.likes || comment.likes,
+            };
+          }
+          return comment;
+        })
+      );
       toast.success(res.data.message);
     }
   } catch (error) {

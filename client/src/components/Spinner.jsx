@@ -3,7 +3,7 @@ import { Instagram } from "lucide-react";
 export function LazySpinner() {
   return (
     <div className="flex justify-center items-center h-screen">
-      <Instagram size="64px" className="text-accent" />
+      <Instagram size="68px" className="text-accent" />
     </div>
   );
 }

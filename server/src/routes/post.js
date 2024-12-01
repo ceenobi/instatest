@@ -7,23 +7,26 @@ const router = express.Router();
 router.post("/createPost", verifyAuth(Roles.All), PostController.createPost);
 
 router.get("/getAllPosts", verifyAuth(Roles.All), PostController.getAllPosts);
-router.patch("/likePost/:id", verifyAuth(Roles.All), PostController.likePost);
 router.patch(
-  "/unlikePost/:id",
+  "/handleLikePost/:id",
   verifyAuth(Roles.All),
-  PostController.unlikePost
+  PostController.handleLikePost
 );
 router.get(
   "/seeWhoLiked/:id",
   verifyAuth(Roles.All),
   PostController.seeWhoLiked
 );
-router.patch("/savePost/:id", verifyAuth(Roles.All), PostController.savePost);
 router.patch(
-  "/unsavePost/:id",
+  "/handleSavePost/:id",
   verifyAuth(Roles.All),
-  PostController.unsavePost
+  PostController.handleSavePost
 );
+// router.patch(
+//   "/unsavePost/:id",
+//   verifyAuth(Roles.All),
+//   PostController.unsavePost
+// );
 // router.patch(
 //     "/comment/:postId",
 //     verifyAuth(Roles.All),

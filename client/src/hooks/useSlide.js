@@ -1,26 +1,33 @@
 import { useState } from "react";
 
 export default function useSlide({ post }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState("next");
 
-  const handlePrevImage = () => {
+  const handlePrev = () => {
+    if (!post?.images?.length) return;
+
     setSlideDirection("prev");
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? (post?.images?.length || 1) - 1 : prev - 1
-    );
+    setCurrentIndex((prev) => {
+      const lastIndex = post.images.length - 1;
+      return prev === 0 ? lastIndex : prev - 1;
+    });
   };
 
-  const handleNextImage = () => {
+  const handleNext = () => {
+    if (!post?.images?.length) return;
+
     setSlideDirection("next");
-    setCurrentImageIndex((prev) =>
-      prev === (post?.images?.length || 1) - 1 ? 0 : prev + 1
-    );
+    setCurrentIndex((prev) => {
+      const lastIndex = post.images.length - 1;
+      return prev === lastIndex ? 0 : prev + 1;
+    });
   };
+
   return {
-    currentImageIndex,
+    currentIndex,
     slideDirection,
-    handlePrevImage,
-    handleNextImage,
+    handlePrev,
+    handleNext,
   };
 }

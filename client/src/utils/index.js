@@ -8,14 +8,10 @@ import { inputFields, sidebar, settingsLinks } from "./constant";
 import axiosInstance from "./axiosInstance";
 import handleError from "./handleError";
 import {
-  saveUserPost,
-  unsaveUserPost,
-  savePostPage,
-  unsavePostPage,
+  handleSavePost,
   handleLike,
-  handleUnlike,
-  handleLikePostPage,
-  handleUnlikePostPage,
+  handleDeleteComment,
+  handleCommentLike,
 } from "./setFunction";
 
 export {
@@ -28,12 +24,8 @@ export {
   handleError,
   sidebar,
   settingsLinks,
-  saveUserPost,
-  unsaveUserPost,
-  savePostPage,
-  unsavePostPage,
+  handleSavePost,
   handleLike,
-  handleUnlike,
-  handleLikePostPage,
-  handleUnlikePostPage,
+  handleDeleteComment,
+  handleCommentLike,
 };

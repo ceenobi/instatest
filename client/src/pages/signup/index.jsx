@@ -39,7 +39,7 @@ export default function Signup() {
     <>
       <Helmet>
         <title>Sign up to Instapics</title>
-        <meta name="description" content="Get access to Instashot" />
+        <meta name="description" content="Get access to Instapics" />
       </Helmet>
       <div className="max-w-[270px] mx-auto">
         <h1 className="text-center font-semibold">

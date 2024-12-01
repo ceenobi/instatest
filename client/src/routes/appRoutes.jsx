@@ -23,6 +23,7 @@ import {
   VerifyLogin,
 } from "@/pages";
 import { PrivateRoutes, PublicRoutes } from "./ProtectedRoutes";
+import { PostProvider } from "@/store";
 
 const routes = [
   {
@@ -80,7 +81,9 @@ const routes = [
     element: (
       <PrivateRoutes>
         <Suspense fallback={<LazySpinner />}>
-          <RootLayout />
+          <PostProvider>
+            <RootLayout />
+          </PostProvider>
         </Suspense>
       </PrivateRoutes>
     ),
@@ -128,7 +131,9 @@ const routes = [
     element: (
       <Suspense fallback={<LazySpinner />}>
         <PrivateRoutes>
-          <ViewPostLayout />
+          <PostProvider>
+            <ViewPostLayout />
+          </PostProvider>
         </PrivateRoutes>
       </Suspense>
     ),

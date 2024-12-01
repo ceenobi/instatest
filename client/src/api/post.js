@@ -1,6 +1,6 @@
 import { axiosInstance } from "@/utils";
 
-export const createPost = async (data, token, fn) => {
+export const createPost = async (data, token, setUploadProgress) => {
   return await axiosInstance.post("/posts/createPost", data, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -10,7 +10,7 @@ export const createPost = async (data, token, fn) => {
       const progress = progressEvent.total
         ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
         : 0;
-      fn(progress);
+      setUploadProgress(progress);
     },
   });
 };
@@ -25,7 +25,7 @@ export const getAllPosts = async (token) => {
 
 export const likePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/posts/likePost/${postId}`,
+    `/posts/handleLikePost/${postId}`,
     {},
     {
       headers: {
@@ -35,9 +35,9 @@ export const likePost = async (postId, token) => {
   );
 };
 
-export const unlikePost = async (postId, token) => {
+export const savePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/posts/unlikePost/${postId}`,
+    `/posts/handleSavePost/${postId}`,
     {},
     {
       headers: {
@@ -55,9 +55,10 @@ export const seeWhoLiked = async (postId, token) => {
   });
 };
 
-export const savePost = async (postId, token) => {
+//remove
+export const unlikePost = async (postId, token) => {
   return await axiosInstance.patch(
-    `/posts/savePost/${postId}`,
+    `/posts/unlikePost/${postId}`,
     {},
     {
       headers: {

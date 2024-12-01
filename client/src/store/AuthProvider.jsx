@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
     user,
     setUser,
     loading,
-    handleLogout
+    handleLogout,
   };
 
   return <AuthStore.Provider value={value}>{children}</AuthStore.Provider>;

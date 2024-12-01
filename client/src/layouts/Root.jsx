@@ -11,13 +11,13 @@ export default function Root() {
       <div className="w-full md:w-[calc(100%-80px)] mx-auto">
         <div className="md:ml-[80px]">
           <Outlet />
+          <ScrollRestoration
+            getKey={(location) => {
+              return location.key;
+            }}
+          />
         </div>
       </div>
-      <ScrollRestoration
-        getKey={(location) => {
-          return location.key;
-        }}
-      />
     </main>
   );
 }

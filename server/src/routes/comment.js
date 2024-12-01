@@ -17,7 +17,7 @@ router.use(verifyAuth(Roles.All));
 router.post("/createComment/:getPostId", createComment);
 router.get("/getPostComments/:postId", getPostComments);
 router.get("/:commentId/replies", getCommentReplies);
-router.delete("/:commentId", deleteComment);
-router.post("/:commentId/like", toggleCommentLike);
+router.delete("/deleteComment/:commentId", deleteComment);
+router.patch("/:commentId/like", toggleCommentLike);
 
 export default router;

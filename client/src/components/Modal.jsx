@@ -31,13 +31,18 @@ export default function Modal({
           <form method="dialog">
             {step && selectedImages.length > 0 && (
               <div className="flex gap-4">
-                <button className="btn btn-sm" onClick={handlePrev}>
+                <button
+                  className="btn btn-sm"
+                  onClick={handlePrev}
+                  disabled={step === 1}
+                >
                   Prev
                 </button>
                 <button
                   className="btn btn-sm btn-neutral"
                   onClick={handleNext}
                   disabled={step === 2}
+                  type="button"
                 >
                   Next
                 </button>
