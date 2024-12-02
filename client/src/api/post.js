@@ -79,6 +79,14 @@ export const getUserSavedPosts = async (userId, token) => {
   });
 };
 
+export const updatePost = async (postId, data, token) => {
+  return await axiosInstance.patch(`/posts/updatePost/${postId}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 //remove
 // export const unlikePost = async (postId, token) => {
 //   return await axiosInstance.patch(

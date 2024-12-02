@@ -52,7 +52,7 @@ export const getPostComments = async (req, res, next) => {
 
     // Get only top-level comments (no parentComment)
     const post = await Post.findById(postId)
-      .select("title description images likes savedBy createdAt")
+      .select("title description images likes savedBy tags createdAt")
       .populate("user", "username profilePicture");
     if (!post) {
       throw createError(404, "Post not found");

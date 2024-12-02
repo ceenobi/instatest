@@ -5,5 +5,6 @@ import Sidebar from "./Sidebar";
 import Alert from "./Alert";
 import Modal from "./Modal";
 import Nav from "./Nav";
+import EditPost from "./EditPost";
 
-export { LazySpinner, FormInput, ActionButton, Sidebar, Alert, DataSpinner, Modal, Nav };
+export { LazySpinner, FormInput, ActionButton, Sidebar, Alert, DataSpinner, Modal, Nav, EditPost };

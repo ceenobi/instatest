@@ -1,5 +1,5 @@
 import { addPostComment, getPostComments } from "@/api/comment";
-import { Alert, DataSpinner } from "@/components";
+import { Alert, DataSpinner, EditPost } from "@/components";
 import { useAuthStore, useFetch, usePostStore, useSlide } from "@/hooks";
 import {
   handleCommentLike,
@@ -175,6 +175,9 @@ export default function Comments() {
   if (error) return <Alert error={error} />;
   if (loading) return <DataSpinner />;
 
+  console.log(post);
+  
+
   return (
     <>
       <Helmet>
@@ -269,28 +272,63 @@ export default function Comments() {
                   <p className="text-sm flex-1 text-gray-600 font-semibold">
                     {post?.description}
                   </p>
+                  <TimeAgo
+                    datetime={post?.createdAt}
+                    className="text-sm text-gray-600"
+                  />
+                  {post?.tags?.length > 0 && (
+                    <div className="flex gap-1 mt-2">
+                      {post?.tags?.map((tag) => (
+                        <Link
+                          key={tag}
+                          to={`/tag/${tag}`}
+                          className="text-sm text-gray-600 font-semibold"
+                        >
+                          #{tag}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   {loggedInUser?._id === post?.user?._id && (
-                    <div className="dropdown dropdown-bottom dropdown-end">
-                      <div
-                        tabIndex={0}
-                        role="button"
-                        className="btn btn-xs btn-ghost"
-                      >
-                        <Ellipsis />
+                    <>
+                      <div className="dropdown dropdown-bottom dropdown-end">
+                        <div
+                          tabIndex={0}
+                          role="button"
+                          className="btn btn-xs btn-ghost"
+                        >
+                          <Ellipsis />
+                        </div>
+                        <ul
+                          tabIndex={0}
+                          className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
+                        >
+                          <li>
+                            <button
+                              onClick={() =>
+                                document
+                                  .getElementById("edit_post_modal")
+                                  .showModal()
+                              }
+                            >
+                              Edit post
+                            </button>
+                          </li>
+                          <li>
+                            <button onClick={deletePostFn}>
+                              {isLoading ? "Deleting..." : "Delete post"}
+                            </button>
+                          </li>
+                        </ul>
                       </div>
-                      <ul
-                        tabIndex={0}
-                        className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
-                      >
-                        <li>
-                          <a onClick={deletePostFn}>
-                            {isLoading ? "Deleting..." : "Delete post"}
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
+                      <EditPost
+                        post={post}
+                        setPostData={setPostData}
+                        modalId="edit_post_modal"
+                      />
+                    </>
                   )}
                 </div>
               </div>

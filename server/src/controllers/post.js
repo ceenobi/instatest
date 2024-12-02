@@ -227,6 +227,38 @@ export const getUserSavedPosts = async (req, res, next) => {
   }
 };
 
+export const updatePost = async (req, res, next) => {
+  const { id: postId } = req.params;
+  const { id: userId } = req.user;
+  const { title, description, tags } = req.body;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+
+    // Check if user owns the post
+    if (post.user.toString() !== userId) {
+      return next(createHttpError(403, "You can only edit your own posts"));
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { title, description, tags },
+      { new: true }
+    ).populate("user", "username profilePicture");
+
+    res.status(200).json({
+      success: true,
+      message: "Post updated successfully",
+      post: updatedPost,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // export const unsavePost = async (req, res, next) => {
 //   const { id: postId } = req.params;
 //   const { id: userId } = req.user;

@@ -40,15 +40,11 @@ router.delete(
   verifyAuth(Roles.All),
   PostController.deletePost
 );
-// router.patch(
-//     "/comment/:postId",
-//     verifyAuth(Roles.All),
-//     PostController.addComment
-// );
-// router.patch(
-//     "/deleteComment/:postId/:commentId",
-//     verifyAuth(Roles.All),
-//     PostController.deleteComment
-// );
+
+router.patch(
+  "/updatePost/:id",
+  verifyAuth(Roles.All),
+  PostController.updatePost
+);
 
 export default router;
