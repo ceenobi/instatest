@@ -1,7 +1,7 @@
 import { changeProfilePhoto } from "@/api/user";
-import { Alert, Modal } from "@/components";
+import { ActionButton, Alert, Modal } from "@/components";
 import { handleError } from "@/utils";
-import { Image } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -10,6 +10,7 @@ export default function ChangeProfileImg({
   setUser,
   setData,
   data,
+  loggedInUser,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [err, setErr] = useState(null);
@@ -19,7 +20,8 @@ export default function ChangeProfileImg({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const handleImage = (e) => {
@@ -79,9 +81,14 @@ export default function ChangeProfileImg({
         }));
         setData((prev) => ({
           ...prev,
-          profilePicture: res.data.profilePicture,
+          user: {
+            ...prev.user,
+            profilePicture: res.data.profilePicture,
+          },
         }));
+        reset();
         setSelectedImage(null);
+        setStatus("idle");
         setIsOpen(false);
       }
     } catch (error) {
@@ -91,11 +98,26 @@ export default function ChangeProfileImg({
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedImage(null);
+    setErr(null);
+    setStatus("idle");
+    setUploadProgress(0);
+    reset();
+  };
+
   return (
     <>
       <div
-        className="avatar flex justify-center cursor-pointer"
-        onClick={() => setIsOpen(true)}
+        className={`avatar flex justify-center ${
+          loggedInUser?.username === data?.username ? "cursor-pointer" : ""
+        }`}
+        onClick={
+          loggedInUser?.username === data?.username
+            ? () => setIsOpen(true)
+            : () => {}
+        }
       >
         <div className="w-20 h-20 md:w-[160px] md:h-[160px] rounded-full">
           <img
@@ -112,17 +134,49 @@ export default function ChangeProfileImg({
       <Modal
         title="Change profile photo"
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
+        classname="max-w-2xl text-center"
       >
-        <div className="my-6 flex flex-col justify-center items-center gap-4">
-          <form className="text-center flex flex-col justify-center items-center relative">
-            <Image size="64px" />
-            <p className="font-semibold">
-              {selectedImage ? "Change image" : "Choose image"}
-            </p>
+        {err && <Alert error={err} classname="my-4" />}
+        <form className="mt-4" onSubmit={handleSubmit(handleImageUpload)}>
+          <div className="form-control w-full">
+            <label
+              htmlFor="images"
+              className="h-[300px] border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer overflow-auto p-2"
+            >
+              {selectedImage === null ? (
+                <div className="text-center">
+                  <Plus className="mx-auto mb-2" />
+                  <p>
+                    {data?.profilePicture ? "Change image" : "Choose image"}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-2 w-full relative z-20">
+                  <div className="relative group">
+                    <img
+                      src={selectedImage}
+                      alt="Selected profile photo"
+                      className="w-full h-[300px] object-contain rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setSelectedImage(null);
+                      }}
+                      className="absolute top-5 right-5 btn btn-circle btn-xs btn-error opacity-0 group-hover:opacity-100"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              )}
+            </label>
             <input
               type="file"
-              className="file-input file-input-bordered w-full max-w-xs h-[100%] absolute top-0 inset-y-0 opacity-0 z-20"
+              className="w-full max-w-xs h-[70%] absolute top-0 inset-y-0 opacity-0 cursor-pointer"
               accept="image/*"
               {...register("photo", { required: true })}
               onChange={handleImage}
@@ -130,54 +184,47 @@ export default function ChangeProfileImg({
             {errors.photo && (
               <p className="text-red-600 text-sm">Provide an image to upload</p>
             )}
-            {err && <Alert error={err} classname="my-4" />}
+          </div>
+          <div className="my-6 flex flex-col justify-center items-center gap-4">
             {selectedImage && (
-              <img
-                src={selectedImage}
-                alt="Selected profile photo"
-                loading="lazy"
-                className="mt-4 mx-auto w-[150px] h-[150px] object-cover"
+              <ActionButton
+                text={status === "uploading" ? "Uploading..." : "Upload"}
+                type="submit"
+                loading={isSubmitting}
+                classname="w-full btn-sm btn-secondary mt-4"
               />
             )}
-          </form>
-          {selectedImage && (
-            <button
-              className="btn btn-accent w-[50%] text-white"
-              onClick={handleSubmit(handleImageUpload)}
-            >
-              {status === "uploading" ? "Uploading..." : "Upload"}
-            </button>
-          )}
-          {status === "uploading" && (
-            <div className="space-y-2">
-              <div className="h-2.5 w-full rounded-full bg-gray-200">
-                <div
-                  className="h-2.5 rounded-full bg-blue-600 transition-all duration-300"
-                  style={{ width: `${uploadProgress}%` }}
-                ></div>
+            {status === "uploading" && (
+              <div className="space-y-2">
+                <div className="h-2.5 w-full rounded-full bg-gray-200">
+                  <div
+                    className="h-2.5 rounded-full bg-blue-600 transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-600">
+                  {uploadProgress}% uploaded
+                </p>
+                <progress
+                  className="progress w-56"
+                  value={uploadProgress}
+                  max="100%"
+                ></progress>
               </div>
-              <p className="text-sm text-gray-600">
-                {uploadProgress}% uploaded
+            )}
+            {status === "success" && (
+              <p className="text-sm text-green-600">
+                File uploaded successfully!
               </p>
-              <progress
-                className="progress w-56"
-                value={uploadProgress}
-                max="100%"
-              ></progress>
-            </div>
-          )}
-          {status === "success" && (
-            <p className="text-sm text-green-600">
-              File uploaded successfully!
-            </p>
-          )}
+            )}
 
-          {status === "error" && (
-            <p className="text-sm text-red-600">
-              Upload failed. Please try again.
-            </p>
-          )}
-        </div>
+            {status === "error" && (
+              <p className="text-sm text-red-600">
+                Upload failed. Please try again.
+              </p>
+            )}
+          </div>
+        </form>
       </Modal>
     </>
   );

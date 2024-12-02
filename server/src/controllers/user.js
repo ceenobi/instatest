@@ -1,6 +1,8 @@
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import Post from "../models/post.js";
+import Comment from "../models/comment.js";
 import {
   deleteFromCloudinary,
   uploadToCloudinary,
@@ -13,10 +15,11 @@ export const getAUser = async (req, res, next) => {
       throw createHttpError(400, "Username is required");
     }
     const user = await User.findOne({ username });
+    const userPostsCount = await Post.countDocuments({ user: user._id });
     if (!user) {
       return next(createHttpError(404, "User not found"));
     }
-    res.status(200).json(user);
+    res.status(200).json({ user, userPostsCount });
   } catch (error) {
     next(error);
   }
@@ -150,6 +153,8 @@ export const deleteAccount = async (req, res, next) => {
       await deleteFromCloudinary(user.profilePhotoId);
     }
     await User.findByIdAndDelete(userId);
+    await Post.deleteMany({ user: userId });
+    await Comment.deleteMany({ user: userId });
     res.status(200).json({
       success: true,
       message: "Account deleted successfully",
@@ -164,17 +169,35 @@ export const followUser = async (req, res, next) => {
   const { id: followerId } = req.params;
   try {
     const user = await User.findById(userId);
-    const followedUser = await User.findById(followerId);
-    if (!user || !followedUser) {
-      return next(createHttpError(404, "User not found"));
+    if (user.following.map((id) => id.toString()).includes(followerId)) {
+      user.following = user.following.filter(
+        (id) => id.toString() !== followerId
+      );
+    } else {
+      user.following.push(followerId);
     }
-    user.following.push(followerId);
-    followedUser.followers.push(userId);
-    await user.save();
+    const followedUser = await User.findById(followerId);
+    if (followedUser.followers.map((id) => id.toString()).includes(userId)) {
+      followedUser.followers = followedUser.followers.filter(
+        (id) => id.toString() !== userId
+      );
+    } else {
+      followedUser.followers.push(userId);
+    }
+    // const user = await User.findById(userId);
+    // const followedUser = await User.findById(followerId);
+    // if (!user || !followedUser) {
+    //   return next(createHttpError(404, "User not found"));
+    // }
+    // user.following.push(followerId);
+    // followedUser.followers.push(userId);
     await followedUser.save();
+    await user.save();
     res.status(200).json({
       success: true,
-      message: "User followed successfully",
+      message: user.following.map((id) => id.toString()).includes(followerId)
+        ? "User followed successfully"
+        : "User unfollowed successfully",
       user,
     });
   } catch (error) {
@@ -182,33 +205,33 @@ export const followUser = async (req, res, next) => {
   }
 };
 
-export const unfollowUser = async (req, res, next) => {
-  const { id: userId } = req.user;
-  const { id: followerId } = req.params;
-  try {
-    const user = await User.findById(userId);
-    const followedUser = await User.findById(followerId);
-    if (!user || !followedUser) {
-      return next(createHttpError(404, "User not found"));
-    }
-    user.following = user.following.filter(
-      (id) => id.toString() !== followerId
-    );
-    user.followers = user.followers.filter((id) => id.toString() !== userId);
-    followedUser.followers = followedUser.followers.filter(
-      (id) => id.toString() !== userId
-    );
-    followedUser.following = followedUser.following.filter(
-      (id) => id.toString() !== followerId
-    );
-    await user.save();
-    await followedUser.save();
-    res.status(200).json({
-      success: true,
-      message: "User unfollowed successfully",
-      user,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+// export const unfollowUser = async (req, res, next) => {
+//   const { id: userId } = req.user;
+//   const { id: followerId } = req.params;
+//   try {
+//     const user = await User.findById(userId);
+//     const followedUser = await User.findById(followerId);
+//     if (!user || !followedUser) {
+//       return next(createHttpError(404, "User not found"));
+//     }
+//     user.following = user.following.filter(
+//       (id) => id.toString() !== followerId
+//     );
+//     user.followers = user.followers.filter((id) => id.toString() !== userId);
+//     followedUser.followers = followedUser.followers.filter(
+//       (id) => id.toString() !== userId
+//     );
+//     followedUser.following = followedUser.following.filter(
+//       (id) => id.toString() !== followerId
+//     );
+//     await user.save();
+//     await followedUser.save();
+//     res.status(200).json({
+//       success: true,
+//       message: "User unfollowed successfully",
+//       user,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };

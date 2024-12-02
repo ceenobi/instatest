@@ -63,27 +63,43 @@ export const seeWhoLiked = async (postId, token) => {
   });
 };
 
-//remove
-export const unlikePost = async (postId, token) => {
-  return await axiosInstance.patch(
-    `/posts/unlikePost/${postId}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+export const deletePost = async (postId, token) => {
+  return await axiosInstance.delete(`/posts/deletePost/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
-export const unsavePost = async (postId, token) => {
-  return await axiosInstance.patch(
-    `/posts/unsavePost/${postId}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+export const getUserSavedPosts = async (userId, token) => {
+  return await axiosInstance.get(`/posts/getUserSavedPosts/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
+
+//remove
+// export const unlikePost = async (postId, token) => {
+//   return await axiosInstance.patch(
+//     `/posts/unlikePost/${postId}`,
+//     {},
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     }
+//   );
+// };
+
+// export const unsavePost = async (postId, token) => {
+//   return await axiosInstance.patch(
+//     `/posts/unsavePost/${postId}`,
+//     {},
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     }
+//   );
+// };

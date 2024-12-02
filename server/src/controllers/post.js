@@ -5,6 +5,7 @@ import {
   uploadToCloudinary,
   deleteFromCloudinary,
 } from "../config/cloudinary.js";
+import Comment from "../models/comment.js";
 
 export const createPost = async (req, res, next) => {
   const { title, description, images, tags } = req.body;
@@ -184,25 +185,47 @@ export const getUserPosts = async (req, res, next) => {
   }
 };
 
+export const deletePost = async (req, res, next) => {
+  const { id: postId } = req.params;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return next(createHttpError(404, "Post not found"));
+    }
+    await deleteFromCloudinary(post.imageIds);
+    await Post.findByIdAndDelete(postId);
+    await Comment.deleteMany({ post: postId });
+    res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const getUserSavedPosts = async (req, res, next) => {
+  const { id: userId } = req.params;
+  const { id: currentUserId } = req.user;
+  // if (userId !== currentUserId) {
+  //   return next(
+  //     createHttpError(403, "You are not authorized for this request")
+  //   );
+  // }
+  try {
+    const posts = await Post.find({ savedBy: userId })
+      .populate("user", "username profilePicture")
+      .sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully",
+      posts,
+      currentUserId,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // export const unsavePost = async (req, res, next) => {
 //   const { id: postId } = req.params;

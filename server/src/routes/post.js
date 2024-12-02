@@ -28,6 +28,18 @@ router.get(
   verifyAuth(Roles.All),
   PostController.getUserPosts
 );
+
+router.get(
+  "/getUserSavedPosts/:id",
+  verifyAuth(Roles.All),
+  PostController.getUserSavedPosts
+);
+
+router.delete(
+  "/deletePost/:id",
+  verifyAuth(Roles.All),
+  PostController.deletePost
+);
 // router.patch(
 //     "/comment/:postId",
 //     verifyAuth(Roles.All),

@@ -3,7 +3,7 @@ import { seeWhoLiked } from "@/api/post";
 import { Alert, Modal } from "@/components";
 import { handleError } from "@/utils";
 import { toast } from "sonner";
-import { followUser, unfollowUser } from "@/api/user";
+import { followUser } from "@/api/user";
 import { Link } from "react-router-dom";
 
 export default function SeeWhoLiked({
@@ -54,26 +54,26 @@ export default function SeeWhoLiked({
     }
   };
 
-  const toggleUnfollowUser = async (userId) => {
-    try {
-      setFollowText("Unfollowing...");
-      const res = await unfollowUser(userId, accessToken);
-      if (res.status === 200) {
-        toast.success(res.data.message);
-        setUser((prev) => ({
-          ...prev,
-          data: {
-            ...prev.data,
-            ...res.data.user,
-          },
-        }));
-      }
-    } catch (error) {
-      handleError(setError, error);
-    } finally {
-      setFollowText("");
-    }
-  };
+  // const toggleUnfollowUser = async (userId) => {
+  //   try {
+  //     setFollowText("Unfollowing...");
+  //     const res = await unfollowUser(userId, accessToken);
+  //     if (res.status === 200) {
+  //       toast.success(res.data.message);
+  //       setUser((prev) => ({
+  //         ...prev,
+  //         data: {
+  //           ...prev.data,
+  //           ...res.data.user,
+  //         },
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     handleError(setError, error);
+  //   } finally {
+  //     setFollowText("");
+  //   }
+  // };
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -135,14 +135,18 @@ export default function SeeWhoLiked({
                     }`}
                     disabled={user._id === loggedInUser._id}
                     onClick={() => {
-                      if (loggedInUser.following.includes(user._id)) {
-                        toggleUnfollowUser(user._id, accessToken);
-                        setActiveBtn(index);
-                      } else {
-                        toggleFollowUser(user._id, accessToken);
-                        setActiveBtn(index);
-                      }
+                      toggleFollowUser(user._id);
+                      setActiveBtn(index);
                     }}
+                    // onClick={() => {
+                    //   if (loggedInUser.following.includes(user._id)) {
+                    //     toggleUnfollowUser(user._id, accessToken);
+                    //     setActiveBtn(index);
+                    //   } else {
+                    //     toggleFollowUser(user._id, accessToken);
+                    //     setActiveBtn(index);
+                    //   }
+                    // }}
                   >
                     {loggedInUser.following.includes(user._id)
                       ? followText && activeBtn === index

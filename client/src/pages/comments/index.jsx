@@ -11,10 +11,11 @@ import {
 import { Bookmark, CirclePlus, Ellipsis, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import TimeAgo from "timeago-react";
 import { Helmet } from "react-helmet-async";
+import { deletePost } from "@/api/post";
 
 export default function Comments() {
   const [page, setPage] = useState(1);
@@ -42,6 +43,7 @@ export default function Comments() {
     formState: { errors, isSubmitting },
     reset,
   } = useForm();
+  const navigate = useNavigate();
   const { post, comments, pagination } = postComments || {};
   const {
     currentIndex,
@@ -153,6 +155,23 @@ export default function Comments() {
     return updatedComments;
   };
 
+  const deletePostFn = async () => {
+    setIsLoading(true);
+    try {
+      const updatedPost = await deletePost(postId, accessToken);
+      if (updatedPost.status === 200) {
+        // Update the posts array in the store
+        setPostData((prevPosts) => prevPosts.filter((p) => p._id !== postId));
+        toast.success(updatedPost.data.message);
+        navigate("/");
+      }
+    } catch (error) {
+      handleError(setErr, error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (error) return <Alert error={error} />;
   if (loading) return <DataSpinner />;
 
@@ -225,17 +244,22 @@ export default function Comments() {
               </figure>
             </div>
             <div className="lg:w-[40%] px-4 relative">
-              <div className="flex w-full">
-                <div>
-                  <Link to={`/${post?.user?.username}`}>
-                    <img
-                      src={post?.user?.profilePicture}
-                      alt={post?.user?.username}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  </Link>
+              <div className="flex w-full gap-4">
+                <div className="avatar placeholder">
+                  <div className="w-12 h-12 rounded-full border-2">
+                    {post?.user?.profilePicture ? (
+                      <img
+                        src={post?.user?.profilePicture}
+                        alt={post?.user?.username}
+                      />
+                    ) : (
+                      <span className="text-3xl">
+                        {post?.user?.username?.charAt(0)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-1 ml-4">
+                <div className="flex-1">
                   <Link
                     to={`/${post?.user?.username}`}
                     className="font-semibold text-sm"
@@ -246,25 +270,28 @@ export default function Comments() {
                     {post?.description}
                   </p>
                 </div>
-                <div className="dropdown dropdown-bottom dropdown-end">
-                  <div
-                    tabIndex={0}
-                    role="button"
-                    className="btn btn-xs btn-ghost"
-                  >
-                    {" "}
-                    <Ellipsis />
-                  </div>
-                  <ul
-                    tabIndex={0}
-                    className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
-                  >
-                    <li>
-                      <a onClick={() => {}}>
-                        {isLoading ? "Deleting..." : "Delete post"}
-                      </a>
-                    </li>
-                  </ul>
+                <div>
+                  {loggedInUser?._id === post?.user?._id && (
+                    <div className="dropdown dropdown-bottom dropdown-end">
+                      <div
+                        tabIndex={0}
+                        role="button"
+                        className="btn btn-xs btn-ghost"
+                      >
+                        <Ellipsis />
+                      </div>
+                      <ul
+                        tabIndex={0}
+                        className="dropdown-content menu bg-base-100 rounded-box z-[1] w-32 p-2 shadow"
+                      >
+                        <li>
+                          <a onClick={deletePostFn}>
+                            {isLoading ? "Deleting..." : "Delete post"}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="divider"></div>
@@ -320,7 +347,6 @@ export default function Comments() {
                               role="button"
                               className="btn btn-xs btn-ghost"
                             >
-                              {" "}
                               <Ellipsis />
                             </div>
                             <ul

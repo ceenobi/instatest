@@ -31,7 +31,10 @@ export default function UpdateProfile({ accessToken, setData, data }) {
       const res = await updateUserProfile(data, accessToken);
       if (res.status === 200) {
         const updatedUser = res.data.user;
-        setData((prev) => ({ ...prev, ...updatedUser }));
+        setData((prev) => ({
+          ...prev,
+          user: { ...prev.user, ...updatedUser },
+        }));
         setIsOpen(false);
         toast.success(res.data.message);
       }

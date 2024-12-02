@@ -72,15 +72,15 @@ export const followUser = async (followerId, token) => {
   );
 };
 
-export const unfollowUser = async (followerId, token) => {
-  return await axiosInstance.patch(
-    `/users/unfollow/${followerId}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-};
+// export const unfollowUser = async (followerId, token) => {
+//   return await axiosInstance.patch(
+//     `/users/unfollow/${followerId}`,
+//     {},
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         "Content-Type": "application/json",
+//       },
+//     }
+//   );
+// };

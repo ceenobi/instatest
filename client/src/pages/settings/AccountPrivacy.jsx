@@ -46,7 +46,7 @@ export default function AccountPrivacy() {
         <title>Toggle Privacy status</title>
         <meta name="description" content="Account privacy" />
       </Helmet>
-      <div className="mt-5 py-5 px-4 md:px-8  mx-auto">
+      <div className="mt-5 py-5 px-4 md:px-8  max-w-[400px] xl:max-w-[700px] mx-auto">
         <h1 className="text-2xl font-bold mb-4">Account privacy</h1>
         {error && <Alert error={error} classname="my-4" />}
         <div className="border-2 border-zinc-200 rounded-lg p-3">
