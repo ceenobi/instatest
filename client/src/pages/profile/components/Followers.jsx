@@ -1,35 +1,19 @@
-import { useState } from "react";
-import { seeWhoLiked } from "@/api/post";
+import { getFollowers } from "@/api/user";
 import { Alert, Modal } from "@/components";
-import { handleError, toggleFollowUser } from "@/utils";
+import { useAuthStore, useFetch } from "@/hooks";
+import { toggleFollowUser } from "@/utils";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function SeeWhoLiked({
-  post,
-  accessToken,
-  loggedInUser,
-  setUser,
-}) {
+export default function Followers({ userProfile, profile }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [followText, setFollowText] = useState("");
+  const [err, setError] = useState(null);
   const [activeBtn, setActiveBtn] = useState(0);
-  const [error, setError] = useState(null);
-
-  const fetchLikes = async () => {
-    try {
-      setLoading(true);
-      const res = await seeWhoLiked(post._id, accessToken);
-      if (res.status === 200) {
-        setUsers(res.data.users);
-      }
-    } catch (error) {
-      handleError(setError, error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { accessToken, user, setUser } = useAuthStore();
+  const { error, data, loading } = useFetch(getFollowers, profile, accessToken);
+  const followers = data?.followers || [];
+  const loggedInUser = user?.data || {};
 
   const toggleFollowUserFn = async (userId) => {
     const res = await toggleFollowUser(
@@ -42,26 +26,30 @@ export default function SeeWhoLiked({
     return res;
   };
 
-  const handleOpen = () => {
-    setIsOpen(true);
-    fetchLikes();
-  };
-
   return (
     <>
-      <button
-        className="font-semibold mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
-        onClick={handleOpen}
-        title="See who liked this post"
+      <h1
+        className="hidden md:block text-lg"
+        onClick={() => setIsOpen(true)}
+        role="button"
       >
-        {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
-      </button>
-      <Modal title="Likes" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <span className="font-bold">{userProfile?.followers?.length}</span>{" "}
+        followers
+      </h1>
+      <div
+        className="md:hidden text-center"
+        onClick={() => setIsOpen(true)}
+        role="button"
+      >
+        <p className="font-bold"> {userProfile?.followers?.length}</p>
+        <span className="text-neutral text-sm">followers</span>
+      </div>
+      <Modal title="Followers" isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <div className="mt-4 min-h-[200px] max-h-[400px] overflow-y-auto">
-          {error && <Alert error={error} classname="my-4" />}
-          {!loading && !error && post?.likes?.length === 0 && (
+          {error || (err && <Alert error={error} classname="my-4" />)}
+          {!loading && !error && followers?.length === 0 && (
             <div className="text-center flex justify-center min-h-[200px] items-center">
-              <p className="text-lg font-semibold">No likes yet 😔 </p>
+              <p className="text-lg font-semibold">No followers yet 😔 </p>
             </div>
           )}
           {loading ? (
@@ -70,7 +58,7 @@ export default function SeeWhoLiked({
             </div>
           ) : (
             <div className="space-y-4">
-              {users.map((user, index) => (
+              {followers.map((user, index) => (
                 <div
                   key={user._id}
                   className="flex items-center justify-between"

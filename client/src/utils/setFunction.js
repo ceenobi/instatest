@@ -6,6 +6,7 @@ import {
   getPostComments,
   toggleCommentLike,
 } from "@/api/comment";
+import { followUser } from "@/api/user";
 
 export const handleLike = async (postId, accessToken, setData) => {
   try {
@@ -120,5 +121,32 @@ export const handleCommentLike = async (
     }
   } catch (error) {
     handleError(toast.error, error);
+  }
+};
+
+export const toggleFollowUser = async (
+  userId,
+  setFollowText,
+  accessToken,
+  setUser,
+  setError
+) => {
+  try {
+    setFollowText("Following...");
+    const res = await followUser(userId, accessToken);
+    if (res.status === 200) {
+      toast.success(res.data.message);
+      setUser((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          ...res.data.user,
+        },
+      }));
+    }
+  } catch (error) {
+    handleError(setError, error);
+  } finally {
+    setFollowText("");
   }
 };

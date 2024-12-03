@@ -1,22 +1,38 @@
 import { useAuthStore, useFetch, usePostStore } from "@/hooks";
 import { Alert } from "@/components";
 import Skeleton from "./components/Skeleton";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { suggestUsers } from "@/api/user";
+import { Link } from "react-router-dom";
+import { toggleFollowUser } from "@/utils";
 
 const Card = lazy(() => import("./components/Card"));
 
 export default function Home() {
+  const [followText, setFollowText] = useState("");
+  const [err, setError] = useState(null);
+  const [activeBtn, setActiveBtn] = useState(0);
   const { posts, loading, error, setData } = usePostStore();
-  const { accessToken, user, handleLogout } = useAuthStore();
+  const { accessToken, user, setUser, handleLogout } = useAuthStore();
   const { data } = useFetch(suggestUsers, accessToken);
   const loggedInUser = user?.data;
 
-  if (error) {
-    return <Alert error={error} />;
+  if (error || err) {
+    return <Alert error={error} classname="my-4" />;
   }
-  console.log('hh',data);
+  const suggestedUsers = data?.users || [];
+
+  const toggleFollowUserFn = async (userId) => {
+    const res = await toggleFollowUser(
+      userId,
+      setFollowText,
+      accessToken,
+      setUser,
+      setError
+    );
+    return res;
+  };
 
   return (
     <>
@@ -25,7 +41,6 @@ export default function Home() {
         <meta name="description" content="Instapics Home" />
       </Helmet>
       <div className="max-w-[1200px] mx-auto ">
-        {/* {error && <Alert error={error} classname="my-4" />} */}
         <div className="py-8 md:flex justify-between w-full min-h-dvh">
           <div className="lg:w-[60%]">
             <div className="mb-6 px-4 md:px-0 flex gap-4 overflow-auto">
@@ -50,7 +65,11 @@ export default function Home() {
                       No posts yet
                     </h1>
                   )}
-                  <Suspense fallback={<div>Loading posts...</div>}>
+                  <Suspense
+                    fallback={
+                      <div className="text-center">Loading posts...</div>
+                    }
+                  >
                     {posts.map((post) => (
                       <Card key={post._id} post={post} setData={setData} />
                     ))}
@@ -100,14 +119,57 @@ export default function Home() {
               </p>
               <button className="text-sm font-semibold">See all</button>
             </div>
-            <div className="mt-4 flex justify-between items-center">
-              <div className="avatar">
-                <div className="w-[50px] rounded-full border-2 border-accent">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+            {suggestedUsers.map((user, index) => (
+              <div
+                className="mt-4 flex justify-between items-center"
+                key={user._id}
+              >
+                <div className="flex gap-4 items-center">
+                  <div className="avatar placeholder">
+                    <div className="w-[50px] h-[50px] rounded-full border-2">
+                      <Link to={`/${user.username}`}>
+                        {user.profilePicture ? (
+                          <img
+                            src={user.profilePicture}
+                            alt={user.username}
+                            loading="eager"
+                            decoding="async"
+                          />
+                        ) : (
+                          <span className="text-2xl">
+                            {user.username?.charAt(0)}
+                          </span>
+                        )}
+                      </Link>
+                    </div>
+                  </div>
+                  <div>
+                    <Link
+                      to={`/${user.username}`}
+                      className="text-sm font-semibold text-zinc-500"
+                    >
+                      {user.username}
+                    </Link>
+                    <p className="text-sm font-semibold">{user.fullname}</p>
+                  </div>
                 </div>
+                <button
+                  className="btn btn-sm"
+                  onClick={() => {
+                    toggleFollowUserFn(user._id);
+                    setActiveBtn(index);
+                  }}
+                >
+                  {loggedInUser?.following.includes(user._id)
+                    ? followText && activeBtn === index
+                      ? followText
+                      : "Following"
+                    : followText && activeBtn === index
+                    ? followText
+                    : "Follow"}
+                </button>
               </div>
-              <button className="btn btn-sm">Follow</button>
-            </div>
+            ))}
           </div>
         </div>
       </div>

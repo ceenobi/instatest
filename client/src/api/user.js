@@ -1,7 +1,7 @@
 import { axiosInstance } from "@/utils";
 
 export const getUser = async (username, token) => {
-  return await axiosInstance.get(`/users/${username}`, {
+  return await axiosInstance.get(`/users/profile/${username}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -86,15 +86,20 @@ export const suggestUsers = async (token) => {
   });
 };
 
-// export const unfollowUser = async (followerId, token) => {
-//   return await axiosInstance.patch(
-//     `/users/unfollow/${followerId}`,
-//     {},
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         "Content-Type": "application/json",
-//       },
-//     }
-//   );
-// };
+export const getFollowers = async (username, token) => {
+  return await axiosInstance.get(`/users/followers/${username}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const getFollowing = async (username, token) => {
+  return await axiosInstance.get(`/users/following/${username}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};

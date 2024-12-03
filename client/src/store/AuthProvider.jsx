@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }) => {
         });
       } catch (error) {
         console.error("Error fetching user:", error);
-        handleLogout();
+        // handleLogout();
       } finally {
         setLoading(false);
       }
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
     const cleanup = setupTokenRefresh();
     return () => cleanup?.();
-  }, [accessToken, handleLogout, setupTokenRefresh]);
+  }, [accessToken, setupTokenRefresh]);
 
   const value = {
     accessToken,

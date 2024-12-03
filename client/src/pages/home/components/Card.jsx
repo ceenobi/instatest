@@ -35,19 +35,11 @@ export default function Card({ post }) {
   const handleLikeFn = async () => {
     const updatedPost = await handleLike(post._id, accessToken, setData);
     return updatedPost;
-    // if (updatedPost) {
-    //   setData(updatedPost);
-    //   setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
-    // }
   };
 
   const handleSaveFn = async () => {
     const updatedPost = await handleSavePost(post._id, accessToken, setData);
     return updatedPost;
-    // if (updatedPost) {
-    //   setData(updatedPost);
-    //   setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
-    // }
   };
 
   return (

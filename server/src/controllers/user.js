@@ -15,10 +15,14 @@ export const getAUser = async (req, res, next) => {
       throw createHttpError(400, "Username is required");
     }
     const user = await User.findOne({ username });
-    const userPostsCount = await Post.countDocuments({ user: user._id });
     if (!user) {
       return next(createHttpError(404, "User not found"));
     }
+
+    const userPostsCount = await Post.countDocuments({
+      user: user._id.toString(),
+    });
+
     res.status(200).json({ user, userPostsCount });
   } catch (error) {
     next(error);
@@ -184,13 +188,6 @@ export const followUser = async (req, res, next) => {
     } else {
       followedUser.followers.push(userId);
     }
-    // const user = await User.findById(userId);
-    // const followedUser = await User.findById(followerId);
-    // if (!user || !followedUser) {
-    //   return next(createHttpError(404, "User not found"));
-    // }
-    // user.following.push(followerId);
-    // followedUser.followers.push(userId);
     await followedUser.save();
     await user.save();
     res.status(200).json({
@@ -208,55 +205,135 @@ export const followUser = async (req, res, next) => {
 export const suggestUsers = async (req, res, next) => {
   const { id: userId } = req.user;
   try {
-    const user = await User.findById(userId);
-    if (!user) {
+    // Find the current user with their following list
+    const currentUser = await User.findById(userId).select("following");
+    if (!currentUser) {
       return next(createHttpError(404, "User not found"));
     }
-    const users = await User.find({
-      $and: [
-        { _id: { $ne: userId } },
-        { isPublic: true },
-        {
-          $or: [{ followers: { $ne: userId } }, { following: { $ne: userId } }],
+
+    // Get users that the current user's followings are following
+    const mutualSuggestions = await User.aggregate([
+      // First get all users the current user is following
+      {
+        $match: {
+          _id: { $in: currentUser.following },
         },
-      ],
-    }).select("username profilePicture");
-    res.status(200).json({
-      success: true,
-      users,
-    });
-  } catch (error) { 
+      },
+      // Look up their following lists
+      {
+        $lookup: {
+          from: "users",
+          localField: "following",
+          foreignField: "_id",
+          as: "mutualConnections",
+        },
+      },
+      // Unwind the mutual connections array
+      { $unwind: "$mutualConnections" },
+      // Group to count how many mutual connections each suggested user has
+      {
+        $group: {
+          _id: "$mutualConnections._id",
+          user: { $first: "$mutualConnections" },
+          mutualCount: { $sum: 1 },
+        },
+      },
+      // Match only users that the current user is not following
+      {
+        $match: {
+          _id: {
+            $ne: userId,
+            $nin: currentUser.following,
+          },
+          "user.isPublic": true,
+        },
+      },
+      // Sort by number of mutual connections
+      { $sort: { mutualCount: -1 } },
+      // Limit to 5 suggestions
+      { $limit: 5 },
+      // Project only needed fields
+      {
+        $project: {
+          _id: "$user._id",
+          username: "$user.username",
+          profilePicture: "$user.profilePicture",
+          fullname: "$user.fullname",
+          mutualCount: 1,
+        },
+      },
+    ]);
+
+    // If we don't have enough mutual suggestions, add some public users
+    if (mutualSuggestions.length < 5) {
+      const additionalUsers = await User.find({
+        $and: [
+          { _id: { $ne: userId } },
+          { _id: { $nin: currentUser.following } },
+          { _id: { $nin: mutualSuggestions.map((s) => s._id) } },
+          { isPublic: true },
+        ],
+      })
+        .select("username profilePicture fullname")
+        .limit(5 - mutualSuggestions.length);
+
+      // Combine both sets of suggestions
+      const allSuggestions = [
+        ...mutualSuggestions,
+        ...additionalUsers.map((user) => ({
+          _id: user._id,
+          username: user.username,
+          profilePicture: user.profilePicture,
+          fullname: user.fullname,
+          mutualCount: 0,
+        })),
+      ];
+
+      res.status(200).json({
+        success: true,
+        users: allSuggestions,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        users: mutualSuggestions,
+      });
+    }
+  } catch (error) {
     next(error);
   }
 };
 
-// export const unfollowUser = async (req, res, next) => {
-//   const { id: userId } = req.user;
-//   const { id: followerId } = req.params;
-//   try {
-//     const user = await User.findById(userId);
-//     const followedUser = await User.findById(followerId);
-//     if (!user || !followedUser) {
-//       return next(createHttpError(404, "User not found"));
-//     }
-//     user.following = user.following.filter(
-//       (id) => id.toString() !== followerId
-//     );
-//     user.followers = user.followers.filter((id) => id.toString() !== userId);
-//     followedUser.followers = followedUser.followers.filter(
-//       (id) => id.toString() !== userId
-//     );
-//     followedUser.following = followedUser.following.filter(
-//       (id) => id.toString() !== followerId
-//     );
-//     await user.save();
-//     await followedUser.save();
-//     res.status(200).json({
-//       success: true,
-//       message: "User unfollowed successfully",
-//       user,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const getUserFollowers = async (req, res, next) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    const followers = await User.find({ _id: { $in: user.followers } });
+    res.status(200).json({
+      success: true,
+      followers,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserFollowing = async (req, res, next) => {
+  const { username } = req.params;
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    const following = await User.find({ _id: { $in: user.following } });
+    res.status(200).json({
+      success: true,
+      following,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

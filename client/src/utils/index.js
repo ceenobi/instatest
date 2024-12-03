@@ -12,6 +12,7 @@ import {
   handleLike,
   handleDeleteComment,
   handleCommentLike,
+  toggleFollowUser,
 } from "./setFunction";
 
 export {
@@ -28,4 +29,5 @@ export {
   handleLike,
   handleDeleteComment,
   handleCommentLike,
+  toggleFollowUser,
 };

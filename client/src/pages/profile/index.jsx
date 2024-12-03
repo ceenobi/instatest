@@ -10,6 +10,7 @@ import { lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { handleError } from "@/utils";
 import { sendVerifyEmailLink } from "@/api";
+import Followers from "./components/Followers";
 
 const Posts = lazy(() => import("./components/Posts"));
 
@@ -182,12 +183,7 @@ export default function Profile() {
                     posts
                   </h1>
                   <div className="flex items-center gap-4">
-                    <h1 className="text-lg">
-                      <span className="font-bold">
-                        {userProfile?.followers?.length}
-                      </span>{" "}
-                      followers
-                    </h1>
+                    <Followers userProfile={userProfile} profile={profile} />
                     <h1 className="text-lg">
                       <span className="font-bold">
                         {userProfile?.following?.length}
@@ -211,10 +207,7 @@ export default function Profile() {
                 <p className="font-bold">{data?.userPostsCount}</p>
                 <span className="text-neutral text-sm">posts</span>
               </div>
-              <div className="text-center">
-                <p className="font-bold"> {userProfile?.followers?.length}</p>
-                <span className="text-neutral text-sm">followers</span>
-              </div>
+              <Followers userProfile={userProfile} profile={profile} />
               <div className="text-center">
                 <p className="font-bold"> {userProfile?.following?.length}</p>
                 <span className="text-neutral text-sm">following</span>
