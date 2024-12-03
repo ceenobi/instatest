@@ -65,15 +65,18 @@ export default function Followers({ userProfile, profile }) {
                 >
                   <Link to={`/${user.username}`}>
                     <div className="flex items-center gap-2">
-                      <div className="avatar">
-                        <div className="w-[40px] rounded-full">
-                          <img
-                            src={
-                              user?.profilePicture ||
-                              "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                            }
-                            alt={user.username}
-                          />
+                      <div className="avatar placeholder">
+                        <div className="w-[45px] rounded-full border-2">
+                          {user?.profilePicture ? (
+                            <img
+                              src={user?.profilePicture}
+                              alt={user?.username}
+                            />
+                          ) : (
+                            <span className="text-3xl">
+                              {user?.username?.charAt(0)}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <div>

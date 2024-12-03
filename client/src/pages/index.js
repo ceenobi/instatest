@@ -12,6 +12,7 @@ import DeleteAccount from "./settings/DeleteAccount";
 import Comments from "./comments";
 import SavedPosts from "./profile/savedPosts";
 import Explore from "./explore";
+import Tags from "./explore/Tags";
 
 export {
   Login,
@@ -28,4 +29,5 @@ export {
   Comments,
   SavedPosts,
   Explore,
+  Tags
 };

@@ -49,7 +49,6 @@ export const toggleAccountPrivacy = async (token) => {
     {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     }
   );
@@ -59,7 +58,6 @@ export const deleteAccount = async (token) => {
   return await axiosInstance.delete("/users/deleteAccount", {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
 };
@@ -71,7 +69,6 @@ export const followUser = async (followerId, token) => {
     {
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
       },
     }
   );
@@ -81,7 +78,6 @@ export const suggestUsers = async (token) => {
   return await axiosInstance.get("/users/suggest", {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
 };
@@ -90,7 +86,6 @@ export const getFollowers = async (username, token) => {
   return await axiosInstance.get(`/users/followers/${username}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
 };
@@ -99,7 +94,6 @@ export const getFollowing = async (username, token) => {
   return await axiosInstance.get(`/users/following/${username}`, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
 };

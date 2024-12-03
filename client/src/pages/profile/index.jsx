@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { handleError } from "@/utils";
 import { sendVerifyEmailLink } from "@/api";
 import Followers from "./components/Followers";
+import Following from "./components/Following";
 
 const Posts = lazy(() => import("./components/Posts"));
 
@@ -184,12 +185,7 @@ export default function Profile() {
                   </h1>
                   <div className="flex items-center gap-4">
                     <Followers userProfile={userProfile} profile={profile} />
-                    <h1 className="text-lg">
-                      <span className="font-bold">
-                        {userProfile?.following?.length}
-                      </span>{" "}
-                      following
-                    </h1>
+                    <Following userProfile={userProfile} profile={profile} />
                   </div>
                 </div>
                 <h1 className="mt-3 text-md font-bold">
@@ -208,10 +204,7 @@ export default function Profile() {
                 <span className="text-neutral text-sm">posts</span>
               </div>
               <Followers userProfile={userProfile} profile={profile} />
-              <div className="text-center">
-                <p className="font-bold"> {userProfile?.following?.length}</p>
-                <span className="text-neutral text-sm">following</span>
-              </div>
+              <Following userProfile={userProfile} profile={profile} />
             </div>
             <div className="divider m-0 md:hidden"></div>
           </>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore, usePostStore } from "@/hooks";
 import { handleLike, handleSavePost } from "@/utils/setFunction";
 import { Heart, MessageCircle, Bookmark } from "lucide-react";
@@ -21,6 +21,7 @@ export default function Card({ post }) {
     setSlideDirection,
     setCurrentIndex,
   } = useSlide({ post });
+  const navigate = useNavigate();
   const { data: loggedInUser } = user || {};
 
   const formatTimeAgo = (timestamp) => {
@@ -40,6 +41,10 @@ export default function Card({ post }) {
   const handleSaveFn = async () => {
     const updatedPost = await handleSavePost(post._id, accessToken, setData);
     return updatedPost;
+  };
+
+  const searchTags = (tag) => {
+    navigate(`/explore/tags?tag=${tag}`);
   };
 
   return (
@@ -185,7 +190,12 @@ export default function Card({ post }) {
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag, index) => (
-                <span key={index} className="text-zinc-900">
+                <span
+                  key={index}
+                  className="text-zinc-900"
+                  role="button"
+                  onClick={() => searchTags(tag)}
+                >
                   #{tag}
                 </span>
               ))}

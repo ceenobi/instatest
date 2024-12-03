@@ -117,7 +117,7 @@ export default function Home() {
               <p className="text-sm lg:text-base text-pretty">
                 Suggested for you
               </p>
-              <button className="text-sm font-semibold">See all</button>
+              {/* <button className="text-sm font-semibold">See all</button> */}
             </div>
             {suggestedUsers.map((user, index) => (
               <div
@@ -170,6 +170,9 @@ export default function Home() {
                 </button>
               </div>
             ))}
+            <h1 className="mt-10 text-sm">
+              &copy; {new Date().getFullYear()} INSTAPICS
+            </h1>
           </div>
         </div>
       </div>

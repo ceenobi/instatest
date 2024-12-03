@@ -172,11 +172,12 @@ export default function Comments() {
     }
   };
 
+  const searchTags = (tag) => {
+    navigate(`/explore/tags?tag=${tag}`);
+  };
+
   if (error) return <Alert error={error} />;
   if (loading) return <DataSpinner />;
-
-  console.log(post);
-  
 
   return (
     <>
@@ -279,13 +280,13 @@ export default function Comments() {
                   {post?.tags?.length > 0 && (
                     <div className="flex gap-1 mt-2">
                       {post?.tags?.map((tag) => (
-                        <Link
+                        <span
                           key={tag}
-                          to={`/tag/${tag}`}
-                          className="text-sm text-gray-600 font-semibold"
+                          onClick={() => searchTags(tag)}
+                          className="text-sm text-gray-600 font-semibold cursor-pointer"
                         >
                           #{tag}
-                        </Link>
+                        </span>
                       ))}
                     </div>
                   )}

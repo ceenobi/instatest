@@ -19,6 +19,7 @@ import {
   Profile,
   SavedPosts,
   Signup,
+  Tags,
   UpdatePassword,
   VerifyAccount,
   VerifyEmail,
@@ -107,6 +108,12 @@ const routes = [
       {
         path: "explore",
         element: <Explore />,
+        children: [
+          {
+            path: "tags",
+            element: <Tags />,
+          },
+        ],
       },
       {
         path: "settings",

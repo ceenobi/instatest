@@ -257,7 +257,7 @@ export const updatePost = async (req, res, next) => {
 export const getRandomPosts = async (req, res, next) => {
   const { id: userId } = req.user;
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 3;
+  const limit = parseInt(req.query.limit) || 5;
   const skip = (page - 1) * limit;
 
   try {
@@ -267,10 +267,10 @@ export const getRandomPosts = async (req, res, next) => {
 
     // Base query to exclude user's own posts
     const excludeUserQuery = {
-      user: { 
-        $ne: userId,  // Exclude posts where user is the current user
-        $exists: true // Ensure user field exists
-      }
+      user: {
+        $ne: userId, // Exclude posts where user is the current user
+        $exists: true, // Ensure user field exists
+      },
     };
 
     // If user has no tags, return latest posts with pagination
@@ -307,11 +307,11 @@ export const getRandomPosts = async (req, res, next) => {
 
     // Get a larger sample to ensure we have enough unique posts after filtering
     const sampleSize = Math.min(totalCount, limit * 2);
-    
+
     // First get all posts with matching tags
     let posts = await Post.aggregate([
       {
-        $match: matchQuery
+        $match: matchQuery,
       },
       // Ensure uniqueness by _id
       {
@@ -340,10 +340,12 @@ export const getRandomPosts = async (req, res, next) => {
     });
 
     // Final safety check to ensure no user posts slip through
-    posts = posts.filter(post => post.user._id.toString() !== userId);
+    posts = posts.filter((post) => post.user._id.toString() !== userId);
 
     // Ensure we have unique posts
-    posts = Array.from(new Map(posts.map(post => [post._id.toString(), post])).values());
+    posts = Array.from(
+      new Map(posts.map((post) => [post._id.toString(), post])).values()
+    );
 
     res.status(200).json({
       success: true,
@@ -361,46 +363,32 @@ export const getRandomPosts = async (req, res, next) => {
   }
 };
 
-// export const unsavePost = async (req, res, next) => {
-//   const { id: postId } = req.params;
-//   const { id: userId } = req.user;
-//   try {
-//     const post = await Post.findById(postId);
-//     if (!post) {
-//       return next(createHttpError(404, "Post not found"));
-//     }
-//     if (post.savedBy.map((id) => id.toString()).includes(userId)) {
-//       post.savedBy = post.savedBy.filter((id) => id.toString() !== userId);
-//     }
-//     await post.save();
-//     res.status(200).json({
-//       success: true,
-//       message: "Post unsaved successfully",
-//       post,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-// export const unlikePost = async (req, res, next) => {
-//   const { id: postId } = req.params;
-//   const { id: userId } = req.user;
-//   try {
-//     const post = await Post.findById(postId);
-//     if (!post) {
-//       return next(createHttpError(404, "Post not found"));
-//     }
-//     if (post.likes.map((id) => id.toString()).includes(userId)) {
-//       post.likes = post.likes.filter((id) => id.toString() !== userId);
-//     }
-//     await post.save();
-//     res.status(200).json({
-//       success: true,
-//       message: "Post unliked successfully",
-//       post,
-//     });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+export const getPostsByTags = async (req, res, next) => {
+  const { tags } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
+  try {
+    const posts = await Post.find({ tags: { $in: tags.split(",") } })
+      .populate("user", "username profilePicture")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const totalCount = await Post.countDocuments({
+      tags: { $in: tags.split(",") },
+    });
+    res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully",
+      posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        totalPosts: totalCount,
+        hasMore: skip + posts.length < totalCount,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

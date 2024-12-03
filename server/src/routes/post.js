@@ -49,4 +49,6 @@ router.patch(
 
 router.get("/random", verifyAuth(Roles.All), PostController.getRandomPosts);
 
+router.get("/tag/:tags", verifyAuth(Roles.All), PostController.getPostsByTags);
+
 export default router;

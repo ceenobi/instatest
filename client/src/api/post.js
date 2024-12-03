@@ -94,4 +94,10 @@ export const getRandomPosts = async (page, token) => {
     },
   });
 };
-
+export const getPostsByTags = async (tag, page, token) => {
+  return await axiosInstance.get(`/posts/tag/${tag}?page=${page}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
