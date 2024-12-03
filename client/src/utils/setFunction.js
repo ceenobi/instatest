@@ -7,13 +7,11 @@ import {
   toggleCommentLike,
 } from "@/api/comment";
 
-export const handleLike = async (postId, accessToken, setPostData, setData) => {
+export const handleLike = async (postId, accessToken, setData) => {
   try {
     const res = await likePost(postId, accessToken);
-    console.log(res);
-
     if (res.status === 200) {
-      setPostData((prev) => ({
+      setData((prev) => ({
         ...prev,
         posts: prev.posts.map((p) => {
           if (p._id === postId) {
@@ -24,13 +22,6 @@ export const handleLike = async (postId, accessToken, setPostData, setData) => {
           }
           return p;
         }),
-      }));
-      setData((prev) => ({
-        ...prev,
-        post: {
-          ...prev.post,
-          likes: res.data.post.likes,
-        },
       }));
       toast.success(res.data.message);
     }

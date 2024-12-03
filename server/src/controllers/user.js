@@ -205,6 +205,31 @@ export const followUser = async (req, res, next) => {
   }
 };
 
+export const suggestUsers = async (req, res, next) => {
+  const { id: userId } = req.user;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(createHttpError(404, "User not found"));
+    }
+    const users = await User.find({
+      $and: [
+        { _id: { $ne: userId } },
+        { isPublic: true },
+        {
+          $or: [{ followers: { $ne: userId } }, { following: { $ne: userId } }],
+        },
+      ],
+    }).select("username profilePicture");
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) { 
+    next(error);
+  }
+};
+
 // export const unfollowUser = async (req, res, next) => {
 //   const { id: userId } = req.user;
 //   const { id: followerId } = req.params;

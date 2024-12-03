@@ -11,6 +11,7 @@ import AccountPrivacy from "./settings/AccountPrivacy";
 import DeleteAccount from "./settings/DeleteAccount";
 import Comments from "./comments";
 import SavedPosts from "./profile/savedPosts";
+import Explore from "./explore";
 
 export {
   Login,
@@ -26,4 +27,5 @@ export {
   DeleteAccount,
   Comments,
   SavedPosts,
+  Explore,
 };

@@ -3,7 +3,7 @@ import { Alert } from "@/components";
 import { useAuthStore, useFetch } from "@/hooks";
 import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function VerifyEmail() {
@@ -13,18 +13,28 @@ export default function VerifyEmail() {
     userId,
     verificationToken
   );
-  const { user } = useAuthStore();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from || "/";
+  const { user, setUser } = useAuthStore();
   const { data: userData } = user || {};
 
   useEffect(() => {
-    if (userData?.isVerified) {
-      toast.success("You are verified already");
-      navigate(from, { replace: true });
+    if (data?.success) {
+      toast.success(data.message, { id: "verifyEmail" });
+      setUser((prev) => ({
+        ...prev,
+        data: {
+          ...prev.data,
+          isVerified: true,
+        },
+      }));
     }
-  }, [from, navigate, userData?.isVerified]);
+  }, [
+    data?.message,
+    data?.success,
+    data?.user,
+    setUser,
+    user,
+    userData?.isVerified,
+  ]);
 
   return (
     <>
@@ -39,8 +49,14 @@ export default function VerifyEmail() {
             <span className="loading loading-spinner loading-md bg-accent"></span>
           </div>
         )}
-        {!error && !loading && data?.success && (
+        {!error && !loading && data?.success ? (
           <p className="mt-4 text-center">{data.message}</p>
+        ) : (
+          <>
+            {userData?.isVerified === true && !error && (
+              <p className="mt-4 text-center">You are verified already</p>
+            )}
+          </>
         )}
       </div>
     </>

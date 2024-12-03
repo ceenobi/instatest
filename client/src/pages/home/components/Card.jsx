@@ -34,18 +34,20 @@ export default function Card({ post }) {
 
   const handleLikeFn = async () => {
     const updatedPost = await handleLike(post._id, accessToken, setData);
-    if (updatedPost) {
-      setData(updatedPost);
-      setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
-    }
+    return updatedPost;
+    // if (updatedPost) {
+    //   setData(updatedPost);
+    //   setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
+    // }
   };
 
   const handleSaveFn = async () => {
     const updatedPost = await handleSavePost(post._id, accessToken, setData);
-    if (updatedPost) {
-      setData(updatedPost);
-      setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
-    }
+    return updatedPost;
+    // if (updatedPost) {
+    //   setData(updatedPost);
+    //   setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
+    // }
   };
 
   return (
@@ -191,7 +193,7 @@ export default function Card({ post }) {
           {post.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag, index) => (
-                <span key={index} className="text-blue-500">
+                <span key={index} className="text-zinc-900">
                   #{tag}
                 </span>
               ))}

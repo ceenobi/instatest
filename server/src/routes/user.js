@@ -4,7 +4,8 @@ import { verifyAuth, Roles } from "../middleware/verifyAuth.js";
 
 const router = express.Router();
 
-router.get("/:username", UserController.getAUser);
+router.get("/:username", verifyAuth(Roles.All), UserController.getAUser);
+router.get("/suggest", verifyAuth(Roles.All), UserController.suggestUsers);
 
 router.patch(
   "/uploadProfilePic",
@@ -34,10 +35,5 @@ router.delete(
 );
 
 router.patch("/follow/:id", verifyAuth(Roles.All), UserController.followUser);
-// router.patch(
-//   "/unfollow/:id",
-//   verifyAuth(Roles.All),
-//   UserController.unfollowUser
-// );
 
 export default router;

@@ -5,10 +5,11 @@ import { Helmet } from "react-helmet-async";
 import { NavLink, Outlet, useMatch, useParams } from "react-router-dom";
 import ChangeProfileImg from "./components/ChangeProfileImg";
 import UpdateProfile from "./components/UpdateProfile";
-import { Bookmark, Grid3x3 } from "lucide-react";
+import { Bookmark, CheckCheck, Grid3x3 } from "lucide-react";
 import { lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { handleError } from "@/utils";
+import { sendVerifyEmailLink } from "@/api";
 
 const Posts = lazy(() => import("./components/Posts"));
 
@@ -16,8 +17,12 @@ export default function Profile() {
   const { profile } = useParams();
   const [followText, setFollowText] = useState("");
   const match = useMatch(`/${profile}`);
-  const { error, loading, data, setData } = useFetch(getUser, profile);
   const { accessToken, setUser, user } = useAuthStore();
+  const { error, loading, data, setData } = useFetch(
+    getUser,
+    profile,
+    accessToken
+  );
   const { data: loggedInUser } = user || {};
   const userProfile = data?.user;
 
@@ -47,6 +52,20 @@ export default function Profile() {
             ...res.data.user,
           },
         }));
+      }
+    } catch (error) {
+      handleError(toast.error, error);
+    } finally {
+      setFollowText("");
+    }
+  };
+
+  const resendVerification = async () => {
+    setFollowText("Resending...");
+    try {
+      const res = await sendVerifyEmailLink(loggedInUser?._id);
+      if (res.status === 200) {
+        toast.success(res.data.message);
       }
     } catch (error) {
       handleError(toast.error, error);
@@ -101,6 +120,9 @@ export default function Profile() {
                             : "Follow"}
                         </button>
                       )}
+                      <button className="btn btn-accent btn-sm text-white">
+                        Verified
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -135,6 +157,21 @@ export default function Profile() {
                           : "Follow"}
                       </button>
                     )}
+                    <button
+                      className="btn btn-neutral btn-sm text-white focus:outline-none"
+                      onClick={
+                        loggedInUser?.isVerified === true
+                          ? () => {}
+                          : resendVerification
+                      }
+                    >
+                      {loggedInUser?.isVerified === true
+                        ? "Verified"
+                        : followText
+                        ? followText
+                        : "Verify Email"}
+                      {loggedInUser?.isVerified === true && <CheckCheck />}
+                    </button>
                   </div>
                 </div>
                 <div className="hidden mt-6 md:flex items-center gap-4">

@@ -36,13 +36,21 @@ export default function Sidebar() {
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
           to={`/${user?.data?.username}`}
         >
-          <div className="w-8 rounded-full border-2 border-accent">
-            <img
-              src={
-                user?.data?.profilePicture ||
-                "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              }
-            />
+          <div className="avatar placeholder">
+            <div className="w-12 rounded-full border-2">
+              {user?.data?.profilePicture ? (
+                <img
+                  src={user?.data?.profilePicture}
+                  alt={user?.data?.username}
+                  loading="eager"
+                  decoding="async"
+                />
+              ) : (
+                <span className="text-2xl">
+                  {user?.data?.username?.charAt(0)}
+                </span>
+              )}
+            </div>
           </div>
         </NavLink>
       </div>

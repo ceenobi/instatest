@@ -1,7 +1,15 @@
 import { Lock } from "lucide-react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function Recover() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
+
+  const redirect = () => {
+    navigate(from, { replace: true });
+  };
+
   return (
     <div className="max-w-[1200px] mx-auto py-6 px-4">
       <div className="sticky top-0 z-40">
@@ -20,9 +28,9 @@ export default function Recover() {
             </div>
           </div>
           <div className="max-w-[350px] mx-auto border-2 p-4 flex justify-center items-center bg-gray-100">
-            <Link to="/auth/login" className="text-sm font-semibold">
-              Back to login
-            </Link>
+            <button className="text-sm font-semibold" onClick={redirect}>
+              Go Back
+            </button>
           </div>
         </div>
         <div className="my-12 max-w-[350px] mx-auto">

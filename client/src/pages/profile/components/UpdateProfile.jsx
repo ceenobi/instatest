@@ -60,7 +60,7 @@ export default function UpdateProfile({ accessToken, setData, data }) {
         <form className="mt-4" onSubmit={handleSubmit(onFormSubmit)}>
           {inputFields
             .filter((item) => fields.includes(item.name))
-            .map(({ type, id, name, placeholder, validate }) => (
+            .map(({ type, id, name, placeholder, validate, label }) => (
               <FormInput
                 type={type}
                 id={id}
@@ -70,15 +70,21 @@ export default function UpdateProfile({ accessToken, setData, data }) {
                 key={id}
                 errors={errors}
                 validate={validate}
+                label={label}
               />
             ))}
-          <textarea
-            className="textarea textarea-bordered w-full"
-            placeholder="Bio"
-            name="bio"
-            id="bio"
-            {...register("bio")}
-          ></textarea>
+          <div className="form-control w-full">
+            <label className="label">
+              <span className="label-text">Bio</span>
+            </label>
+            <textarea
+              className="textarea textarea-bordered w-full rounded-none"
+              placeholder="Bio"
+              name="bio"
+              id="bio"
+              {...register("bio")}
+            ></textarea>
+          </div>
           <ActionButton
             text="Update"
             type="submit"

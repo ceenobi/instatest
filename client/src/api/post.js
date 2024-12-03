@@ -87,27 +87,11 @@ export const updatePost = async (postId, data, token) => {
   });
 };
 
-//remove
-// export const unlikePost = async (postId, token) => {
-//   return await axiosInstance.patch(
-//     `/posts/unlikePost/${postId}`,
-//     {},
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     }
-//   );
-// };
+export const getRandomPosts = async (page, token) => {
+  return await axiosInstance.get(`/posts/random?page=${page}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
 
-// export const unsavePost = async (postId, token) => {
-//   return await axiosInstance.patch(
-//     `/posts/unsavePost/${postId}`,
-//     {},
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     }
-//   );
-// };

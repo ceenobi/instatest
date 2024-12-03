@@ -12,6 +12,7 @@ import {
   AccountPrivacy,
   Comments,
   DeleteAccount,
+  Explore,
   ForgotPassword,
   Home,
   Login,
@@ -102,6 +103,10 @@ const routes = [
             element: <SavedPosts />,
           },
         ],
+      },
+      {
+        path: "explore",
+        element: <Explore />,
       },
       {
         path: "settings",

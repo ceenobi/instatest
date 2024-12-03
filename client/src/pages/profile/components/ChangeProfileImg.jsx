@@ -119,16 +119,21 @@ export default function ChangeProfileImg({
             : () => {}
         }
       >
-        <div className="w-20 h-20 md:w-[160px] md:h-[160px] rounded-full">
-          <img
-            src={
-              data?.profilePicture ||
-              "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            }
-            title="change profile photo"
-            loading="lazy"
-            alt={data?.username}
-          />
+        <div className="avatar placeholder">
+          <div className="w-20 md:w-[160px] rounded-full border-2">
+            {data?.profilePicture ? (
+              <img
+                src={data?.profilePicture}
+                alt={data?.username}
+                loading="eager"
+                title="change profile photo"
+              />
+            ) : (
+              <span className="text-7xl" title="change profile photo">
+                {data?.username?.charAt(0)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
       <Modal

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import Modal from "./Modal";
-import { useForm } from "react-hook-form";
+import { useForm} from "react-hook-form";
 import { handleError, inputFields } from "@/utils";
 import { FormInput } from "./FormField";
 import { createPost } from "@/api/post";
@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import Alert from "./Alert";
 import { Helmet } from "react-helmet-async";
 import ActionButton from "./ActionButton";
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +28,7 @@ export default function CreatePost() {
   } = useForm();
   const { accessToken } = useAuthStore();
   const { setData } = usePostStore();
+  const navigate = useNavigate();
 
   const handleImage = (e) => {
     const files = Array.from(e.target.files || []);
@@ -54,10 +56,9 @@ export default function CreatePost() {
     validFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        console.log("File read complete:", file.name);
+        //console.log("File read complete:", file.name);
         setSelectedImages((prev) => {
           const newState = [...prev, { file, preview: reader.result }];
-          console.log("New state:", newState);
           return newState;
         });
       };
@@ -113,6 +114,7 @@ export default function CreatePost() {
         setUploadProgress(100);
         toast.success(res.data.message);
         setIsOpen(false);
+        navigate("/");
       }
     } catch (error) {
       setStatus("error");

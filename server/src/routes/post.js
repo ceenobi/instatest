@@ -47,4 +47,6 @@ router.patch(
   PostController.updatePost
 );
 
+router.get("/random", verifyAuth(Roles.All), PostController.getRandomPosts);
+
 export default router;

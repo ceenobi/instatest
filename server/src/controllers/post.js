@@ -207,11 +207,6 @@ export const deletePost = async (req, res, next) => {
 export const getUserSavedPosts = async (req, res, next) => {
   const { id: userId } = req.params;
   const { id: currentUserId } = req.user;
-  // if (userId !== currentUserId) {
-  //   return next(
-  //     createHttpError(403, "You are not authorized for this request")
-  //   );
-  // }
   try {
     const posts = await Post.find({ savedBy: userId })
       .populate("user", "username profilePicture")
@@ -253,6 +248,113 @@ export const updatePost = async (req, res, next) => {
       success: true,
       message: "Post updated successfully",
       post: updatedPost,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getRandomPosts = async (req, res, next) => {
+  const { id: userId } = req.user;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 3;
+  const skip = (page - 1) * limit;
+
+  try {
+    // First get all tags used by the logged in user
+    const userPosts = await Post.find({ user: userId });
+    const userTags = [...new Set(userPosts.flatMap((post) => post.tags))];
+
+    // Base query to exclude user's own posts
+    const excludeUserQuery = {
+      user: { 
+        $ne: userId,  // Exclude posts where user is the current user
+        $exists: true // Ensure user field exists
+      }
+    };
+
+    // If user has no tags, return latest posts with pagination
+    if (userTags.length === 0) {
+      const [posts, totalCount] = await Promise.all([
+        Post.find(excludeUserQuery)
+          .populate("user", "username profilePicture")
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(limit),
+        Post.countDocuments(excludeUserQuery),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        message: "Posts fetched successfully",
+        posts,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalCount / limit),
+          totalPosts: totalCount,
+          hasMore: skip + posts.length < totalCount,
+        },
+      });
+    }
+
+    // Get total count of eligible posts
+    const matchQuery = {
+      ...excludeUserQuery,
+      tags: { $in: userTags },
+    };
+
+    const totalCount = await Post.countDocuments(matchQuery);
+
+    // Get a larger sample to ensure we have enough unique posts after filtering
+    const sampleSize = Math.min(totalCount, limit * 2);
+    
+    // First get all posts with matching tags
+    let posts = await Post.aggregate([
+      {
+        $match: matchQuery
+      },
+      // Ensure uniqueness by _id
+      {
+        $group: {
+          _id: "$_id",
+          doc: { $first: "$$ROOT" },
+        },
+      },
+      // Restore document structure
+      {
+        $replaceRoot: { newRoot: "$doc" },
+      },
+      // Add random sort
+      {
+        $sample: { size: sampleSize },
+      },
+      // Skip and limit after sampling
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    // Populate user data
+    await Post.populate(posts, {
+      path: "user",
+      select: "username profilePicture",
+    });
+
+    // Final safety check to ensure no user posts slip through
+    posts = posts.filter(post => post.user._id.toString() !== userId);
+
+    // Ensure we have unique posts
+    posts = Array.from(new Map(posts.map(post => [post._id.toString(), post])).values());
+
+    res.status(200).json({
+      success: true,
+      message: "Posts fetched successfully",
+      posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        totalPosts: totalCount,
+        hasMore: skip + posts.length < totalCount,
+      },
     });
   } catch (error) {
     next(error);

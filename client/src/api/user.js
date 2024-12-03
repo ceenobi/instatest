@@ -1,7 +1,12 @@
 import { axiosInstance } from "@/utils";
 
-export const getUser = async (username) => {
-  return await axiosInstance.get(`/users/${username}`);
+export const getUser = async (username, token) => {
+  return await axiosInstance.get(`/users/${username}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 export const changeProfilePhoto = async (data, token, fn) => {
@@ -70,6 +75,15 @@ export const followUser = async (followerId, token) => {
       },
     }
   );
+};
+
+export const suggestUsers = async (token) => {
+  return await axiosInstance.get("/users/suggest", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 // export const unfollowUser = async (followerId, token) => {
