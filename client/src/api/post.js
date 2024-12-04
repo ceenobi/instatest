@@ -15,8 +15,8 @@ export const createPost = async (data, token, setUploadProgress) => {
   });
 };
 
-export const getAllPosts = async (token) => {
-  return await axiosInstance.get("/posts/getAllPosts", {
+export const getAllPosts = async (page, token) => {
+  return await axiosInstance.get(`/posts/getAllPosts?page=${page}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

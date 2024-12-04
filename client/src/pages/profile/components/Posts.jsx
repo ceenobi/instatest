@@ -30,16 +30,10 @@ export default function Posts({ accessToken, profileId }) {
     );
   }
 
-  if (error && !profileId) return <Alert error={error} />;
+  if (error && !profileId) return <Alert error={error} classname="my-4" />;
 
   return (
     <>
-      {/* {error && !profileId && <Alert error={error} />} */}
-      {/* {loading && (
-        <div className="flex justify-center items-center h-[300px]">
-          <span className="loading loading-spinner loading-md bg-accent"></span>
-        </div>
-      )} */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {posts.map((post) => (
           <Link

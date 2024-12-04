@@ -97,3 +97,11 @@ export const getFollowing = async (username, token) => {
     },
   });
 };
+
+export const searchUsers = async (searchTerm, token) => {
+  return await axiosInstance.get(`/users/search?q=${searchTerm}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};

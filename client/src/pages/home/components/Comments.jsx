@@ -4,13 +4,15 @@ import { addPostComment, getPostComments } from "@/api/comment";
 import { handleError } from "@/utils";
 import { toast } from "sonner";
 import { useFetch } from "@/hooks";
+import { useState } from "react";
 
 export default function Comments({ post, accessToken }) {
+  const [page] = useState(1);
   const {
     error,
     data: postComments,
     setData,
-  } = useFetch(getPostComments, post._id, accessToken);
+  } = useFetch(getPostComments, post._id, page, accessToken);
   const {
     register,
     handleSubmit,

@@ -337,3 +337,21 @@ export const getUserFollowing = async (req, res, next) => {
     next(error);
   }
 };
+
+export const searchUsers = async (req, res, next) => {
+  const query = req.query.q;
+  try {
+    const users = await User.find({
+      $or: [
+        { username: { $regex: query.trim(), $options: "i" } },
+        { fullname: { $regex: query.trim(), $options: "i" } },
+      ],
+    });
+    res.status(200).json({
+      success: true,
+      users,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -8,7 +8,7 @@ import TimeAgo from "timeago-react";
 import Comments from "./Comments";
 import SeeWhoLiked from "./SeeWhoLiked";
 
-export default function Card({ post }) {
+export default function Card({ post, isLastPost, lastPostRef }) {
   const { accessToken, user, setUser } = useAuthStore();
   const { setData } = usePostStore();
   const [isLiked, setIsLiked] = useState(false);
@@ -48,7 +48,10 @@ export default function Card({ post }) {
   };
 
   return (
-    <div className="card bg-base-100 mb-8 lg:w-[450px]">
+    <div
+      className="card bg-base-100 mb-8 lg:w-[450px]"
+      ref={isLastPost ? lastPostRef : null}
+    >
       <div className="card-body py-2 px-4 md:px-0">
         <div className="flex items-center gap-3">
           <div className="avatar placeholder">
@@ -57,6 +60,8 @@ export default function Card({ post }) {
                 <img
                   src={post.user?.profilePicture}
                   alt={post.user?.username}
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <span className="text-3xl">
@@ -94,6 +99,8 @@ export default function Card({ post }) {
               src={image}
               alt={`Post ${index + 1}`}
               className="w-full object-cover aspect-square shrink-0"
+              loading="lazy"
+              decoding="async"
             />
           ))}
         </div>

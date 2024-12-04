@@ -36,7 +36,7 @@ export default function Comments() {
     loading,
     setLoading,
     setData,
-  } = useFetch(getPostComments, postId, accessToken, page);
+  } = useFetch(getPostComments, postId, page, accessToken);
   const {
     register,
     handleSubmit,

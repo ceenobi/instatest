@@ -1,8 +1,8 @@
 import { getRandomPosts } from "@/api/post";
 import { Alert, DataSpinner } from "@/components";
-import { useAuthStore } from "@/hooks";
+import { useAuthStore, useInfiniteScroll } from "@/hooks";
 import { handleError } from "@/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { toast } from "sonner";
@@ -13,25 +13,9 @@ export default function Explore() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const { lastPostRef } = useInfiniteScroll(loading, hasMore, setPage);
   const { accessToken } = useAuthStore();
-  const observer = useRef();
   const match = useLocation().pathname === "/explore";
-
-  const lastPostRef = useCallback(
-    (node) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setPage((prev) => prev + 1);
-        }
-      });
-
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore]
-  );
 
   const fetchPosts = useCallback(async () => {
     if (!accessToken) return;
@@ -56,18 +40,14 @@ export default function Explore() {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, page]);
+  }, [accessToken, page, setHasMore]);
 
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
 
   if (error) {
-    return (
-      <div className="mt-4">
-        <Alert variant="error" message={error.message} />
-      </div>
-    );
+    return <Alert error={error} classname="my-4" />;
   }
 
   return (

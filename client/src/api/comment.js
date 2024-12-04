@@ -9,9 +9,9 @@ export const addPostComment = async (postId, data, token) => {
   });
 };
 
-export const getPostComments = async (postId, token, page) => {
+export const getPostComments = async (postId, page, token) => {
   return await axiosInstance.get(
-    `/comments/getPostComments/${postId}?page=${page || 1}`,
+    `/comments/getPostComments/${postId}?page=${page}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,

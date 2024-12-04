@@ -6,7 +6,6 @@ import {
   House,
   KeyRound,
   Lock,
-  Search,
 } from "lucide-react";
 import {
   validateEmail,
@@ -96,12 +95,6 @@ export const sidebar = [
     path: "/",
     name: "Home",
     Icon: House,
-  },
-  {
-    id: 2,
-    path: "/search",
-    name: "Search",
-    Icon: Search,
   },
   {
     id: 3,

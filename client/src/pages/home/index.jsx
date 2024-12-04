@@ -13,7 +13,7 @@ export default function Home() {
   const [followText, setFollowText] = useState("");
   const [err, setError] = useState(null);
   const [activeBtn, setActiveBtn] = useState(0);
-  const { posts, loading, error, setData } = usePostStore();
+  const { posts, loading, error, setData, lastPostRef } = usePostStore();
   const { accessToken, user, setUser, handleLogout } = useAuthStore();
   const { data } = useFetch(suggestUsers, accessToken);
   const loggedInUser = user?.data;
@@ -70,9 +70,18 @@ export default function Home() {
                       <div className="text-center">Loading posts...</div>
                     }
                   >
-                    {posts.map((post) => (
-                      <Card key={post._id} post={post} setData={setData} />
-                    ))}
+                    {posts.map((post, index) => {
+                      const isLastPost = posts.length === index + 1;
+                      return (
+                        <Card
+                          key={post._id}
+                          post={post}
+                          setData={setData}
+                          isLastPost={isLastPost}
+                          lastPostRef={lastPostRef}
+                        />
+                      );
+                    })}
                   </Suspense>
                 </>
               )}
@@ -80,37 +89,47 @@ export default function Home() {
           </div>
           <div className="hidden md:block min-w-[30%] lg:min-w-[30%]">
             <div className="flex justify-between items-center mb-8">
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-3 items-center">
                 <div className="avatar placeholder">
                   <div className="w-12 rounded-full border-2">
                     {loggedInUser?.profilePicture ? (
-                      <img
-                        src={loggedInUser?.profilePicture}
-                        alt={loggedInUser?.username}
-                        loading="eager"
-                        decoding="async"
-                      />
+                      <Link to={`/${loggedInUser?.username}`}>
+                        <img
+                          src={loggedInUser?.profilePicture}
+                          alt={loggedInUser?.username}
+                          loading="eager"
+                          decoding="async"
+                        />
+                      </Link>
                     ) : (
-                      <span className="text-2xl">
-                        {loggedInUser?.username?.charAt(0)}
-                      </span>
+                      <Link to={`/${loggedInUser?.username}`}>
+                        <span className="text-2xl">
+                          {loggedInUser?.username?.charAt(0)}
+                        </span>
+                      </Link>
                     )}
                   </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold">
+                <div className="flex flex-col gap-1">
+                  <Link
+                    to={`/${loggedInUser?.username}`}
+                    className="text-sm font-semibold"
+                  >
                     {loggedInUser?.username}
-                  </p>
-                  <p className="text-sm font-semibold text-zinc-500">
+                  </Link>
+                  <Link
+                    to={`/${loggedInUser?.username}`}
+                    className="text-sm font-semibold text-zinc-500"
+                  >
                     {loggedInUser?.fullname}
-                  </p>
+                  </Link>
                 </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="btn btn-sm btn-outline btn-error focus:outline-none focus:text-white"
+                className="btn btn-sm border-accent focus:outline-none focus:text-white text-accent"
               >
-                Sign out
+                Log out
               </button>
             </div>
             <div className="flex flex-wrap justify-between items-center">
@@ -124,7 +143,7 @@ export default function Home() {
                 className="mt-4 flex justify-between items-center"
                 key={user._id}
               >
-                <div className="flex gap-4 items-center">
+                <div className="flex gap-3 items-center">
                   <div className="avatar placeholder">
                     <div className="w-[50px] h-[50px] rounded-full border-2">
                       <Link to={`/${user.username}`}>

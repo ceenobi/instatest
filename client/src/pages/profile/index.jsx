@@ -12,6 +12,7 @@ import { handleError } from "@/utils";
 import { sendVerifyEmailLink } from "@/api";
 import Followers from "./components/Followers";
 import Following from "./components/Following";
+import CreateStory from "./components/CreateStory";
 
 const Posts = lazy(() => import("./components/Posts"));
 
@@ -197,6 +198,10 @@ export default function Profile() {
                 </p>
               </div>
             </div>
+            <div className="my-8 text-center">
+              <CreateStory />
+              <p>Create story</p>
+            </div>
             <div className="divider m-0 md:hidden mt-4"></div>
             <div className="flex justify-between items-center md:hidden px-12 md:px-4">
               <div className="text-center">
@@ -235,7 +240,9 @@ export default function Profile() {
             ))}
           </div>
           {match ? (
-            <Suspense fallback={<div>Fetching posts..</div>}>
+            <Suspense
+              fallback={<div className="text-center">Fetching posts..</div>}
+            >
               <Posts accessToken={accessToken} profileId={userProfile?._id} />
             </Suspense>
           ) : (

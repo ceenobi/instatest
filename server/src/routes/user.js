@@ -21,6 +21,8 @@ router.get(
   UserController.getUserFollowing
 );
 
+router.get("/search", verifyAuth(Roles.All), UserController.searchUsers);
+
 router.patch(
   "/uploadProfilePic",
   verifyAuth(Roles.All),

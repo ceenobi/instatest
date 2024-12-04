@@ -80,14 +80,26 @@ export const createPost = async (req, res, next) => {
 };
 
 export const getAllPosts = async (req, res, next) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
   try {
     const posts = await Post.find()
       .populate("user", "username profilePicture")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const totalCount = await Post.countDocuments();
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
       posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalCount / limit),
+        totalPosts: totalCount,
+        hasMore: skip + posts.length < totalCount,
+      },
     });
   } catch (error) {
     next(error);

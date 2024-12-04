@@ -3,6 +3,7 @@ import { sidebar } from "@/utils";
 import { AlignJustify, Bookmark, Instagram, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import CreatePost from "./CreatePost";
+import Search from "./Search";
 
 export default function Sidebar() {
   const { user, handleLogout } = useAuthStore() || {};
@@ -21,11 +22,17 @@ export default function Sidebar() {
           >
             {({ isActive }) => (
               <span className={`mb-2 hover:bg-zinc-100 rounded-lg p-3`}>
-                <Icon size="28px" className={isActive ? "text-accent" : ""} />
+                <Icon size={28} className={isActive ? "text-accent" : ""} />
               </span>
             )}
           </NavLink>
         ))}
+        <div
+          className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
+          data-tip="Search users"
+        >
+          <Search />
+        </div>
         <div
           className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
           data-tip="New post"

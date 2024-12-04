@@ -1,8 +1,8 @@
 import { getPostsByTags } from "@/api/post";
 import { Alert, DataSpinner } from "@/components";
-import { useAuthStore } from "@/hooks";
+import { useAuthStore, useInfiniteScroll } from "@/hooks";
 import { handleError } from "@/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -13,27 +13,10 @@ export default function Tags() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const { lastPostRef } = useInfiniteScroll(loading, hasMore, setPage);
   const { accessToken } = useAuthStore();
-  const observer = useRef();
   const [searchParams] = useSearchParams();
-
   const tag = searchParams.get("tag");
-
-  const lastPostRef = useCallback(
-    (node) => {
-      if (loading) return;
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          setPage((prev) => prev + 1);
-        }
-      });
-
-      if (node) observer.current.observe(node);
-    },
-    [loading, hasMore]
-  );
 
   const fetchPosts = useCallback(async () => {
     if (!accessToken) return;
@@ -58,7 +41,7 @@ export default function Tags() {
     } finally {
       setLoading(false);
     }
-  }, [accessToken, page, tag]);
+  }, [accessToken, page, setHasMore, tag]);
 
   useEffect(() => {
     fetchPosts();
