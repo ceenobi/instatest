@@ -1,54 +1,120 @@
-import {
-  deleteFromCloudinary,
-  uploadToCloudinary,
-} from "../config/cloudinary.js";
 import Story from "../models/story.js";
 import User from "../models/user.js";
 import createHttpError from "http-errors";
 
 export const createStory = async (req, res, next) => {
   try {
-    const { images } = req.body;
-    const { id: userId } = req.user;
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      throw createHttpError(400, "At least one image is required");
-    }
-    const user = await User.findById(userId);
-    if (!user) {
-      return next(createHttpError(404, "User not found"));
-    }
-    if (!user.isVerified) {
-      return next(
-        createHttpError(403, "Please verify your email to create stories")
-      );
-    }
-    // Upload images to Cloudinary
-    const uploadPromises = images.map((image) =>
-      uploadToCloudinary(image, {
-        folder: "instapics/stories",
-        resource_type: "image",
-      })
-    );
+    const { media, caption } = req.body;
+    const userId = req.user.id;
 
-    const uploadResults = await Promise.all(uploadPromises);
-    const newStory = await Story.create({
-      images: uploadResults.map((result) => result.url),
-      imageIds: uploadResults.map((result) => result.public_id),
+    if (!media) {
+      throw createHttpError(400, "Media is required");
+    }
+
+    const story = await Story.create({
       user: userId,
+      media,
+      caption,
     });
+
     res.status(201).json({
       success: true,
       message: "Story created successfully",
-      story: newStory,
+      story,
     });
   } catch (error) {
-    if (error && uploadResults) {
-      await Promise.all(
-        uploadResults
-          .filter((result) => result && result.public_id)
-          .map((result) => deleteFromCloudinary(result.public_id))
-      );
+    next(error);
+  }
+};
+
+export const getUserStories = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const stories = await Story.find({ user: userId })
+      .populate("user", "username profilePicture")
+      .sort("-createdAt");
+
+    res.json({
+      success: true,
+      stories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowingStories = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      throw createHttpError(404, "User not found");
     }
+
+    const stories = await Story.find({
+      user: { $in: [...user.following, userId] },
+    })
+      .populate("user", "username profilePicture")
+      .sort("-createdAt");
+
+    res.json({
+      success: true,
+      stories,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const viewStory = async (req, res, next) => {
+  try {
+    const { storyId } = req.params;
+    const userId = req.user.id;
+
+    const story = await Story.findById(storyId);
+    
+    if (!story) {
+      throw createHttpError(404, "Story not found");
+    }
+
+    if (!story.viewers.includes(userId)) {
+      story.viewers.push(userId);
+      await story.save();
+    }
+
+    res.json({
+      success: true,
+      message: "Story viewed",
+      story,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteStory = async (req, res, next) => {
+  try {
+    const { storyId } = req.params;
+    const userId = req.user.id;
+
+    const story = await Story.findById(storyId);
+    
+    if (!story) {
+      throw createHttpError(404, "Story not found");
+    }
+
+    if (story.user.toString() !== userId) {
+      throw createHttpError(403, "Not authorized to delete this story");
+    }
+
+    await story.deleteOne();
+
+    res.json({
+      success: true,
+      message: "Story deleted successfully",
+    });
+  } catch (error) {
     next(error);
   }
 };

@@ -102,30 +102,27 @@ export default function Comments() {
   };
 
   useEffect(() => {
-    const getPost = posts.filter((p) => p._id === postId);
-    setIsLiked(getPost[0]?.likes?.includes(loggedInUser?._id));
-    setIsSaved(getPost[0]?.savedBy?.includes(loggedInUser?._id));
+    setIsLiked(post?.likes?.includes(loggedInUser?._id));
+    setIsSaved(post?.savedBy?.includes(loggedInUser?._id));
     setIsCommentLiked(
       commentsArray?.some((c) => c?.likes?.includes(loggedInUser?._id))
     );
-  }, [commentsArray, loggedInUser?._id, postId, posts]);
+  }, [
+    commentsArray,
+    loggedInUser?._id,
+    post?.likes,
+    post?.savedBy,
+    postId,
+    posts,
+  ]);
 
   const handleLikeFn = async () => {
-    const updatedLike = await handleLike(
-      postId,
-      accessToken,
-      setPostData,
-      setData
-    );
+    const updatedLike = await handleLike(postId, accessToken, setData);
     return updatedLike;
   };
 
   const handleSaveFn = async () => {
-    const updatedSavedPost = await handleSavePost(
-      postId,
-      accessToken,
-      setPostData
-    );
+    const updatedSavedPost = await handleSavePost(postId, accessToken, setData);
     return updatedSavedPost;
   };
 
@@ -134,8 +131,6 @@ export default function Comments() {
       commentId,
       accessToken,
       setData,
-      postId,
-      page,
       setCommentsArray
     );
     return updatedLikeComments;
@@ -146,9 +141,7 @@ export default function Comments() {
     const updatedComments = await handleDeleteComment(
       commentId,
       accessToken,
-      postId,
       setData,
-      page,
       setCommentsArray
     );
     setIsLoading(false);
@@ -178,6 +171,8 @@ export default function Comments() {
 
   if (error) return <Alert error={error} />;
   if (loading) return <DataSpinner />;
+
+  console.log(comments);
 
   return (
     <>

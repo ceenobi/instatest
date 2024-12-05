@@ -1,31 +1,30 @@
+import { useState, useRef } from "react";
+import { Plus } from "lucide-react";
 import { createStory } from "@/api/story";
-import { ActionButton, Alert, Modal } from "@/components";
 import { useAuthStore } from "@/hooks";
 import { handleError } from "@/utils";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
+import { Alert, Modal } from "@/components";
 
 export default function CreateStory() {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const [err, setErr] = useState(null);
-  const [status, setStatus] = useState("idle");
+  const fileInputRef = useRef(null);
+  const { accessToken } = useAuthStore();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm();
-  const { accessToken } = useAuthStore();
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setSelectedImages([]);
-    setErr(null);
-    reset();
-  };
+  //   const handleFileSelect = async (e) => {
+  //     const file = e.target.files?.[0];
+  //     if (!file) return;
+  //   };
 
   const handleImage = (e) => {
     const files = Array.from(e.target.files || []);
@@ -40,6 +39,16 @@ export default function CreateStory() {
       if (!file.type.startsWith("image/")) {
         setErr("Please upload only image files");
         return false;
+      }
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Please select an image file (JPEG, PNG, GIF, or WebP)");
+        return;
       }
       if (file.size > 5 * 1024 * 1024) {
         setErr("Image size should be less than 5MB");
@@ -65,44 +74,41 @@ export default function CreateStory() {
     });
   };
 
-  const onSubmit = async (data) => {
-    if (selectedImages.length === 0) {
-      setErr("Please select at least one image");
-      return;
-    }
-    try {
-      setStatus("loading");
-      const formData = {
-        ...data,
-        images: selectedImages.map(({ preview }) => preview),
-      };
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
 
-      await createStory(formData, accessToken);
-      setStatus("success");
-      handleClose();
-    } catch (error) {
-      handleError(setErr, error);
-      setStatus("error");
-    }
+  const handleOpen = () => {
+    setIsOpen(true);
+    handleClick();
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedImages([]);
+    setErr(null);
+    reset();
+  };
+
+  const onSubmit = async () => {
+    console.log("kk");
   };
 
   return (
     <>
-      <Helmet>
-        <title>Create Story - Instapics</title>
-        <meta name="description" content="Create a new story on Instapics" />
-      </Helmet>
-      <button
-        className="btn btn-circle bg-gray-300 text-white focus:outline-none"
-        onClick={() => setIsOpen(true)}
-      >
-        <Plus size={48}/>
-      </button>
+      <div className="relative inline-block">
+        <div
+          onClick={handleOpen}
+          className="w-16 h-16 rounded-full border-2 border-accent flex items-center justify-center cursor-pointer hover:bg-accent/10 transition-colors"
+        >
+          <Plus size={24} className="text-accent" />
+        </div>
+      </div>
       <Modal
         isOpen={isOpen}
         onClose={handleClose}
-        title="Create a Story"
-        id="create-story-modal"
+        title="Create Story"
+        id="create-storyModal"
         classname="max-w-2xl"
         selectedImages={selectedImages}
       >
@@ -150,20 +156,13 @@ export default function CreateStory() {
             </label>
             <input
               type="file"
-              name="images"
-              id="images"
+              ref={fileInputRef}
+              onChange={handleImage}
               accept="image/*"
               multiple
-              className="w-full max-w-xs h-full absolute top-0 inset-y-0 opacity-0  cursor-pointer"
-              onChange={handleImage}
+              className="hidden"
             />
           </div>
-          <ActionButton
-            text="Share"
-            type="submit"
-            loading={isSubmitting}
-            classname="w-full btn-sm btn-secondary mt-4"
-          />
         </form>
       </Modal>
     </>

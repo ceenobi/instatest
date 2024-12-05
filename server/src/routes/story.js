@@ -1,13 +1,19 @@
 import express from "express";
-import * as StoryController from "../controllers/story.js";
 import { verifyAuth, Roles } from "../middleware/verifyAuth.js";
+import {
+  createStory,
+  getUserStories,
+  viewStory,
+  deleteStory,
+  getFollowingStories
+} from "../controllers/story.js";
 
 const router = express.Router();
 
-router.post(
-    "/createStory",
-    verifyAuth(Roles.All),
-    StoryController.createStory
-);
+router.post("/", verifyAuth(Roles.All), createStory);
+router.get("/user/:userId", verifyAuth(Roles.All), getUserStories);
+router.get("/following", verifyAuth(Roles.All), getFollowingStories);
+router.patch("/:storyId/view", verifyAuth(Roles.All), viewStory);
+router.delete("/:storyId", verifyAuth(Roles.All), deleteStory);
 
 export default router;

@@ -1,33 +1,33 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const storySchema = new Schema(
+const storySchema = new mongoose.Schema(
   {
     user: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "User is required"],
+      required: true,
     },
-    images: {
-      type: [String],
-      required: [true, "Image is required"],
+    media: {
+      type: String,
+      required: true,
     },
-    likes: {
-      type: [Schema.Types.ObjectId],
+    caption: {
+      type: String,
+      trim: true,
+    },
+    viewers: [{
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: [],
-    },
-    imageIds: {
-      type: [String],
-    },
+    }],
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: "24h", // Automatically delete after 24 hours
-    },
+      expires: '24h', // TTL index - delete after 24 hours
+    }
   },
   { timestamps: true }
 );
 
-const Story = model("Story", storySchema);
+const Story = mongoose.model("Story", storySchema);
 
 export default Story;
