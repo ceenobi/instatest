@@ -1,21 +1,20 @@
 import { useState } from "react";
 import { seeWhoLiked } from "@/api/post";
-import { Alert, Modal } from "@/components";
 import { handleError, toggleFollowUser } from "@/utils";
+import { useAuthStore } from "@/hooks";
 import { Link } from "react-router-dom";
+import { Alert, Modal } from "@/components";
 
-export default function SeeWhoLiked({
-  post,
-  accessToken,
-  loggedInUser,
-  setUser,
-}) {
+export default function SeeWhoLiked({ post }) {
   const [isOpen, setIsOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [followText, setFollowText] = useState("");
   const [activeBtn, setActiveBtn] = useState(0);
   const [error, setError] = useState(null);
+  const { accessToken, user, setUser } = useAuthStore();
+  const { data } = user || {};
+  const loggedInUser = data || {};
 
   const fetchLikes = async () => {
     try {
@@ -42,6 +41,11 @@ export default function SeeWhoLiked({
     return res;
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setUsers([]);
+  };
+
   const handleOpen = () => {
     setIsOpen(true);
     fetchLikes();
@@ -50,13 +54,14 @@ export default function SeeWhoLiked({
   return (
     <>
       <button
-        className="font-semibold mt-2 hover:opacity-50 transition-opacity outline-none focus:outline-none"
+        className="font-semibold hover:opacity-50 transition-opacity outline-none focus:outline-none"
         onClick={handleOpen}
         title="See who liked this post"
       >
         {post.likes.length} {post.likes.length === 1 ? "like" : "likes"}
       </button>
-      <Modal title="Likes" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+
+      <Modal title="Likes" isOpen={isOpen} onClose={handleClose}>
         <div className="mt-4 min-h-[200px] max-h-[400px] overflow-y-auto">
           {error && <Alert error={error} classname="my-4" />}
           {!loading && !error && post?.likes?.length === 0 && (

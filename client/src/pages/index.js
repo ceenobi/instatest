@@ -13,6 +13,7 @@ import Comments from "./comments";
 import SavedPosts from "./profile/savedPosts";
 import Explore from "./explore";
 import Tags from "./explore/Tags";
+import Stories from "./stories";
 
 export {
   Login,
@@ -29,5 +30,6 @@ export {
   Comments,
   SavedPosts,
   Explore,
-  Tags
+  Tags,
+  Stories,
 };

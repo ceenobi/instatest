@@ -120,12 +120,16 @@ export const handleLikePost = async (req, res, next) => {
       post.likes.push(userId);
     }
     await post.save();
+    
+    // Populate user field before sending response
+    const populatedPost = await Post.findById(post._id).populate("user", "username profilePicture");
+    
     res.status(200).json({
       success: true,
-      message: post.likes.map((id) => id.toString()).includes(userId)
+      message: populatedPost.likes.map((id) => id.toString()).includes(userId)
         ? "Post liked successfully"
         : "Post unliked successfully",
-      post,
+      post: populatedPost,
     });
   } catch (error) {
     next(error);
@@ -169,12 +173,16 @@ export const handleSavePost = async (req, res, next) => {
       post.savedBy.push(userId);
     }
     await post.save();
+    
+    // Populate user field before sending response
+    const populatedPost = await Post.findById(post._id).populate("user", "username profilePicture");
+    
     res.status(200).json({
       success: true,
-      message: post.savedBy.map((id) => id.toString()).includes(userId)
+      message: populatedPost.savedBy.map((id) => id.toString()).includes(userId)
         ? "Post saved successfully"
         : "Post unsaved successfully",
-      post,
+      post: populatedPost,
     });
   } catch (error) {
     next(error);

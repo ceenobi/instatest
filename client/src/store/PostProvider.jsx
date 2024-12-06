@@ -1,6 +1,7 @@
+import { getFollowingStories } from "@/api/story";
 import { PostStore } from ".";
 import { getAllPosts } from "@/api/post";
-import { useAuthStore, useInfiniteScroll } from "@/hooks";
+import { useAuthStore, useFetch, useInfiniteScroll } from "@/hooks";
 import { handleError } from "@/utils";
 import { useCallback, useEffect, useState } from "react";
 
@@ -12,6 +13,12 @@ export const PostProvider = ({ children }) => {
   const [hasMore, setHasMore] = useState(true);
   const { lastPostRef } = useInfiniteScroll(loading, hasMore, setPage);
   const { accessToken } = useAuthStore();
+  const {
+    error: err,
+    loading: isLoading,
+    data: storyData,
+    setData: setStoryData,
+  } = useFetch(getFollowingStories, accessToken);
 
   const fetchPosts = useCallback(async () => {
     if (!accessToken) return;
@@ -66,12 +73,19 @@ export const PostProvider = ({ children }) => {
     });
   }, []);
 
+  const stories = storyData?.stories || [];
+
   const value = {
     posts,
     error,
     loading,
     setData,
     lastPostRef,
+    stories,
+    err,
+    isLoading,
+    setPosts,
+    setStoryData
   };
 
   return <PostStore.Provider value={value}>{children}</PostStore.Provider>;

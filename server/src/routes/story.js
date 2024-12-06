@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.post("/", verifyAuth(Roles.All), createStory);
+router.post("/create", verifyAuth(Roles.All), createStory);
 router.get("/user/:userId", verifyAuth(Roles.All), getUserStories);
 router.get("/following", verifyAuth(Roles.All), getFollowingStories);
 router.patch("/:storyId/view", verifyAuth(Roles.All), viewStory);

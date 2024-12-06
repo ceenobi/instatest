@@ -6,7 +6,7 @@ export const createStory = async (storyData, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  return await axiosInstance.post("/stories", storyData, config);
+  return await axiosInstance.post("/stories/create", storyData, config);
 };
 
 export const getUserStories = async (userId, token) => {

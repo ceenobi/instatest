@@ -4,7 +4,7 @@ import Skeleton from "./components/Skeleton";
 import { lazy, Suspense, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { suggestUsers } from "@/api/user";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toggleFollowUser } from "@/utils";
 
 const Card = lazy(() => import("./components/Card"));
@@ -12,8 +12,18 @@ const Card = lazy(() => import("./components/Card"));
 export default function Home() {
   const [followText, setFollowText] = useState("");
   const [err, setError] = useState(null);
+  const navigate = useNavigate();
   const [activeBtn, setActiveBtn] = useState(0);
-  const { posts, loading, error, setData, lastPostRef } = usePostStore();
+  const {
+    posts,
+    loading,
+    error,
+    setData,
+    lastPostRef,
+    stories,
+    err: storiesErr,
+    isLoading,
+  } = usePostStore();
   const { accessToken, user, setUser, handleLogout } = useAuthStore();
   const { data } = useFetch(suggestUsers, accessToken);
   const loggedInUser = user?.data;
@@ -34,6 +44,10 @@ export default function Home() {
     return res;
   };
 
+  const viewStory = (username, storyId) => {
+    navigate(`/stories/${username}/${storyId}`);
+  };
+  
   return (
     <>
       <Helmet>
@@ -44,16 +58,30 @@ export default function Home() {
         <div className="py-8 md:flex justify-between w-full min-h-dvh">
           <div className="lg:w-[60%]">
             <div className="mb-6 px-4 md:px-0 flex gap-4 overflow-auto">
-              <div className="avatar">
-                <div className="w-[50px] rounded-full border-2 border-accent">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+              {storiesErr && (
+                <p className="text-red-500 text-sm">{storiesErr}</p>
+              )}
+              {isLoading && (
+                <div className="flex gap-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div
+                      className="skeleton h-12 w-12 shrink-0 rounded-full"
+                      key={i}
+                    ></div>
+                  ))}
                 </div>
-              </div>
-              <div className="avatar">
-                <div className="w-[50px] rounded-full border-2 border-accent">
-                  <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-              </div>
+              )}
+              {stories.map((story) => (
+                <img
+                  key={story._id}
+                  src={story.media[0]}
+                  alt={story?.user?.username}
+                  className={`h-14 w-14 shrink-0 rounded-full border-2 ${!story.viewers.includes(loggedInUser?._id) && "border-accent"} cursor-pointer`}
+                  loading="eager"
+                  onClick={() => viewStory(story?.user?.username, story._id)}
+                  decoding="async"
+                />
+              ))}
             </div>
             <div className="md:max-w-[400px] lg:max-w-[400px] xl:max-w-[600px] mx-auto">
               {loading ? (

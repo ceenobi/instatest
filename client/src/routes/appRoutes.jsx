@@ -19,6 +19,7 @@ import {
   Profile,
   SavedPosts,
   Signup,
+  Stories,
   Tags,
   UpdatePassword,
   VerifyAccount,
@@ -146,7 +147,6 @@ const routes = [
     ],
   },
   {
-    path: "comments",
     element: (
       <Suspense fallback={<LazySpinner />}>
         <PrivateRoutes>
@@ -158,8 +158,12 @@ const routes = [
     ),
     children: [
       {
-        path: ":postId",
+        path: "comments/:postId",
         element: <Comments />,
+      },
+      {
+        path: "stories/:username/:storyId",
+        element: <Stories />,
       },
     ],
   },

@@ -1,30 +1,25 @@
 import { useState, useRef } from "react";
 import { Plus } from "lucide-react";
 import { createStory } from "@/api/story";
-import { useAuthStore } from "@/hooks";
+import { useAuthStore, usePostStore } from "@/hooks";
 import { handleError } from "@/utils";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { Alert, Modal } from "@/components";
+import { set, useForm } from "react-hook-form";
+import { ActionButton, Alert, Modal } from "@/components";
 
 export default function CreateStory() {
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const [err, setErr] = useState(null);
   const fileInputRef = useRef(null);
   const { accessToken } = useAuthStore();
+  const { setStoryData } = usePostStore();
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     reset,
   } = useForm();
-
-  //   const handleFileSelect = async (e) => {
-  //     const file = e.target.files?.[0];
-  //     if (!file) return;
-  //   };
 
   const handleImage = (e) => {
     const files = Array.from(e.target.files || []);
@@ -90,8 +85,27 @@ export default function CreateStory() {
     reset();
   };
 
-  const onSubmit = async () => {
-    console.log("kk");
+  const onSubmit = async (data) => {
+    const formData = {
+      ...data,
+      media: selectedImages.map(({ preview }) => preview),
+    };
+    try {
+      const res = await createStory(formData, accessToken);
+      if (res.status === 201) {
+        toast.success(res.data.message);
+        setStoryData((prev) => ({
+          ...prev,
+          stories: [res.data.story, ...(prev?.stories || [])],
+        }));
+        setSelectedImages([]);
+        setErr(null);
+        reset();
+        setIsOpen(false);
+      }
+    } catch (error) {
+      handleError(setErr, error);
+    }
   };
 
   return (
@@ -163,6 +177,23 @@ export default function CreateStory() {
               className="hidden"
             />
           </div>
+          <div className="form-control mt-2 text-start">
+            <label className="label">
+              <span className="label-text">Caption</span>
+            </label>
+            <input
+              type="text"
+              className="input input-bordered rounded-none"
+              placeholder="Add a caption (optional)"
+              {...register("caption")}
+            />
+          </div>
+          <ActionButton
+            text="Share"
+            type="submit"
+            loading={isSubmitting}
+            classname="w-full btn-sm btn-secondary mt-4"
+          />
         </form>
       </Modal>
     </>

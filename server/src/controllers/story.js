@@ -1,19 +1,43 @@
+import {
+  deleteFromCloudinary,
+  uploadToCloudinary,
+} from "../config/cloudinary.js";
 import Story from "../models/story.js";
 import User from "../models/user.js";
 import createHttpError from "http-errors";
 
 export const createStory = async (req, res, next) => {
+  let uploadResults;
   try {
     const { media, caption } = req.body;
-    const userId = req.user.id;
-
+    const { id: userId } = req.user;
     if (!media) {
       throw createHttpError(400, "Media is required");
     }
+    const user = await User.findById(userId);
+    if (!user) {
+      throw createHttpError(404, "User not found");
+    }
+
+    if (!user.isVerified) {
+      return next(
+        createHttpError(403, "Please verify your email to create a story")
+      );
+    }
+
+    const uploadPromises = media.map((image) =>
+      uploadToCloudinary(image, {
+        folder: "instapics/stories",
+        resource_type: "image",
+      })
+    );
+
+    uploadResults = await Promise.all(uploadPromises);
 
     const story = await Story.create({
       user: userId,
-      media,
+      media: uploadResults.map((result) => result.url),
+      mediaIds: uploadResults.map((result) => result.public_id),
       caption,
     });
 
@@ -23,6 +47,13 @@ export const createStory = async (req, res, next) => {
       story,
     });
   } catch (error) {
+    if (uploadResults?.length > 0) {
+      await Promise.all(
+        uploadResults
+          .filter((result) => result && result.public_id)
+          .map((result) => deleteFromCloudinary(result.public_id))
+      );
+    }
     next(error);
   }
 };
@@ -47,7 +78,7 @@ export const getFollowingStories = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
-    
+
     if (!user) {
       throw createHttpError(404, "User not found");
     }
@@ -72,21 +103,36 @@ export const viewStory = async (req, res, next) => {
     const { storyId } = req.params;
     const userId = req.user.id;
 
-    const story = await Story.findById(storyId);
-    
+    const story = await Story.findById(storyId).populate("user", "username profilePicture");
+
     if (!story) {
       throw createHttpError(404, "Story not found");
     }
 
-    if (!story.viewers.includes(userId)) {
-      story.viewers.push(userId);
-      await story.save();
+    // Check if the story is public or if the user is the owner
+    if (!story.isPublic && story.user._id.toString() !== userId) {
+      throw createHttpError(403, "This story is private");
     }
+
+    // Check if user has already viewed this story
+    if (story.viewers.includes(userId)) {
+      return res.json({
+        success: true,
+        message: "Story already viewed",
+        story,
+        hasViewed: true
+      });
+    }
+
+    // Add user to viewers and save
+    story.viewers.push(userId);
+    await story.save();
 
     res.json({
       success: true,
       message: "Story viewed",
       story,
+      hasViewed: false
     });
   } catch (error) {
     next(error);
@@ -99,7 +145,7 @@ export const deleteStory = async (req, res, next) => {
     const userId = req.user.id;
 
     const story = await Story.findById(storyId);
-    
+
     if (!story) {
       throw createHttpError(404, "Story not found");
     }

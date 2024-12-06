@@ -1,36 +1,33 @@
 import { likePost, savePost } from "@/api/post";
 import { toast } from "sonner";
 import handleError from "./handleError";
-import {
-  deleteComment,
-  toggleCommentLike,
-} from "@/api/comment";
+import { deleteComment, toggleCommentLike } from "@/api/comment";
 import { followUser } from "@/api/user";
 
-export const handleLike = async (postId, accessToken, setData) => {
+export const handleLike = async (postId, accessToken, setPosts) => {
   try {
     const res = await likePost(postId, accessToken);
     if (res.status === 200) {
       toast.success(res.data.message);
-      setData((prev) => ({
-        ...prev,
-        post: res.data.post,
-      }));
+      setPosts((prev) =>
+        prev.map((post) => (post._id === postId ? res.data.post : post))
+      );
+      return res.data.post;
     }
   } catch (error) {
     handleError(toast.error, error);
   }
 };
 
-export const handleSavePost = async (postId, accessToken, setData) => {
+export const handleSavePost = async (postId, accessToken, setPosts) => {
   try {
     const res = await savePost(postId, accessToken);
     if (res.status === 200) {
       toast.success(res.data.message);
-      setData((prev) => ({
-        ...prev,
-        post: res.data.post,
-      }));
+      setPosts((prev) =>
+        prev.map((post) => (post._id === postId ? res.data.post : post))
+      );
+      return res.data.post;
     }
   } catch (error) {
     handleError(toast.error, error);
@@ -95,7 +92,7 @@ export const toggleFollowUser = async (
   setError
 ) => {
   try {
-    setFollowText("Following...");
+    setFollowText("loading...");
     const res = await followUser(userId, accessToken);
     if (res.status === 200) {
       toast.success(res.data.message);

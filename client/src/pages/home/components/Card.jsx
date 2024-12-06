@@ -9,8 +9,8 @@ import Comments from "./Comments";
 import SeeWhoLiked from "./SeeWhoLiked";
 
 export default function Card({ post, isLastPost, lastPostRef }) {
-  const { accessToken, user, setUser } = useAuthStore();
-  const { setData } = usePostStore();
+  const { accessToken, user } = useAuthStore();
+  const { setPosts } = usePostStore();
   const [isLiked, setIsLiked] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const {
@@ -34,13 +34,17 @@ export default function Card({ post, isLastPost, lastPostRef }) {
   }, [loggedInUser?._id, post]);
 
   const handleLikeFn = async () => {
-    const updatedPost = await handleLike(post._id, accessToken, setData);
-    return updatedPost;
+    const updatedPost = await handleLike(post._id, accessToken, setPosts);
+    if (updatedPost) {
+      setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
+    }
   };
 
   const handleSaveFn = async () => {
-    const updatedPost = await handleSavePost(post._id, accessToken, setData);
-    return updatedPost;
+    const updatedPost = await handleSavePost(post._id, accessToken, setPosts);
+    if (updatedPost) {
+      setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
+    }
   };
 
   const searchTags = (tag) => {
@@ -154,12 +158,12 @@ export default function Card({ post, isLastPost, lastPostRef }) {
             >
               <Heart className={isLiked ? "fill-current" : ""} />
             </button>
-            <Link
-              to={`/comments/${post._id}`}
+            <button
               className="btn btn-ghost btn-circle btn-sm"
+              onClick={() => navigate(`/comments/${post._id}`)}
             >
               <MessageCircle />
-            </Link>
+            </button>
           </div>
           <button
             className={`btn btn-ghost btn-circle btn-sm focus:outline-none ${
@@ -176,12 +180,7 @@ export default function Card({ post, isLastPost, lastPostRef }) {
           </button>
         </div>
         <div className="space-y-1">
-          <SeeWhoLiked
-            post={post}
-            accessToken={accessToken}
-            loggedInUser={loggedInUser}
-            setUser={setUser}
-          />
+          <SeeWhoLiked post={post} />
           <div>
             <Link
               to={`/${post.user?.username}`}
@@ -194,7 +193,7 @@ export default function Card({ post, isLastPost, lastPostRef }) {
           {post.description && (
             <p className="text-gray-600 text-sm">{post.description}</p>
           )}
-          {post.tags.length > 0 && (
+          {post?.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag, index) => (
                 <span

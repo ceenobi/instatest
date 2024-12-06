@@ -8,22 +8,31 @@ const storySchema = new mongoose.Schema(
       required: true,
     },
     media: {
-      type: String,
+      type: [String],
       required: true,
+    },
+    mediaIds: {
+      type: [String],
     },
     caption: {
       type: String,
       trim: true,
     },
-    viewers: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    }],
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
+    viewers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: '24h', // TTL index - delete after 24 hours
-    }
+      expires: "24h", // TTL index - delete after 24 hours
+    },
   },
   { timestamps: true }
 );

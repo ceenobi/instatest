@@ -54,6 +54,7 @@ export default function Comments() {
     setCurrentIndex,
   } = useSlide({ post });
 
+  const getPost = posts.filter((p) => p._id === postId);
   const handleMoreCommments = () => {
     sethasMore(true);
     setPage((prev) => prev + 1);
@@ -82,6 +83,14 @@ export default function Comments() {
     }
   }, [comments]);
 
+  useEffect(() => {
+    setIsLiked(getPost[0]?.likes?.includes(loggedInUser?._id));
+    setIsSaved(getPost[0]?.savedBy?.includes(loggedInUser?._id));
+    setIsCommentLiked(
+      commentsArray?.some((c) => c?.likes?.includes(loggedInUser?._id))
+    );
+  }, [commentsArray, loggedInUser?._id, posts, postId, getPost]);
+
   const addComment = async (data) => {
     try {
       const res = await addPostComment(postId, data, accessToken);
@@ -101,29 +110,20 @@ export default function Comments() {
     }
   };
 
-  useEffect(() => {
-    setIsLiked(post?.likes?.includes(loggedInUser?._id));
-    setIsSaved(post?.savedBy?.includes(loggedInUser?._id));
-    setIsCommentLiked(
-      commentsArray?.some((c) => c?.likes?.includes(loggedInUser?._id))
-    );
-  }, [
-    commentsArray,
-    loggedInUser?._id,
-    post?.likes,
-    post?.savedBy,
-    postId,
-    posts,
-  ]);
-
   const handleLikeFn = async () => {
-    const updatedLike = await handleLike(postId, accessToken, setData);
-    return updatedLike;
+    const updatedPost = await handleLike(postId, accessToken, setPostData);
+    if (updatedPost) {
+      setPostData(updatedPost);
+      setIsLiked(updatedPost.likes.includes(loggedInUser?._id));
+    }
   };
 
   const handleSaveFn = async () => {
-    const updatedSavedPost = await handleSavePost(postId, accessToken, setData);
-    return updatedSavedPost;
+    const updatedPost = await handleSavePost(postId, accessToken, setPostData);
+    if (updatedPost) {
+      setPostData(updatedPost);
+      setIsSaved(updatedPost.savedBy.includes(loggedInUser?._id));
+    }
   };
 
   const handleLikeCommentFn = async (commentId) => {
@@ -172,15 +172,13 @@ export default function Comments() {
   if (error) return <Alert error={error} />;
   if (loading) return <DataSpinner />;
 
-  console.log(comments);
-
   return (
     <>
       <Helmet>
         <title>{`${post?.user?.username} post - ${post?.title}`}</title>
         <meta name="description" content="Instapics post" />
       </Helmet>
-      <div className="max-w-[1200px] mx-auto">
+      <div>
         <div className="my-4 bg-base-100 rounded-lg">
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-0">
             <div className="lg:px-4 lg:w-[60%] h-full carousel overflow-hidden">
@@ -478,7 +476,7 @@ export default function Comments() {
                   </div>
                 </div>
                 <p className="font-semibold mt-2">
-                  {post?.likes?.length} likes
+                  {getPost[0]?.likes?.length} likes
                 </p>
                 <TimeAgo
                   datetime={post?.createdAt}
