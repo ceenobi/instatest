@@ -187,7 +187,10 @@ export default function Profile() {
                       </button>
                     )}
                     <button
-                      className="btn btn-neutral btn-sm text-white focus:outline-none"
+                      className={`btn btn-neutral btn-sm text-white focus:outline-none ${
+                        loggedInUser?.isVerified === true &&
+                        "cursor-not-allowed"
+                      }`}
                       onClick={
                         loggedInUser?.isVerified === true
                           ? () => {}
@@ -219,8 +222,7 @@ export default function Profile() {
                   {userProfile?.fullname}
                 </h1>
                 <p className="text-sm">
-                  {userProfile?.bio ||
-                    "Tech lover, web developer, arts lover. #RealMadrid White"}
+                  {userProfile?.bio || "Like what you see? Come get at me!"}
                 </p>
               </div>
             </div>

@@ -6,7 +6,11 @@ export default function ViewPost() {
   const match = useMatch("/stories/:id/:status");
   return (
     <div className="max-w-[1200px] mx-auto py-6">
-      <div className="px-4 sticky top-0 z-40 flex justify-between bg-inherit">
+      <div
+        className={`px-4 sticky top-0 z-40 flex justify-between ${
+          match ? "bg-black" : "bg-white"
+        }`}
+      >
         <Link
           to="/"
           className={`text-center text-3xl font-bold mb-8 text-logo ${
