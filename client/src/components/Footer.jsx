@@ -1,11 +1,16 @@
 import { sidebar } from "@/utils";
 import { NavLink } from "react-router-dom";
 import Search from "./Search";
-import { useAuthStore } from "@/hooks";
+import { useAuthStore, usePostStore } from "@/hooks";
 import Menu from "./Menu";
 
 export default function Footer() {
   const { user } = useAuthStore() || {};
+  const { stories } = usePostStore();
+
+  const getUserStories = stories.filter((story) => {
+    return story.user._id === user?.data?._id;
+  });
   const links = ["Home", "Explore"];
 
   return (
@@ -25,7 +30,11 @@ export default function Footer() {
         <Search />
         <NavLink to={`/${user?.data?.username}`}>
           <div className="avatar placeholder">
-            <div className="w-8 rounded-full border-2">
+            <div
+              className={`w-8 rounded-full border-2 ${
+                getUserStories.length > 0 ? "border-accent" : ""
+              }`}
+            >
               {user?.data?.profilePicture ? (
                 <img
                   src={user?.data?.profilePicture}

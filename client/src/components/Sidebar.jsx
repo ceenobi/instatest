@@ -8,15 +8,11 @@ import { usePostStore } from "@/hooks";
 
 export default function Sidebar() {
   const { user, handleLogout } = useAuthStore() || {};
-  const { storyData } = usePostStore();
-  const stories = storyData?.stories || [];
+  const { stories } = usePostStore();
 
   const getUserStories = stories.filter((story) => {
     return story.user._id === user?.data?._id;
   });
-  console.log("ss", storyData);
-
-  console.log(getUserStories);
 
   return (
     <div className="py-8 px-[8px] flex flex-col h-[100%] justify-between items-center">
@@ -55,7 +51,11 @@ export default function Sidebar() {
           to={`/${user?.data?.username}`}
         >
           <div className="avatar placeholder">
-            <div className="w-12 rounded-full border-2">
+            <div
+              className={`w-12 rounded-full border-2 ${
+                getUserStories.length > 0 ? "border-accent" : ""
+              }`}
+            >
               {user?.data?.profilePicture ? (
                 <img
                   src={user?.data?.profilePicture}

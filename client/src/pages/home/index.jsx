@@ -60,7 +60,7 @@ export default function Home() {
         <div className="py-4 md:py-8 md:flex justify-between w-full min-h-dvh">
           <div className="lg:w-[60%]">
             <div className="relative flex gap-4 px-4 md:px-0">
-            <CreateStory />
+              <CreateStory />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
                 <button
                   onClick={() => handleScroll("left")}
@@ -75,7 +75,6 @@ export default function Home() {
                 ref={storiesContainerRef}
                 className="mb-6 px-4 md:px-0 flex gap-4 overflow-auto scrollbar-hide"
               >
-              
                 {storiesErr && (
                   <p className="text-red-500 text-sm">{storiesErr}</p>
                 )}
@@ -90,18 +89,22 @@ export default function Home() {
                   </div>
                 )}
                 {stories.map((story) => (
-                  <img
-                    key={story._id}
-                    src={story.media[0]}
-                    alt={story?.user?.username}
-                    className={`h-14 w-14 shrink-0 rounded-full border-2 ${
-                      !story.viewers.includes(loggedInUser?._id) &&
-                      "border-accent"
-                    } cursor-pointer`}
-                    loading="eager"
-                    onClick={() => viewStory(story?.user?.username, story._id)}
-                    decoding="async"
-                  />
+                  <div key={story._id} className="flex flex-col items-center">
+                    <img
+                      src={story.media[0]}
+                      alt={story?.user?.username}
+                      className={`h-14 w-14 shrink-0 rounded-full border-2 ${
+                        !story.viewers.includes(loggedInUser?._id) &&
+                        "border-accent"
+                      } cursor-pointer`}
+                      loading="eager"
+                      onClick={() =>
+                        viewStory(story?.user?.username, story._id)
+                      }
+                      decoding="async"
+                    />
+                    <p className="text-sm font-bold">{story?.user?.username}</p>
+                  </div>
                 ))}
               </div>
 

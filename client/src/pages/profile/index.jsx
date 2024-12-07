@@ -276,8 +276,8 @@ export default function Profile() {
                         title="View story"
                       />
                       <p className="font-bold mt-2">
-                        {story.caption?.length > 20
-                          ? `${story.caption.slice(0, 20)}...`
+                        {story.caption?.length > 13
+                          ? `${story.caption.slice(0, 13)}...`
                           : story.caption}
                       </p>
                     </div>

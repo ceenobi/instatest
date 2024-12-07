@@ -59,9 +59,9 @@ export default function Search() {
     <>
       <SearchIcon size={28} onClick={handleOpen} className={`cursor-pointer ${isOpen ? "text-accent" : ""}`} />
       <div
-        className={`drawer fixed top-0 left-[80px] ${
+        className={`drawer fixed top-0 md:left-[80px] z-40 ${
           isOpen ? "drawer-open" : ""
-        } z-20`}
+        }`}
       >
         <input
           type="checkbox"
@@ -78,7 +78,7 @@ export default function Search() {
             ref={drawerRef}
             className="menu w-80 h-screen bg-base-200 text-base-content p-4"
           >
-            <div className="mb-4">
+            <div className="mt-20 md:mt-0 mb-4">
               <input
                 type="search"
                 ref={inputRef}
