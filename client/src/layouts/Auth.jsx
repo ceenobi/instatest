@@ -15,22 +15,24 @@ export default function Auth() {
     <div className="flex flex-col justify-between min-h-dvh">
       <div>
         <div className="max-w-[800px] py-8 mx-auto md:flex justify-center">
-          {location.pathname === "/auth/login" && (
-            <div className="hidden lg:block max-w-[400px] mx-auto">
-              <img
-                src={authHeroPic}
-                className="w-full h-[600px] object-cover"
-                alt="auth"
-                loading="eager"
-              />
-            </div>
-          )}
+          <div>
+            {location.pathname === "/auth/login" && (
+              <div className="hidden lg:block w-[400px] mx-auto">
+                <img
+                  src={authHeroPic}
+                  className="w-[400px] h-[600px] object-cover"
+                  alt="auth"
+                  loading="eager"
+                />
+              </div>
+            )}
+          </div>
+
           <div className="max-w-[350px] mx-auto w-full">
             <div className="border-[1.5px] border-gray-200 py-6">
               <h1
                 className="text-center text-3xl font-bold mb-8 text-logo"
                 onClick={redirect}
-                role="button"
               >
                 Instapics
               </h1>
