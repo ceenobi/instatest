@@ -1,5 +1,5 @@
 import { useAuthStore, useFetch, usePostStore, useScroll } from "@/hooks";
-import { Alert } from "@/components";
+import { Alert, CreateStory } from "@/components";
 import Skeleton from "./components/Skeleton";
 import { lazy, Suspense, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -57,9 +57,10 @@ export default function Home() {
         <meta name="description" content="Instapics Home" />
       </Helmet>
       <div className="max-w-[1200px] mx-auto ">
-        <div className="py-8 md:flex justify-between w-full min-h-dvh">
+        <div className="py-4 md:py-8 md:flex justify-between w-full min-h-dvh">
           <div className="lg:w-[60%]">
-            <div className="relative">
+            <div className="relative flex gap-4 px-4 md:px-0">
+            <CreateStory />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
                 <button
                   onClick={() => handleScroll("left")}
@@ -74,6 +75,7 @@ export default function Home() {
                 ref={storiesContainerRef}
                 className="mb-6 px-4 md:px-0 flex gap-4 overflow-auto scrollbar-hide"
               >
+              
                 {storiesErr && (
                   <p className="text-red-500 text-sm">{storiesErr}</p>
                 )}

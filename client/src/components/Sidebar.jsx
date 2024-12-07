@@ -1,16 +1,27 @@
 import { useAuthStore } from "@/hooks";
 import { sidebar } from "@/utils";
-import { AlignJustify, Bookmark, Instagram, Settings } from "lucide-react";
+import { AlignJustify, Bookmark, ImageUp, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import CreatePost from "./CreatePost";
 import Search from "./Search";
+import { usePostStore } from "@/hooks";
 
 export default function Sidebar() {
   const { user, handleLogout } = useAuthStore() || {};
+  const { storyData } = usePostStore();
+  const stories = storyData?.stories || [];
+
+  const getUserStories = stories.filter((story) => {
+    return story.user._id === user?.data?._id;
+  });
+  console.log("ss", storyData);
+
+  console.log(getUserStories);
+
   return (
     <div className="py-8 px-[8px] flex flex-col h-[100%] justify-between items-center">
       <NavLink to="/" className="tooltip tooltip-right" data-tip="Instapics">
-        <Instagram size="28px" />
+        <ImageUp size="28px" />
       </NavLink>
       <div>
         {sidebar.map(({ id, path, name, Icon }) => (

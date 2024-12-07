@@ -44,7 +44,7 @@ export default function UpdatePassword() {
         <h1 className="text-2xl font-bold mb-8 px-3">Update password</h1>
         {error && <Alert error={error} classname="my-4" />}
         <form
-          className="w-[85vw] md:w-[400px] p-3"
+          className="w-[85vw] md:w-[400px] p-3 mx-auto"
           onSubmit={handleSubmit(onSubmit)}
         >
           {inputFields

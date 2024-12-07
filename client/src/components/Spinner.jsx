@@ -1,9 +1,9 @@
-import { Instagram } from "lucide-react";
+import { ImageUp } from "lucide-react";
 
 export function LazySpinner() {
   return (
     <div className="flex justify-center items-center h-screen">
-      <Instagram size="68px" className="text-accent" />
+      <ImageUp size="68px" className="text-accent" />
     </div>
   );
 }

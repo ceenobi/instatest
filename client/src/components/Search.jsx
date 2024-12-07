@@ -57,8 +57,7 @@ export default function Search() {
 
   return (
     <>
-      <SearchIcon size={28} onClick={handleOpen} className="cursor-pointer" />
-
+      <SearchIcon size={28} onClick={handleOpen} className={`cursor-pointer ${isOpen ? "text-accent" : ""}`} />
       <div
         className={`drawer fixed top-0 left-[80px] ${
           isOpen ? "drawer-open" : ""

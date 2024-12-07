@@ -24,7 +24,7 @@ import { handleError } from "@/utils";
 import { sendVerifyEmailLink } from "@/api";
 import Followers from "./components/Followers";
 import Following from "./components/Following";
-import CreateStory from "./components/CreateStory";
+import CreateStory from "../../components/CreateStory";
 import { getUserStories } from "@/api/story";
 
 const Posts = lazy(() => import("./components/Posts"));
@@ -224,19 +224,19 @@ export default function Profile() {
                 </p>
               </div>
             </div>
-            <div className="my-8 flex gap-4 px-4 md:px-0">
+            <div className="my-8 flex gap-4 px-4 md:px-0 items-center">
               <div className="w-[120px] text-center">
                 <CreateStory />
                 <p className="mt-2">Create story</p>
               </div>
-              <div className="relative w-full">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+              <div className="relative w-full md:mt-6">
+                <div className="absolute left-0 top-[25%] -translate-y-1/2 z-10">
                   <button
                     onClick={() => handleScroll("left")}
                     className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
                     style={{ display: scrollPosition <= 0 ? "none" : "block" }}
                   >
-                    <ChevronLeft size={20} />
+                    <ChevronLeft size={12} />
                   </button>
                 </div>
                 <div
@@ -267,7 +267,7 @@ export default function Profile() {
                       <img
                         src={story.media[0]}
                         alt={story?.user?.username}
-                        className={`h-16 w-16 shrink-0 rounded-full border-2 hover:border-2 hover:border-neutral ${
+                        className={`h-14 w-14 shrink-0 rounded-full border-2 hover:border-2 hover:border-neutral ${
                           !story.viewers.includes(loggedInUser?._id) &&
                           "border-accent"
                         } cursor-pointer`}
@@ -283,7 +283,7 @@ export default function Profile() {
                     </div>
                   ))}
                 </div>
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+                <div className="absolute right-0 top-[25%] -translate-y-1/2 z-10">
                   <button
                     onClick={() => handleScroll("right")}
                     className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
@@ -297,7 +297,7 @@ export default function Profile() {
                           : "block",
                     }}
                   >
-                    <ChevronRight size={18} />
+                    <ChevronRight size={12} />
                   </button>
                 </div>
               </div>

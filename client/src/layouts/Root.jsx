@@ -1,4 +1,4 @@
-import { Nav, Sidebar } from "@/components";
+import { Footer, Nav, Sidebar } from "@/components";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 
 export default function Root() {
@@ -18,6 +18,7 @@ export default function Root() {
           />
         </div>
       </div>
+      <Footer />
     </main>
   );
 }
