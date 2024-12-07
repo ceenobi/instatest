@@ -4,6 +4,7 @@ import useFetch from "./useFetch";
 import useSlide from "./useSlide";
 import useInfiniteScroll from "./useInfiniteScroll";
 import useScroll from "./useScroll";
+import useClickOutside from "./useClickOutside";
 
 export {
   useLocalStorage,
@@ -13,4 +14,5 @@ export {
   useSlide,
   useInfiniteScroll,
   useScroll,
+  useClickOutside,
 };

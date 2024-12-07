@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import Post from "../models/post.js";
 import Comment from "../models/comment.js";
+import Story from "../models/story.js";
+import Notification from "../models/notification.js";
 import {
   deleteFromCloudinary,
   uploadToCloudinary,
@@ -190,6 +192,13 @@ export const followUser = async (req, res, next) => {
     }
     await followedUser.save();
     await user.save();
+    if (user.following.map((id) => id.toString()).includes(followerId)) {
+      await Notification.create({
+        recipient: followerId,
+        sender: userId,
+        type: "follow",
+      });
+    }
     res.status(200).json({
       success: true,
       message: user.following.map((id) => id.toString()).includes(followerId)

@@ -6,6 +6,7 @@ import {
   deleteFromCloudinary,
 } from "../config/cloudinary.js";
 import Comment from "../models/comment.js";
+import Notification from "../models/notification.js";
 
 export const createPost = async (req, res, next) => {
   const { title, description, images, tags } = req.body;
@@ -118,6 +119,15 @@ export const handleLikePost = async (req, res, next) => {
       post.likes = post.likes.filter((id) => id.toString() !== userId);
     } else {
       post.likes.push(userId);
+      // Create notification if the post is not by the same user
+      if (post.user.toString() !== userId) {
+        await Notification.create({
+          recipient: post.user,
+          sender: userId,
+          type: "like",
+          post: post._id,
+        });
+      }
     }
     await post.save();
 

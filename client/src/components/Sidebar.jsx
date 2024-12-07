@@ -4,6 +4,7 @@ import { AlignJustify, Bookmark, ImageUp, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import CreatePost from "./CreatePost";
 import Search from "./Search";
+import NotificationBell from "./NotificationBell";
 import { usePostStore } from "@/hooks";
 
 export default function Sidebar() {
@@ -20,7 +21,7 @@ export default function Sidebar() {
         <ImageUp size="28px" />
       </NavLink>
       <div>
-        {sidebar.map(({ id, path, name, Icon }) => (
+      {sidebar.map(({ id, path, name, Icon }) => (
           <NavLink
             key={id}
             className="tooltip tooltip-right flex flex-col justify-center items-center"
@@ -34,18 +35,19 @@ export default function Sidebar() {
             )}
           </NavLink>
         ))}
-        <div
-          className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
-          data-tip="Search users"
-        >
+        <div className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer" data-tip="Search">
           <Search />
         </div>
-        <div
-          className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
-          data-tip="New post"
-        >
+        <div className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer" data-tip="Notifications">
+          <NotificationBell />
+        </div>
+        <div className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer" data-tip="Create post">
           <CreatePost />
         </div>
+        {/* <div
+          className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
+          data-tip="Search users"
+        ></div> */}
         <NavLink
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
           to={`/${user?.data?.username}`}

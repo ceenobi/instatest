@@ -11,6 +11,7 @@ import userRoutes from "./routes/user.js";
 import postRoutes from "./routes/post.js";
 import commentRoutes from "./routes/comment.js";
 import storyRoutes from "./routes/story.js";
+import notificationRoutes from "./routes/notification.js";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/stories", storyRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use((req, res, next) => {
   return next(createHttpError(404, "Endpoint not found"));

@@ -2,7 +2,6 @@ import {
   BadgeCheck,
   BadgeX,
   Compass,
-  Heart,
   House,
   KeyRound,
   Lock,
@@ -97,16 +96,10 @@ export const sidebar = [
     Icon: House,
   },
   {
-    id: 3,
+    id: 2,
     path: "/explore",
     name: "Explore",
     Icon: Compass,
-  },
-  {
-    id: 4,
-    path: "/favorites",
-    name: "Likes",
-    Icon: Heart,
   },
 ];
 

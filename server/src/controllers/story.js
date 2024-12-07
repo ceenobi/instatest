@@ -4,6 +4,7 @@ import {
 } from "../config/cloudinary.js";
 import Story from "../models/story.js";
 import User from "../models/user.js";
+import Notification from "../models/notification.js";
 import createHttpError from "http-errors";
 
 export const createStory = async (req, res, next) => {
@@ -130,6 +131,16 @@ export const viewStory = async (req, res, next) => {
     // Add user to viewers and save
     story.viewers.push(userId);
     await story.save();
+
+    // Create notification if the story is not by the same user
+    if (story.user.toString() !== userId) {
+      await Notification.create({
+        recipient: story.user,
+        sender: userId,
+        type: "story_view",
+        story: story._id
+      });
+    }
 
     res.json({
       success: true,
