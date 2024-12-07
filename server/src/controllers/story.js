@@ -103,7 +103,10 @@ export const viewStory = async (req, res, next) => {
     const { storyId } = req.params;
     const userId = req.user.id;
 
-    const story = await Story.findById(storyId).populate("user", "username profilePicture");
+    const story = await Story.findById(storyId).populate(
+      "user",
+      "username profilePicture"
+    );
 
     if (!story) {
       throw createHttpError(404, "Story not found");
@@ -120,7 +123,7 @@ export const viewStory = async (req, res, next) => {
         success: true,
         message: "Story already viewed",
         story,
-        hasViewed: true
+        hasViewed: true,
       });
     }
 
@@ -132,7 +135,7 @@ export const viewStory = async (req, res, next) => {
       success: true,
       message: "Story viewed",
       story,
-      hasViewed: false
+      hasViewed: false,
     });
   } catch (error) {
     next(error);
@@ -154,11 +157,54 @@ export const deleteStory = async (req, res, next) => {
       throw createHttpError(403, "Not authorized to delete this story");
     }
 
+    // Delete media from Cloudinary
+    if (story.mediaIds && story.mediaIds.length > 0) {
+      const deletePromises = story.mediaIds.map((mediaId) =>
+        deleteFromCloudinary(mediaId)
+      );
+      await Promise.all(deletePromises);
+    }
+
     await story.deleteOne();
 
     res.json({
       success: true,
       message: "Story deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const likeStory = async (req, res, next) => {
+  try {
+    const { storyId } = req.params;
+    const userId = req.user.id;
+
+    const story = await Story.findById(storyId);
+
+    if (!story) {
+      throw createHttpError(404, "Story not found");
+    }
+
+    // Check if user has already liked this story
+    if (story.likes.includes(userId)) {
+      return res.json({
+        success: true,
+        message: "Story already liked",
+        story,
+        hasLiked: true,
+      });
+    }
+    // Add user to likes and save
+    story.likes.push(userId);
+    await story.save();
+
+    res.json({
+      success: true,
+      message: "Story liked",
+      story,
+      hasLiked: false,
     });
   } catch (error) {
     next(error);

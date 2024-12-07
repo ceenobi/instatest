@@ -4,7 +4,7 @@ import { createStory } from "@/api/story";
 import { useAuthStore, usePostStore } from "@/hooks";
 import { handleError } from "@/utils";
 import { toast } from "sonner";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ActionButton, Alert, Modal } from "@/components";
 
 export default function CreateStory() {

@@ -28,10 +28,16 @@ const storySchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: "24h", // TTL index - delete after 24 hours
+      expires: "24h",
     },
   },
   { timestamps: true }

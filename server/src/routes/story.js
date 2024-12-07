@@ -5,7 +5,8 @@ import {
   getUserStories,
   viewStory,
   deleteStory,
-  getFollowingStories
+  getFollowingStories,
+  likeStory,
 } from "../controllers/story.js";
 
 const router = express.Router();
@@ -14,6 +15,7 @@ router.post("/create", verifyAuth(Roles.All), createStory);
 router.get("/user/:userId", verifyAuth(Roles.All), getUserStories);
 router.get("/following", verifyAuth(Roles.All), getFollowingStories);
 router.patch("/:storyId/view", verifyAuth(Roles.All), viewStory);
+router.patch("/like/:storyId", verifyAuth(Roles.All), likeStory);
 router.delete("/:storyId", verifyAuth(Roles.All), deleteStory);
 
 export default router;

@@ -44,3 +44,12 @@ export const deleteStory = async (storyId, token) => {
   };
   return await axiosInstance.delete(`/stories/${storyId}`, config);
 };
+
+export const likeStory = async (storyId, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await axiosInstance.patch(`/stories/like/${storyId}`, {}, config);
+};

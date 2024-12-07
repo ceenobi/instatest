@@ -120,10 +120,13 @@ export const handleLikePost = async (req, res, next) => {
       post.likes.push(userId);
     }
     await post.save();
-    
+
     // Populate user field before sending response
-    const populatedPost = await Post.findById(post._id).populate("user", "username profilePicture");
-    
+    const populatedPost = await Post.findById(post._id).populate(
+      "user",
+      "username profilePicture"
+    );
+
     res.status(200).json({
       success: true,
       message: populatedPost.likes.map((id) => id.toString()).includes(userId)
@@ -173,10 +176,13 @@ export const handleSavePost = async (req, res, next) => {
       post.savedBy.push(userId);
     }
     await post.save();
-    
+
     // Populate user field before sending response
-    const populatedPost = await Post.findById(post._id).populate("user", "username profilePicture");
-    
+    const populatedPost = await Post.findById(post._id).populate(
+      "user",
+      "username profilePicture"
+    );
+
     res.status(200).json({
       success: true,
       message: populatedPost.savedBy.map((id) => id.toString()).includes(userId)
@@ -212,9 +218,19 @@ export const deletePost = async (req, res, next) => {
     if (!post) {
       return next(createHttpError(404, "Post not found"));
     }
-    await deleteFromCloudinary(post.imageIds);
+
+    // Delete images from Cloudinary
+    if (post.imageIds && post.imageIds.length > 0) {
+      const deletePromises = post.imageIds.map((imageId) =>
+        deleteFromCloudinary(imageId)
+      );
+      await Promise.all(deletePromises);
+    }
+
+    // Delete post and associated comments
     await Post.findByIdAndDelete(postId);
     await Comment.deleteMany({ post: postId });
+
     res.status(200).json({
       success: true,
       message: "Post deleted successfully",

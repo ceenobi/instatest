@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import Modal from "./Modal";
-import { useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { handleError, inputFields } from "@/utils";
 import { FormInput } from "./FormField";
 import { createPost } from "@/api/post";
@@ -27,7 +27,7 @@ export default function CreatePost() {
     reset,
   } = useForm();
   const { accessToken } = useAuthStore();
-  const { setData } = usePostStore();
+  const { setPosts } = usePostStore();
   const navigate = useNavigate();
 
   const handleImage = (e) => {
@@ -102,11 +102,8 @@ export default function CreatePost() {
 
       const res = await createPost(formData, accessToken, setUploadProgress);
       if (res.status === 201) {
-        // Update the posts data in the store
-        setData((prev) => ({
-          ...prev,
-          posts: [res.data.post, ...(prev?.posts || [])],
-        }));
+        // Update the posts data in the store with new post at the beginning
+        setPosts((prevPosts) => [res.data.post, ...prevPosts]);
         setSelectedImages([]);
         setTags([]);
         reset();

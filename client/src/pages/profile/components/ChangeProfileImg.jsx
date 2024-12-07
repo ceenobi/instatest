@@ -11,6 +11,7 @@ export default function ChangeProfileImg({
   setData,
   data,
   loggedInUser,
+  storyData,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [err, setErr] = useState(null);
@@ -23,6 +24,7 @@ export default function ChangeProfileImg({
     reset,
     formState: { errors, isSubmitting },
   } = useForm();
+  const stories = storyData?.stories || [];
 
   const handleImage = (e) => {
     const file = e.target.files?.[0];
@@ -120,7 +122,11 @@ export default function ChangeProfileImg({
         }
       >
         <div className="avatar placeholder">
-          <div className="w-20 md:w-[160px] rounded-full border-2">
+          <div
+            className={`w-20 md:w-[160px] rounded-full  ${
+              stories?.length > 0 ? "border-accent border-4" : "border-2"
+            }`}
+          >
             {data?.profilePicture ? (
               <img
                 src={data?.profilePicture}

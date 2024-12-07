@@ -1,11 +1,23 @@
 import { followUser, getUser } from "@/api/user";
 import { Alert, DataSpinner } from "@/components";
-import { useAuthStore, useFetch } from "@/hooks";
+import { useAuthStore, useFetch, useScroll } from "@/hooks";
 import { Helmet } from "react-helmet-async";
-import { NavLink, Outlet, useMatch, useParams } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useMatch,
+  useParams,
+  useNavigate,
+} from "react-router-dom";
 import ChangeProfileImg from "./components/ChangeProfileImg";
 import UpdateProfile from "./components/UpdateProfile";
-import { Bookmark, CheckCheck, Grid3x3 } from "lucide-react";
+import {
+  Bookmark,
+  CheckCheck,
+  ChevronLeft,
+  ChevronRight,
+  Grid3x3,
+} from "lucide-react";
 import { lazy, Suspense, useState } from "react";
 import { toast } from "sonner";
 import { handleError } from "@/utils";
@@ -13,6 +25,7 @@ import { sendVerifyEmailLink } from "@/api";
 import Followers from "./components/Followers";
 import Following from "./components/Following";
 import CreateStory from "./components/CreateStory";
+import { getUserStories } from "@/api/story";
 
 const Posts = lazy(() => import("./components/Posts"));
 
@@ -20,14 +33,22 @@ export default function Profile() {
   const { profile } = useParams();
   const [followText, setFollowText] = useState("");
   const match = useMatch(`/${profile}`);
+  const navigate = useNavigate();
   const { accessToken, setUser, user } = useAuthStore();
   const { error, loading, data, setData } = useFetch(
     getUser,
     profile,
     accessToken
   );
+  const {
+    err: storyErr,
+    loading: storyLoading,
+    data: storyData,
+  } = useFetch(getUserStories, data.user?._id, accessToken);
+  const { storiesContainerRef, scrollPosition, handleScroll } = useScroll();
   const { data: loggedInUser } = user || {};
   const userProfile = data?.user;
+  const stories = storyData?.stories || [];
 
   const profileLinks = [
     {
@@ -77,6 +98,10 @@ export default function Profile() {
     }
   };
 
+  const viewStory = (username, storyId) => {
+    navigate(`/stories/${username}/${storyId}`);
+  };
+
   return (
     <>
       <Helmet>
@@ -98,6 +123,7 @@ export default function Profile() {
                     setData={setData}
                     data={userProfile}
                     loggedInUser={loggedInUser}
+                    storyData={storyData}
                   />
                   <div className="md:hidden">
                     <h1 className="text-xl font-bold">{profile}</h1>
@@ -198,9 +224,83 @@ export default function Profile() {
                 </p>
               </div>
             </div>
-            <div className="my-8 text-center">
-              <CreateStory />
-              <p>Create story</p>
+            <div className="my-8 flex gap-4 px-4 md:px-0">
+              <div className="w-[120px] text-center">
+                <CreateStory />
+                <p className="mt-2">Create story</p>
+              </div>
+              <div className="relative w-full">
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+                  <button
+                    onClick={() => handleScroll("left")}
+                    className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                    style={{ display: scrollPosition <= 0 ? "none" : "block" }}
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                </div>
+                <div
+                  ref={storiesContainerRef}
+                  className="w-full mb-6 px-4 md:px-0 flex gap-4 overflow-auto scrollbar-hide"
+                >
+                  {storyErr && (
+                    <p className="text-red-500 text-sm">{storyErr}</p>
+                  )}
+                  {storyLoading && (
+                    <div className="flex gap-4">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div
+                          className="skeleton h-12 w-12 shrink-0 rounded-full"
+                          key={i}
+                        ></div>
+                      ))}
+                    </div>
+                  )}
+                  {stories.map((story) => (
+                    <div
+                      key={story._id}
+                      className="flex flex-col justify-center items-center"
+                      onClick={() =>
+                        viewStory(story?.user?.username, story._id)
+                      }
+                    >
+                      <img
+                        src={story.media[0]}
+                        alt={story?.user?.username}
+                        className={`h-16 w-16 shrink-0 rounded-full border-2 hover:border-2 hover:border-neutral ${
+                          !story.viewers.includes(loggedInUser?._id) &&
+                          "border-accent"
+                        } cursor-pointer`}
+                        loading="eager"
+                        decoding="async"
+                        title="View story"
+                      />
+                      <p className="font-bold mt-2">
+                        {story.caption?.length > 20
+                          ? `${story.caption.slice(0, 20)}...`
+                          : story.caption}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+                  <button
+                    onClick={() => handleScroll("right")}
+                    className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                    style={{
+                      display:
+                        storiesContainerRef.current &&
+                        scrollPosition >=
+                          storiesContainerRef.current.scrollWidth -
+                            storiesContainerRef.current.clientWidth
+                          ? "none"
+                          : "block",
+                    }}
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="divider m-0 md:hidden mt-4"></div>
             <div className="flex justify-between items-center md:hidden px-12 md:px-4">
@@ -215,7 +315,7 @@ export default function Profile() {
           </>
         )}
         <>
-          <div className="divider mt-8 mb-0"></div>
+          <div className="divider"></div>
           <div className="flex justify-center items-center gap-6 px-4 md:px-0">
             {profileLinks.map(({ path, name, Icon }) => (
               <NavLink

@@ -1,4 +1,4 @@
-import { useAuthStore, useFetch, usePostStore } from "@/hooks";
+import { useAuthStore, useFetch, usePostStore, useScroll } from "@/hooks";
 import { Alert } from "@/components";
 import Skeleton from "./components/Skeleton";
 import { lazy, Suspense, useState } from "react";
@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet-async";
 import { suggestUsers } from "@/api/user";
 import { Link, useNavigate } from "react-router-dom";
 import { toggleFollowUser } from "@/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Card = lazy(() => import("./components/Card"));
 
@@ -14,6 +15,7 @@ export default function Home() {
   const [err, setError] = useState(null);
   const navigate = useNavigate();
   const [activeBtn, setActiveBtn] = useState(0);
+  const { storiesContainerRef, scrollPosition, handleScroll } = useScroll();
   const {
     posts,
     loading,
@@ -47,7 +49,7 @@ export default function Home() {
   const viewStory = (username, storyId) => {
     navigate(`/stories/${username}/${storyId}`);
   };
-  
+
   return (
     <>
       <Helmet>
@@ -57,31 +59,67 @@ export default function Home() {
       <div className="max-w-[1200px] mx-auto ">
         <div className="py-8 md:flex justify-between w-full min-h-dvh">
           <div className="lg:w-[60%]">
-            <div className="mb-6 px-4 md:px-0 flex gap-4 overflow-auto">
-              {storiesErr && (
-                <p className="text-red-500 text-sm">{storiesErr}</p>
-              )}
-              {isLoading && (
-                <div className="flex gap-4">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div
-                      className="skeleton h-12 w-12 shrink-0 rounded-full"
-                      key={i}
-                    ></div>
-                  ))}
-                </div>
-              )}
-              {stories.map((story) => (
-                <img
-                  key={story._id}
-                  src={story.media[0]}
-                  alt={story?.user?.username}
-                  className={`h-14 w-14 shrink-0 rounded-full border-2 ${!story.viewers.includes(loggedInUser?._id) && "border-accent"} cursor-pointer`}
-                  loading="eager"
-                  onClick={() => viewStory(story?.user?.username, story._id)}
-                  decoding="async"
-                />
-              ))}
+            <div className="relative">
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 z-10">
+                <button
+                  onClick={() => handleScroll("left")}
+                  className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                  style={{ display: scrollPosition <= 0 ? "none" : "block" }}
+                >
+                  <ChevronLeft size={20} />
+                </button>
+              </div>
+
+              <div
+                ref={storiesContainerRef}
+                className="mb-6 px-4 md:px-0 flex gap-4 overflow-auto scrollbar-hide"
+              >
+                {storiesErr && (
+                  <p className="text-red-500 text-sm">{storiesErr}</p>
+                )}
+                {isLoading && (
+                  <div className="flex gap-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div
+                        className="skeleton h-12 w-12 shrink-0 rounded-full"
+                        key={i}
+                      ></div>
+                    ))}
+                  </div>
+                )}
+                {stories.map((story) => (
+                  <img
+                    key={story._id}
+                    src={story.media[0]}
+                    alt={story?.user?.username}
+                    className={`h-14 w-14 shrink-0 rounded-full border-2 ${
+                      !story.viewers.includes(loggedInUser?._id) &&
+                      "border-accent"
+                    } cursor-pointer`}
+                    loading="eager"
+                    onClick={() => viewStory(story?.user?.username, story._id)}
+                    decoding="async"
+                  />
+                ))}
+              </div>
+
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10">
+                <button
+                  onClick={() => handleScroll("right")}
+                  className="p-2 bg-black/50 text-white rounded-full hover:bg-black/70 transition-colors"
+                  style={{
+                    display:
+                      storiesContainerRef.current &&
+                      scrollPosition >=
+                        storiesContainerRef.current.scrollWidth -
+                          storiesContainerRef.current.clientWidth
+                        ? "none"
+                        : "block",
+                  }}
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
             </div>
             <div className="md:max-w-[400px] lg:max-w-[400px] xl:max-w-[600px] mx-auto">
               {loading ? (
