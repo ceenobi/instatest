@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
             setAccessToken(data.accessToken);
           } catch (error) {
             console.error(error);
-            //handleLogout();
+            handleLogout();
           }
         }, timeUntilRefresh);
 
@@ -73,9 +73,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error setting up token refresh:", error);
-      //handleLogout();
+      handleLogout();
     }
-  }, [accessToken, setAccessToken]);
+  }, [accessToken, handleLogout, setAccessToken]);
 
   useEffect(() => {
     if (!accessToken) {
