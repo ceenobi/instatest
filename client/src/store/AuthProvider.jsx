@@ -56,10 +56,7 @@ export const AuthProvider = ({ children }) => {
           .then(({ data }) => {
             setAccessToken(data.accessToken);
           })
-          .catch((error) => {
-            // handleLogout();
-            console.error(error);
-          });
+          .catch(handleLogout);
       } else {
         // Set up refresh timer
         const refreshTimer = setTimeout(async () => {

@@ -113,7 +113,7 @@ export default function CreateStory() {
       <div className="relative inline-block">
         <div
           onClick={handleOpen}
-          className="w-14 h-14 rounded-full border-2 border-accent flex items-center justify-center cursor-pointer hover:bg-accent/10 transition-colors"
+          className="w-12 h-12 rounded-full border-2 border-accent flex items-center justify-center cursor-pointer hover:bg-accent/10 transition-colors"
           title="Create Story"
         >
           <Plus size={28} className="text-accent" />
