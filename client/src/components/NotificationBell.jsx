@@ -4,7 +4,6 @@ import { Bell } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { NotificationContext } from "@/store";
-//import defaultAvatar from "@/assets/default-avatar.png";
 
 export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,10 +73,12 @@ export default function NotificationBell() {
   return (
     <div className="relative">
       <button
-        className="relative p-2 hover:bg-base-200 rounded-full"
+        className={`relative p-2 hover:bg-base-200 rounded-full focus:outline-none ${
+          isOpen ? "text-accent" : ""
+        }`}
         onClick={handleOpen}
       >
-        <Bell size={24} />
+        <Bell size={28} />
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-accent rounded-full">
             {unreadCount}
@@ -113,7 +114,7 @@ export default function NotificationBell() {
                 {notifications.map((notification) => (
                   <div
                     key={notification._id}
-                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-base-200 ${
+                    className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-base-200 ${
                       !notification.read ? "bg-base-200" : ""
                     }`}
                     onClick={() => handleNotificationClick(notification)}

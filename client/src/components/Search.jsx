@@ -55,9 +55,19 @@ export default function Search() {
     }, 100);
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    setSearchTerm("");
+    setUsers([]);
+  };
+
   return (
     <>
-      <SearchIcon size={28} onClick={handleOpen} className={`cursor-pointer ${isOpen ? "text-accent" : ""}`} />
+      <SearchIcon
+        size={28}
+        onClick={isOpen ? handleClose : handleOpen}
+        className={`cursor-pointer ${isOpen ? "text-accent" : ""}`}
+      />
       <div
         className={`drawer fixed top-0 md:left-[80px] z-40 ${
           isOpen ? "drawer-open" : ""

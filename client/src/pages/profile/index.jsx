@@ -227,10 +227,12 @@ export default function Profile() {
               </div>
             </div>
             <div className="my-8 flex gap-4 px-4 md:px-0 items-center">
-              <div className="w-[120px] text-center">
-                <CreateStory />
-                <p className="mt-2">Create story</p>
-              </div>
+              {loggedInUser?.username === profile && (
+                <div className="w-[120px] text-center">
+                  <CreateStory />
+                  <p className="mt-2">Create story</p>
+                </div>
+              )}
               <div className="relative w-full md:mt-6">
                 <div className="absolute left-0 top-[25%] -translate-y-1/2 z-10">
                   <button

@@ -44,10 +44,6 @@ export default function Sidebar() {
         <div className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer" data-tip="Create post">
           <CreatePost />
         </div>
-        {/* <div
-          className="tooltip tooltip-right flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 cursor-pointer"
-          data-tip="Search users"
-        ></div> */}
         <NavLink
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
           to={`/${user?.data?.username}`}

@@ -5,6 +5,8 @@ import cors from "cors";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import { v2 as cloudinary } from "cloudinary";
+import { createServer } from "http";
+import { initializeSocket } from "./socket.js";
 
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
@@ -14,6 +16,8 @@ import storyRoutes from "./routes/story.js";
 import notificationRoutes from "./routes/notification.js";
 
 const app = express();
+const httpServer = createServer(app);
+const io = initializeSocket(httpServer);
 
 const corsOptions = {
   origin: [
@@ -39,6 +43,11 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 app.disable("x-powered-by");
 app.get("/", (req, res) => {
@@ -67,4 +76,4 @@ app.use((error, req, res, next) => {
   res.status(statusCode).json({ error: errorMessage });
 });
 
-export default app;
+export { httpServer, io };

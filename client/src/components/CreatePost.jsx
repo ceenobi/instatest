@@ -253,9 +253,9 @@ export default function CreatePost() {
                     />
                   ))}
                 <div className="form-control">
-                  {/* <label className="label">
+                  <label className="label hidden">
                     <span className="label-text">Description</span>
-                  </label> */}
+                  </label>
                   <textarea
                     className="textarea textarea-bordered rounded-none"
                     placeholder="Description"
@@ -271,9 +271,9 @@ export default function CreatePost() {
                   )}
                 </div>
                 <div className="form-control">
-                  {/* <label className="label">
+                  <label className="label hidden">
                     <span className="label-text">Tags</span>
-                  </label> */}
+                  </label>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag, index) => (
                       <span

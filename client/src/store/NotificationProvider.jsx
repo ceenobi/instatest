@@ -3,16 +3,18 @@ import { useAuthStore } from "@/hooks";
 import { getNotifications, markNotificationsAsRead } from "@/api/notification";
 import { handleError } from "@/utils";
 import { NotificationContext } from ".";
+import io from "socket.io-client";
 
-//export const NotificationContext = createContext({});
-
-export const NotificationProvider =({ children }) => {
+export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const { accessToken } = useAuthStore();
+  const [socket, setSocket] = useState(null);
+  const { accessToken, user } = useAuthStore();
 
   const fetchNotifications = useCallback(async () => {
+    if (!accessToken) return;
+
     try {
       setLoading(true);
       const res = await getNotifications(accessToken);
@@ -29,7 +31,7 @@ export const NotificationProvider =({ children }) => {
 
   const markAsRead = useCallback(async (notificationIds) => {
     try {
-      const res = await markNotificationsAsRead(accessToken, notificationIds);
+      const res = await markNotificationsAsRead(notificationIds, accessToken);
       if (res.status === 200) {
         setNotifications((prev) =>
           prev.map((notification) =>
@@ -51,9 +53,38 @@ export const NotificationProvider =({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (accessToken) {
-      fetchNotifications();
-    }
+    if (!accessToken || !user?.data?._id) return;
+
+    const newSocket = io(import.meta.env.VITE_BASE_URL, {
+      auth: {
+        token: accessToken,
+      },
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
+    });
+
+    newSocket.on('connect', () => {
+      console.log('WebSocket connected');
+    });
+
+    newSocket.on('notification', (newNotification) => {
+      addNotification(newNotification);
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('WebSocket connection error:', error);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [accessToken, user?.data?._id, addNotification]);
+
+  useEffect(() => {
+    fetchNotifications();
   }, [accessToken, fetchNotifications]);
 
   return (
@@ -65,9 +96,10 @@ export const NotificationProvider =({ children }) => {
         fetchNotifications,
         markAsRead,
         addNotification,
+        socket
       }}
     >
       {children}
     </NotificationContext.Provider>
   );
-}
+};

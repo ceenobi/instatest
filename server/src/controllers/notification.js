@@ -1,5 +1,6 @@
 import createHttpError from "http-errors";
 import Notification from "../models/notification.js";
+import { sendNotification } from "../socket.js";
 
 // Create a new notification
 export const createNotification = async (req, res, next) => {
@@ -21,6 +22,11 @@ export const createNotification = async (req, res, next) => {
       .populate("post", "media")
       .populate("story", "media")
       .execPopulate();
+
+    // Send real-time notification via WebSocket
+    if (req.io) {
+      sendNotification(req.io, populatedNotification);
+    }
 
     res.status(201).json({
       success: true,

@@ -1,4 +1,4 @@
-import app from "./src/app.js";
+import {httpServer} from "./src/app.js";
 import mongoose from "mongoose";
 import { connectToDb } from "./src/config/database.js";
 
@@ -12,7 +12,7 @@ async function startServer() {
     console.log("✅ Database connection established");
 
     // Start the server
-    server = app.listen(port, () => {
+    server = httpServer.listen(port, () => {
       console.log("\n🚀 Server started successfully");
       console.log(`✅ Server is running on port ${port}`);
       console.log(`📚 API Documentation: http://localhost:${port}/api-docs`);

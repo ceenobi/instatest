@@ -56,7 +56,10 @@ export const AuthProvider = ({ children }) => {
           .then(({ data }) => {
             setAccessToken(data.accessToken);
           })
-          .catch(handleLogout);
+          .catch((error) => {
+            // handleLogout();
+            console.error(error);
+          });
       } else {
         // Set up refresh timer
         const refreshTimer = setTimeout(async () => {
@@ -65,7 +68,7 @@ export const AuthProvider = ({ children }) => {
             setAccessToken(data.accessToken);
           } catch (error) {
             console.error(error);
-            handleLogout();
+            //handleLogout();
           }
         }, timeUntilRefresh);
 
@@ -73,9 +76,9 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error setting up token refresh:", error);
-      handleLogout();
+      //handleLogout();
     }
-  }, [accessToken, handleLogout, setAccessToken]);
+  }, [accessToken, setAccessToken]);
 
   useEffect(() => {
     if (!accessToken) {

@@ -171,6 +171,7 @@ export default function CreateStory() {
             </label>
             <input
               type="file"
+              id="images"
               ref={fileInputRef}
               onChange={handleImage}
               accept="image/*"
@@ -184,6 +185,8 @@ export default function CreateStory() {
             </label>
             <input
               type="text"
+              id="caption"
+              name="caption"
               className="input input-bordered rounded-none"
               placeholder="Add a caption (optional)"
               {...register("caption")}
