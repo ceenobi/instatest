@@ -164,7 +164,7 @@ export default function Home() {
                 <div className="avatar placeholder">
                   <div className="w-12 rounded-full border-2">
                     {loggedInUser?.profilePicture ? (
-                      <Link to={`/${loggedInUser?.username}`}>
+                      <Link to={`/profile/${loggedInUser?.username}`}>
                         <img
                           src={loggedInUser?.profilePicture}
                           alt={loggedInUser?.username}
@@ -173,7 +173,7 @@ export default function Home() {
                         />
                       </Link>
                     ) : (
-                      <Link to={`/${loggedInUser?.username}`}>
+                      <Link to={`/profile/${loggedInUser?.username}`}>
                         <span className="text-2xl">
                           {loggedInUser?.username?.charAt(0)}
                         </span>
@@ -183,13 +183,13 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <Link
-                    to={`/${loggedInUser?.username}`}
+                    to={`/profile/${loggedInUser?.username}`}
                     className="text-sm font-semibold"
                   >
                     {loggedInUser?.username}
                   </Link>
                   <Link
-                    to={`/${loggedInUser?.username}`}
+                    to={`/profile/${loggedInUser?.username}`}
                     className="text-sm font-semibold text-zinc-500"
                   >
                     {loggedInUser?.fullname}
@@ -217,7 +217,7 @@ export default function Home() {
                 <div className="flex gap-3 items-center">
                   <div className="avatar placeholder">
                     <div className="w-[50px] h-[50px] rounded-full border-2">
-                      <Link to={`/${user.username}`}>
+                      <Link to={`/profile/${user.username}`}>
                         {user.profilePicture ? (
                           <img
                             src={user.profilePicture}
@@ -235,7 +235,7 @@ export default function Home() {
                   </div>
                   <div>
                     <Link
-                      to={`/${user.username}`}
+                      to={`/profile/${user.username}`}
                       className="text-sm font-semibold text-zinc-500"
                     >
                       {user.username}

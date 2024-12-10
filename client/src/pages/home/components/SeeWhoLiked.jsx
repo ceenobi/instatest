@@ -80,7 +80,7 @@ export default function SeeWhoLiked({ post }) {
                   key={user._id}
                   className="flex items-center justify-between"
                 >
-                  <Link to={`/${user.username}`}>
+                  <Link to={`/profile/${user.username}`}>
                     <div className="flex items-center gap-2">
                       <div className="avatar">
                         <div className="w-[40px] rounded-full">

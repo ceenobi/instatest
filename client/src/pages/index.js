@@ -14,6 +14,7 @@ import SavedPosts from "./profile/savedPosts";
 import Explore from "./explore";
 import Tags from "./explore/Tags";
 import Stories from "./stories";
+import Error404 from "./notFound";
 
 export {
   Login,
@@ -32,4 +33,5 @@ export {
   Explore,
   Tags,
   Stories,
+  Error404
 };

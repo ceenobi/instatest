@@ -12,6 +12,7 @@ import {
   AccountPrivacy,
   Comments,
   DeleteAccount,
+  Error404,
   Explore,
   ForgotPassword,
   Home,
@@ -97,7 +98,7 @@ const routes = [
         element: <Home />,
       },
       {
-        path: ":profile",
+        path: "profile/:profile",
         element: <Profile />,
         children: [
           {
@@ -166,6 +167,14 @@ const routes = [
         element: <Stories />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: (
+      <Suspense fallback={<LazySpinner />}>
+        <Error404 />
+      </Suspense>
+    ),
   },
 ];
 const router = createBrowserRouter(routes);

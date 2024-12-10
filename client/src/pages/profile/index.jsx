@@ -32,7 +32,7 @@ const Posts = lazy(() => import("./components/Posts"));
 export default function Profile() {
   const { profile } = useParams();
   const [followText, setFollowText] = useState("");
-  const match = useMatch(`/${profile}`);
+  const match = useMatch(`/profile/${profile}`);
   const navigate = useNavigate();
   const { accessToken, setUser, user } = useAuthStore();
   const { error, loading, data, setData } = useFetch(
@@ -52,12 +52,12 @@ export default function Profile() {
 
   const profileLinks = [
     {
-      path: `/${profile}`,
+      path: `/profile/${profile}`,
       Icon: Grid3x3,
       name: "Posts",
     },
     {
-      path: `/${profile}/saved`,
+      path: `/profile/${profile}/saved`,
       Icon: Bookmark,
       name: "Saved",
     },
@@ -347,7 +347,7 @@ export default function Profile() {
             <Suspense
               fallback={<div className="text-center">Fetching posts..</div>}
             >
-              <Posts accessToken={accessToken} profileId={userProfile?._id} />
+              <Posts profileId={userProfile?._id} />
             </Suspense>
           ) : (
             <Outlet />

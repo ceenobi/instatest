@@ -1,10 +1,11 @@
 import { getUserPosts } from "@/api/post";
 import { Alert } from "@/components";
-import { useFetch } from "@/hooks";
+import { useAuthStore, useFetch } from "@/hooks";
 import { BookmarkX } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export default function Posts({ accessToken, profileId }) {
+export default function Posts({ profileId }) {
+  const { accessToken } = useAuthStore();
   const { error, data, loading } = useFetch(
     getUserPosts,
     profileId,

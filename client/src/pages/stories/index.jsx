@@ -246,7 +246,7 @@ export default function Stories() {
             {/* User info */}
             <div
               className="absolute top-4 left-4 flex items-center gap-2 bg-black/50 p-2 rounded-full cursor-pointer"
-              onClick={() => navigate(`/${currentStory.user.username}`)}
+              onClick={() => navigate(`/profile/${currentStory.user.username}`)}
             >
               <div className="avatar">
                 <div className="w-7 h-7 rounded-full">

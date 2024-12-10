@@ -65,7 +65,7 @@ export default function Following({ userProfile, profile }) {
                     key={user._id}
                     className="flex items-center justify-between"
                   >
-                    <Link to={`/${user.username}`}>
+                    <Link to={`/profile/${user.username}`}>
                       <div className="flex items-center gap-2">
                         <div className="avatar placeholder">
                           <div className="w-[45px] rounded-full border-2">

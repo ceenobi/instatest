@@ -28,7 +28,7 @@ export default function Footer() {
             </NavLink>
           ))}
         <Search />
-        <NavLink to={`/${user?.data?.username}`}>
+        <NavLink to={`/profile/${user?.data?.username}`}>
           <div className="avatar placeholder">
             <div
               className={`w-8 rounded-full border-2 ${

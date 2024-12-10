@@ -24,7 +24,7 @@ export default function Menu() {
           <li>
             <NavLink
               className="flex items-center gap-2"
-              to={`/${user?.data?.username}/saved`}
+              to={`/profile/${user?.data?.username}/saved`}
             >
               <Bookmark />
               Saved

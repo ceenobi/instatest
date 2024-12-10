@@ -46,7 +46,7 @@ export default function Sidebar() {
         </div>
         <NavLink
           className="avatar flex flex-col justify-center items-center mb-2 hover:bg-zinc-100 rounded-lg p-3 "
-          to={`/${user?.data?.username}`}
+          to={`/profile/${user?.data?.username}`}
         >
           <div className="avatar placeholder">
             <div
@@ -90,7 +90,7 @@ export default function Sidebar() {
           <li>
             <NavLink
               className="flex items-center gap-2"
-              to={`/${user?.data?.username}/saved`}
+              to={`/profile/${user?.data?.username}/saved`}
             >
               <Bookmark />
               Saved

@@ -24,7 +24,7 @@ export default function SavedPosts() {
   useEffect(() => {
     // Redirect if not authorized
     if (!loading && !isOwnProfile) {
-      navigate(`/${profile}`, { replace: true });
+      navigate(`/profile/${profile}`, { replace: true });
     }
   }, [loading, isOwnProfile, profile, navigate]);
 

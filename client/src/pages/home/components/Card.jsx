@@ -76,7 +76,7 @@ export default function Card({ post, isLastPost, lastPostRef }) {
           </div>
           <div>
             <Link
-              to={`/${post.user?.username}`}
+              to={`/profile/${post.user?.username}`}
               className="font-semibold hover:text-gray-500"
             >
               {post.user?.username}
@@ -183,7 +183,7 @@ export default function Card({ post, isLastPost, lastPostRef }) {
           <SeeWhoLiked post={post} />
           <div>
             <Link
-              to={`/${post.user?.username}`}
+              to={`/profile/${post.user?.username}`}
               className="font-semibold hover:underline"
             >
               {post.user?.username}
