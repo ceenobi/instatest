@@ -21,11 +21,12 @@ export const initializeSocket = (server) => {
 
     try {
       if (!token) {
-        return next(new Error("Authentication error"));
+        return next(new Error("No token provided"));
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
       const user = await User.findById(decoded.id);
+
       if (!user) {
         return next(new Error("User not found"));
       }
@@ -33,7 +34,10 @@ export const initializeSocket = (server) => {
       socket.user = user;
       next();
     } catch (error) {
-      next(error);
+      if (error instanceof jwt.JsonWebTokenError) {
+        return next(new Error("Invalid token"));
+      }
+      next(new Error("Authentication failed"));
     }
   });
 
@@ -46,6 +50,7 @@ export const initializeSocket = (server) => {
     console.log(`User ${userId} connected to socket`);
 
     socket.on("disconnect", () => {
+      socket.leave(userId);
       console.log(`User ${userId} disconnected from socket`);
     });
   });
@@ -54,6 +59,13 @@ export const initializeSocket = (server) => {
 };
 
 export const sendNotification = (io, notification) => {
-  // Send notification to the recipient
-  io.to(notification.recipient.toString()).emit("notification", notification);
+  try {
+    if (!notification || !notification.recipient) {
+      throw new Error("Invalid notification data");
+    }
+    // Send notification to the recipient
+    io.to(notification.recipient.toString()).emit("notification", notification);
+  } catch (error) {
+    console.error("Error sending notification:", error);
+  }
 };

@@ -3,7 +3,7 @@ import { useAuthStore } from "@/hooks";
 import { getNotifications, markNotificationsAsRead } from "@/api/notification";
 import { handleError } from "@/utils";
 import { NotificationContext } from ".";
-import io from "socket.io-client";
+import {io} from "socket.io-client";
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
@@ -11,7 +11,7 @@ export const NotificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [socket, setSocket] = useState(null);
   const { accessToken, user } = useAuthStore();
-
+  
   const fetchNotifications = useCallback(async () => {
     if (!accessToken) return;
 
@@ -55,18 +55,32 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!accessToken || !user?.data?._id) return;
 
+    // Log the socket URL for debugging
+    console.log('Attempting to connect to:', import.meta.env.VITE_SOCKET_URL);
+
     const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       auth: {
         token: accessToken,
       },
       reconnection: true,
       reconnectionAttempts: 5,
-      reconnectionDelay: 1000
+      reconnectionDelay: 1000,
+      // Add these options for better debugging
+      transports: ['websocket', 'polling'],
+      timeout: 10000,
+      debug: true
     });
     
-    // Add error handling
+    // Enhance error logging
     newSocket.on('connect_error', (error) => {
-      console.error('Connection Error:', error);
+      console.error('Connection Error:', {
+        message: error.message,
+        description: error.description,
+        context: {
+          url: import.meta.env.VITE_SOCKET_URL,
+          userId: user?.data?._id
+        }
+      });
     });
     
     newSocket.on('disconnect', (reason) => {
