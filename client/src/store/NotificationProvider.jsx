@@ -55,7 +55,7 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!accessToken || !user?.data?._id) return;
 
-    const newSocket = io(import.meta.env.VITE_BASE_URL, {
+    const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       auth: {
         token: accessToken,
       },
@@ -63,7 +63,15 @@ export const NotificationProvider = ({ children }) => {
       reconnectionAttempts: 5,
       reconnectionDelay: 1000
     });
-
+    
+    // Add error handling
+    newSocket.on('connect_error', (error) => {
+      console.error('Connection Error:', error);
+    });
+    
+    newSocket.on('disconnect', (reason) => {
+      console.warn('Disconnected:', reason);
+    });
     newSocket.on('connect', () => {
       console.log('WebSocket connected');
     });

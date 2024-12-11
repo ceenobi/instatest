@@ -126,7 +126,7 @@ export default function Home() {
                 </button>
               </div>
             </div>
-            <div className="md:max-w-[400px] lg:max-w-[400px] xl:max-w-[600px] mx-auto">
+            <div className="mt-4 md:max-w-[400px] lg:max-w-[400px] xl:max-w-[600px] mx-auto">
               {loading ? (
                 <Skeleton />
               ) : (
