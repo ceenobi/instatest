@@ -9,6 +9,7 @@ export const initializeSocket = (server) => {
         "http://localhost:5173",
         "http://localhost:5174",
         "https://instapics.vercel.app",
+        "wss://instapics.vercel.app",
       ],
       // origin: process.env.CORS_ORIGIN.split(","),
       methods: ["GET", "POST"],
