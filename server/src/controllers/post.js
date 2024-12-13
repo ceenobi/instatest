@@ -7,6 +7,8 @@ import {
 } from "../config/cloudinary.js";
 import Comment from "../models/comment.js";
 import Notification from "../models/notification.js";
+import { sendNotification } from "../socket.js";
+import { clearCache } from "../config/cache.js";
 
 export const createPost = async (req, res, next) => {
   const { title, description, images, tags } = req.body;
@@ -91,6 +93,7 @@ export const getAllPosts = async (req, res, next) => {
       .skip(skip)
       .limit(limit);
     const totalCount = await Post.countDocuments();
+    //clearCache(`get_allposts_${posts}`);
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
@@ -108,7 +111,7 @@ export const getAllPosts = async (req, res, next) => {
 };
 
 export const handleLikePost = async (req, res, next) => {
-  const { id: postId } = req.params;
+  const { id: postId } = req.param;
   const { id: userId } = req.user;
   try {
     const post = await Post.findById(postId);
@@ -121,12 +124,27 @@ export const handleLikePost = async (req, res, next) => {
       post.likes.push(userId);
       // Create notification if the post is not by the same user
       if (post.user.toString() !== userId) {
-        await Notification.create({
-          recipient: post.user,
-          sender: userId,
-          type: "like",
-          post: post._id,
-        });
+        try {
+          const notification = await Notification.create({
+            recipient: post.user,
+            sender: userId,
+            type: "like",
+            post: post._id,
+          });
+
+          // Get the populated notification data
+          const populatedNotification = await Notification.findById(
+            notification._id
+          )
+            .populate("sender", "username profilePicture")
+            .populate("post", "images");
+
+          // Send the notification through socket
+          sendNotification(req.app.get("io"), populatedNotification);
+        } catch (notificationError) {
+          console.error("Failed to create notification:", notificationError);
+          // Continue execution even if notification fails
+        }
       }
     }
     await post.save();
@@ -162,6 +180,7 @@ export const seeWhoLiked = async (req, res, next) => {
       )
     );
     const users = await Promise.all(getUserPromises);
+    clearCache(`see_whoLiked_${postId}`);
     res.status(200).json({
       success: true,
       message: "Post fetched successfully",
@@ -211,6 +230,7 @@ export const getUserPosts = async (req, res, next) => {
     const posts = await Post.find({ user: userId })
       .populate("user", "username profilePicture")
       .sort({ createdAt: -1 });
+    clearCache(`get_userPost_${userId}`);
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
@@ -257,6 +277,7 @@ export const getUserSavedPosts = async (req, res, next) => {
     const posts = await Post.find({ savedBy: userId })
       .populate("user", "username profilePicture")
       .sort({ createdAt: -1 });
+    clearCache(`get_userSaved_${currentUserId}`);
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",
@@ -329,7 +350,7 @@ export const getRandomPosts = async (req, res, next) => {
           .limit(limit),
         Post.countDocuments(excludeUserQuery),
       ]);
-
+      clearCache(`get_randomPost_${userId}`);
       return res.status(200).json({
         success: true,
         message: "Posts fetched successfully",
@@ -423,6 +444,7 @@ export const getPostsByTags = async (req, res, next) => {
     const totalCount = await Post.countDocuments({
       tags: { $in: tags.split(",") },
     });
+    clearCache(`get_tags_${tags}`);
     res.status(200).json({
       success: true,
       message: "Posts fetched successfully",

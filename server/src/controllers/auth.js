@@ -8,6 +8,7 @@ import {
   generateRefreshToken,
 } from "../config/generateToken.js";
 import mailService from "../config/mailService.js";
+import { clearCache } from "../config/cache.js";
 
 const cookieOptions = {
   httpOnly: true, // Prevents client-side access to the cookie
@@ -218,11 +219,12 @@ export const authenticateUser = async (req, res, next) => {
     if (!user) {
       return next(createHttpError(404, "User not found"));
     }
+    clearCache(`get_auser_${req.user.id}`);
     res.status(200).json(user);
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const sendVerifyEmail = async (req, res, next) => {
   const { userId } = req.params;
@@ -342,7 +344,7 @@ export const logout = async (req, res, next) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
     });
-    
+
     res.status(200).json({
       success: true,
       message: "Logged out successfully",

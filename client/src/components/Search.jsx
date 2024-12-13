@@ -116,7 +116,7 @@ export default function Search() {
                     ? users.map((user) => (
                         <Link
                           key={user._id}
-                          to={`/${user.username}`}
+                          to={`/profile/${user.username}`}
                           onClick={() => {
                             setIsOpen(false);
                             setSearchTerm("");

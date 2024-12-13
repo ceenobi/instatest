@@ -6,6 +6,7 @@ import Story from "../models/story.js";
 import User from "../models/user.js";
 import Notification from "../models/notification.js";
 import createHttpError from "http-errors";
+import { clearCache } from "../config/cache.js";
 
 export const createStory = async (req, res, next) => {
   let uploadResults;
@@ -65,7 +66,7 @@ export const getUserStories = async (req, res, next) => {
     const stories = await Story.find({ user: userId })
       .populate("user", "username profilePicture")
       .sort("-createdAt");
-
+    clearCache(`get_userStories_${userId}`);
     res.json({
       success: true,
       stories,
@@ -89,7 +90,7 @@ export const getFollowingStories = async (req, res, next) => {
     })
       .populate("user", "username profilePicture")
       .sort("-createdAt");
-
+    clearCache(`user_profile_${userId}`);
     res.json({
       success: true,
       stories,
@@ -134,12 +135,17 @@ export const viewStory = async (req, res, next) => {
 
     // Create notification if the story is not by the same user
     if (story.user.toString() !== userId) {
-      await Notification.create({
-        recipient: story.user,
-        sender: userId,
-        type: "story_view",
-        story: story._id
-      });
+      try {
+        await Notification.create({
+          recipient: story.user,
+          sender: userId,
+          type: "story_view",
+          story: story._id,
+        });
+      } catch (notificationError) {
+        console.error("Failed to create notification:", notificationError);
+        // Continue execution even if notification fails
+      }
     }
 
     res.json({

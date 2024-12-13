@@ -8,6 +8,16 @@ export const createNotification = async (req, res, next) => {
     const { recipient, type, post, story, comment } = req.body;
     const sender = req.user.id;
 
+    // Validate required fields
+    if (!recipient || !type) {
+      throw createHttpError(400, "Recipient and type are required");
+    }
+
+    // Prevent self-notifications
+    if (recipient === sender) {
+      throw createHttpError(400, "Cannot send notification to yourself");
+    }
+
     const notification = await Notification.create({
       recipient,
       sender,
@@ -17,11 +27,11 @@ export const createNotification = async (req, res, next) => {
       comment,
     });
 
-    const populatedNotification = await notification
+    // Updated populate without execPopulate
+    const populatedNotification = await Notification.findById(notification._id)
       .populate("sender", "username profilePicture")
       .populate("post", "media")
-      .populate("story", "media")
-      .execPopulate();
+      .populate("story", "media");
 
     // Send real-time notification via WebSocket
     if (req.io) {
@@ -33,6 +43,10 @@ export const createNotification = async (req, res, next) => {
       notification: populatedNotification,
     });
   } catch (error) {
+    // Handle mongoose duplicate key errors
+    if (error.code === 11000) {
+      return next(createHttpError(400, "Duplicate notification"));
+    }
     next(error);
   }
 };

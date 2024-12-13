@@ -72,7 +72,7 @@ export const getPostComments = async (req, res, next) => {
       });
 
     const total = await Comment.countDocuments({ postId, parentComment: null });
-
+    //clearCache(`get_postComments_${req.params.postId}`);
     res.status(200).json({
       success: true,
       comments,

@@ -89,6 +89,10 @@ userSchema.virtual("profileUrl").get(function () {
   return `/users/${this.username}`;
 });
 
+userSchema.index({ username: 1, email: 1 });
+userSchema.index({ following: 1, followers: 1 });
+userSchema.index({ createdAt: -1 });
+
 const User = model("User", userSchema);
 
 export default User;

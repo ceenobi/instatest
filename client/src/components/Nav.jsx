@@ -1,6 +1,6 @@
-import { Heart } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import CreatePost from "./CreatePost";
+import NotificationBell from "./NotificationBell";
 
 export default function Nav() {
   return (
@@ -10,11 +10,9 @@ export default function Nav() {
           <NavLink to="/" className="text-2xl font-bold text-logo">
             Instapics
           </NavLink>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-3 items-center px-4">
             <CreatePost />
-            <NavLink to="/favorites">
-              <Heart size="28px" />
-            </NavLink>
+            <NotificationBell />
           </div>
         </div>
       </div>

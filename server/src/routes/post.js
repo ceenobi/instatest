@@ -1,20 +1,36 @@
 import express from "express";
 import * as PostController from "../controllers/post.js";
 import { verifyAuth, Roles } from "../middleware/verifyAuth.js";
+import { apiLimiter } from "../middleware/rateLimit.js";
+import { cacheMiddleware } from "../config/cache.js";
 
 const router = express.Router();
 
-router.post("/createPost", verifyAuth(Roles.All), PostController.createPost);
+router.post(
+  "/createPost",
+  apiLimiter,
+  verifyAuth(Roles.All),
+  PostController.createPost
+);
 
-router.get("/getAllPosts", verifyAuth(Roles.All), PostController.getAllPosts);
+router.get(
+  "/getAllPosts",
+  apiLimiter,
+  verifyAuth(Roles.All),
+  cacheMiddleware("get_allposts", 120),
+  PostController.getAllPosts
+);
 router.patch(
   "/handleLikePost/:id",
+  apiLimiter,
   verifyAuth(Roles.All),
   PostController.handleLikePost
 );
 router.get(
   "/seeWhoLiked/:id",
+  apiLimiter,
   verifyAuth(Roles.All),
+  cacheMiddleware("see_whoLiked", 120),
   PostController.seeWhoLiked
 );
 router.patch(
@@ -25,13 +41,17 @@ router.patch(
 
 router.get(
   "/getUserPosts/:id",
+  apiLimiter,
   verifyAuth(Roles.All),
+  cacheMiddleware("get_userPost", 120),
   PostController.getUserPosts
 );
 
 router.get(
   "/getUserSavedPosts/:id",
+  apiLimiter,
   verifyAuth(Roles.All),
+  cacheMiddleware("get_userSaved", 120),
   PostController.getUserSavedPosts
 );
 
@@ -47,8 +67,20 @@ router.patch(
   PostController.updatePost
 );
 
-router.get("/random", verifyAuth(Roles.All), PostController.getRandomPosts);
+router.get(
+  "/random",
+  apiLimiter,
+  verifyAuth(Roles.All),
+  cacheMiddleware("get_randomPost", 120),
+  PostController.getRandomPosts
+);
 
-router.get("/tag/:tags", verifyAuth(Roles.All), PostController.getPostsByTags);
+router.get(
+  "/tag/:tags",
+  apiLimiter,
+  verifyAuth(Roles.All),
+  cacheMiddleware("get_tags", 120),
+  PostController.getPostsByTags
+);
 
 export default router;

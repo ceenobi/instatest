@@ -17,11 +17,9 @@ export const NotificationProvider = ({ children }) => {
 
     try {
       setLoading(true);
-      const res = await getNotifications(accessToken);
-      if (res.status === 200) {
-        setNotifications(res.data.notifications);
-        setUnreadCount(res.data.unreadCount);
-      }
+      const data = await getNotifications(accessToken);
+      setNotifications(data.notifications);
+      setUnreadCount(data.unreadCount);
     } catch (error) {
       handleError(error);
     } finally {
@@ -55,9 +53,6 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!accessToken || !user?.data?._id) return;
 
-    // Log the socket URL for debugging
-    console.log('Attempting to connect to:', import.meta.env.VITE_SOCKET_URL);
-
     const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       auth: {
         token: accessToken,
@@ -65,42 +60,37 @@ export const NotificationProvider = ({ children }) => {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
-      // Add these options for better debugging
       transports: ['websocket', 'polling'],
       timeout: 10000,
       debug: true
     });
     
-    // Enhance error logging
+    newSocket.on('connect', () => {
+      console.log('Socket connected with ID:', newSocket.id);
+    });
+
+    newSocket.on('notification', (newNotification) => {
+      console.log('Received notification:', newNotification);
+      addNotification(newNotification);
+    });
+
+    // Enhanced error logging
     newSocket.on('connect_error', (error) => {
-      console.error('Connection Error:', {
+      console.error('Socket connection error:', {
         message: error.message,
         description: error.description,
         context: {
           url: import.meta.env.VITE_SOCKET_URL,
-          userId: user?.data?._id
+          userId: user?.data?._id,
+          socketId: newSocket.id
         }
       });
-    });
-    
-    newSocket.on('disconnect', (reason) => {
-      console.warn('Disconnected:', reason);
-    });
-    newSocket.on('connect', () => {
-      console.log('WebSocket connected');
-    });
-
-    newSocket.on('notification', (newNotification) => {
-      addNotification(newNotification);
-    });
-
-    newSocket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
     });
 
     setSocket(newSocket);
 
     return () => {
+      console.log('Disconnecting socket:', newSocket.id);
       newSocket.disconnect();
     };
   }, [accessToken, user?.data?._id, addNotification]);

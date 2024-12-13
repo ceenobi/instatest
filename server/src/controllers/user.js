@@ -3,12 +3,12 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import Post from "../models/post.js";
 import Comment from "../models/comment.js";
-import Story from "../models/story.js";
 import Notification from "../models/notification.js";
 import {
   deleteFromCloudinary,
   uploadToCloudinary,
 } from "../config/cloudinary.js";
+import { clearCache } from "../config/cache.js";
 
 export const getAUser = async (req, res, next) => {
   const { username } = req.params;
@@ -16,7 +16,7 @@ export const getAUser = async (req, res, next) => {
     if (!username) {
       throw createHttpError(400, "Username is required");
     }
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).lean();
     if (!user) {
       return next(createHttpError(404, "User not found"));
     }
@@ -24,7 +24,7 @@ export const getAUser = async (req, res, next) => {
     const userPostsCount = await Post.countDocuments({
       user: user._id.toString(),
     });
-
+    clearCache(`user_profile_${req.params.username}`);
     res.status(200).json({ user, userPostsCount });
   } catch (error) {
     next(error);
@@ -193,11 +193,16 @@ export const followUser = async (req, res, next) => {
     await followedUser.save();
     await user.save();
     if (user.following.map((id) => id.toString()).includes(followerId)) {
-      await Notification.create({
-        recipient: followerId,
-        sender: userId,
-        type: "follow",
-      });
+      try {
+        await Notification.create({
+          recipient: followerId,
+          sender: userId,
+          type: "follow",
+        });
+      } catch (notificationError) {
+        console.error("Failed to create notification:", notificationError);
+        // Continue execution even if notification fails
+      }
     }
     res.status(200).json({
       success: true,
@@ -297,7 +302,7 @@ export const suggestUsers = async (req, res, next) => {
           mutualCount: 0,
         })),
       ];
-
+      clearCache(`suggest_user_${req.user.id}`);
       res.status(200).json({
         success: true,
         users: allSuggestions,
@@ -321,6 +326,7 @@ export const getUserFollowers = async (req, res, next) => {
       return next(createHttpError(404, "User not found"));
     }
     const followers = await User.find({ _id: { $in: user.followers } });
+    clearCache(`get_followers_${req.user.username}`);
     res.status(200).json({
       success: true,
       followers,
@@ -338,6 +344,7 @@ export const getUserFollowing = async (req, res, next) => {
       return next(createHttpError(404, "User not found"));
     }
     const following = await User.find({ _id: { $in: user.following } });
+    clearCache(`get_following_${req.params.username}`);
     res.status(200).json({
       success: true,
       following,

@@ -16,9 +16,12 @@ export const connectToDb = async () => {
 
     const db = await mongoose.connect(mongoUri, {
       dbName: "instapics",
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      maxPoolSize: 50,
+      minPoolSize: 10,
       socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 5000,
+      // keepAlive: true,
+      // keepAliveInitialDelay: 300000,
     });
 
     connection.isConnected = db.connections[0].readyState === 1;

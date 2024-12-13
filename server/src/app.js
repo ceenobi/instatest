@@ -13,6 +13,7 @@ import postRoutes from "./routes/post.js";
 import commentRoutes from "./routes/comment.js";
 import storyRoutes from "./routes/story.js";
 import notificationRoutes from "./routes/notification.js";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -72,9 +73,9 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/stories", storyRoutes);
 app.use("/api/notifications", notificationRoutes);
 
-app.use((req, res, next) => {
-  return next(createHttpError(404, "Endpoint not found"));
-});
+app.use(notFoundHandler);
+// Handle all errors
+app.use(errorHandler);
 
 app.use((error, req, res, next) => {
   console.error(error);
@@ -86,5 +87,7 @@ app.use((error, req, res, next) => {
   }
   res.status(statusCode).json({ error: errorMessage });
 });
+
+app.set("io", io);
 
 export { httpServer, io };
