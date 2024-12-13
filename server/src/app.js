@@ -54,18 +54,6 @@ app.get("/", (req, res) => {
   res.send("Hello express");
 });
 
-app.get("/api/test-notification", (req, res) => {
-  const testNotification = {
-    recipient: "674031d2ee975bc377b32a3e", // Replace with a valid user ID or use a method to get the current user
-    message: "This is a test notification",
-    type: "test",
-    createdAt: new Date(),
-  };
-
-  io.emit("notification", testNotification); // Emit to all connected clients
-  res.json({ message: "Test notification sent!" });
-});
-
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);

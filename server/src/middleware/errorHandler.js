@@ -10,10 +10,10 @@ const logger = winston.createLogger({
   ),
   transports: [
     // Log errors to a file
-    new winston.transports.File({
-      filename: "logs/error.log",
-      level: "error",
-    }),
+    // new winston.transports.File({
+    //   filename: "logs/error.log",
+    //   level: "error",
+    // }),
     // Also log to console in development
     ...(process.env.NODE_ENV !== "production"
       ? [
