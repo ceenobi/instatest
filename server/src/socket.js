@@ -13,7 +13,13 @@ export const initializeSocket = (server) => {
       ],
       // origin: process.env.CORS_ORIGIN.split(","),
       methods: ["GET", "POST"],
+      credentials: true,
     },
+    transports: ["websocket", "polling"], // Add this
+    allowEIO3: true, // Add this for compatibility
+    path: "/socket.io/", // Explicitly set the path
+    pingTimeout: 60000, // Increase timeout
+    pingInterval: 25000, // Add heartbeat interval
   });
 
   // Socket authentication middleware

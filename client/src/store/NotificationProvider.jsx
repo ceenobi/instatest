@@ -62,7 +62,8 @@ export const NotificationProvider = ({ children }) => {
       reconnectionDelay: 1000,
       transports: ['websocket', 'polling'],
       timeout: 10000,
-      debug: true
+      debug: true,
+      path: '/socket.io/',
     });
     
     newSocket.on('connect', () => {
