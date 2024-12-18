@@ -1,5 +1,5 @@
 import express, { json } from "express";
-import createHttpError, { isHttpError } from "http-errors";
+import { isHttpError } from "http-errors";
 import morgan from "morgan";
 import cors from "cors";
 import compression from "compression";

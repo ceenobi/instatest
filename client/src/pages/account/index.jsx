@@ -32,7 +32,7 @@ export default function ForgotPassword() {
   return (
     <>
       <Helmet>
-        <title>Let&apos;s gegt you signed in</title>
+        <title>Let&apos;s get you signed in</title>
         <meta name="description" content="Get access to Instashot" />
       </Helmet>
       <div className="max-w-[300px] mx-auto">

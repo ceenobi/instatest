@@ -33,7 +33,7 @@ export default function NotificationBell() {
         navigate(`/comments/${notification.post._id}`);
         break;
       case "follow":
-        navigate(`/${notification.sender.username}`);
+        navigate(`/profile/${notification.sender.username}`);
         break;
       case "story_view":
         navigate(
