@@ -63,7 +63,7 @@ app.use("/api/notifications", notificationRoutes);
 
 app.use(notFoundHandler);
 // Handle all errors
-app.use(errorHandler);
+// app.use(errorHandler);
 
 app.use((error, req, res, next) => {
   console.error(error);
