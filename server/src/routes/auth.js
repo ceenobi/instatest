@@ -7,7 +7,7 @@ import { cacheMiddleware } from "../config/cache.js";
 const router = express.Router();
 
 router.post("/signup", AuthController.signUp);
-router.post("/signin", authLimiter, AuthController.signIn);
+router.post("/signin", AuthController.signIn);
 router.post("/signinViaMail", authLimiter, AuthController.signInViaEmail);
 router.post(
   "/sendVerifyMail/:userId",

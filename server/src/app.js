@@ -13,7 +13,7 @@ import postRoutes from "./routes/post.js";
 import commentRoutes from "./routes/comment.js";
 import storyRoutes from "./routes/story.js";
 import notificationRoutes from "./routes/notification.js";
-import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+import { notFoundHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 const httpServer = createServer(app);
